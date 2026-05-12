@@ -1,0 +1,222 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum Role {
+  ADMIN
+  TEACHER
+  STUDENT
+}
+
+enum EnglishLevel {
+  BEGINNER
+  ELEMENTARY
+  PRE_INTERMEDIATE
+  INTERMEDIATE
+  UPPER_INTERMEDIATE
+  ADVANCED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  OVERDUE
+  CANCELLED
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LATE
+  EXCUSED
+}
+
+model User {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  passwordHash String
+  role         Role
+  firstName    String
+  lastName     String
+  phone        String?
+  isActive     Boolean   @default(true)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  teacher      Teacher?
+  student      Student?
+
+  @@map("users")
+}
+
+model Teacher {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bio         String?
+  subjects    String[] // e.g. ["English", "Business English"]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  groups        Group[]
+  classSessions ClassSession[]
+
+  @@map("teachers")
+}
+
+model Student {
+  id            String       @id @default(cuid())
+  userId        String       @unique
+  user          User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  dateOfBirth   DateTime?
+  englishLevel  EnglishLevel @default(BEGINNER)
+  parentName    String?
+  parentPhone   String?
+  notes         String?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  groupStudents  GroupStudent[]
+  payments       Payment[]
+  grades         Grade[]
+
+  @@map("students")
+}
+
+model Group {
+  id          String       @id @default(cuid())
+  name        String       // e.g. "Morning Intermediate A"
+  teacherId   String
+  teacher     Teacher      @relation(fields: [teacherId], references: [id])
+  level       EnglishLevel
+  schedule    String       // e.g. "Mon/Wed/Fri 09:00-10:30"
+  maxStudents Int          @default(12)
+  isActive    Boolean      @default(true)
+  startDate   DateTime
+  endDate     DateTime?
+  monthlyFee  Float
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  groupStudents  GroupStudent[]
+  classSessions  ClassSession[]
+  invoices       Invoice[]
+
+  @@map("groups")
+}
+
+model GroupStudent {
+  id        String   @id @default(cuid())
+  groupId   String
+  studentId String
+  group     Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  student   Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  joinedAt  DateTime @default(now())
+  isActive  Boolean  @default(true)
+
+  @@unique([groupId, studentId])
+  @@map("group_students")
+}
+
+model ClassSession {
+  id          String    @id @default(cuid())
+  groupId     String
+  teacherId   String
+  group       Group     @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  teacher     Teacher   @relation(fields: [teacherId], references: [id])
+  scheduledAt DateTime
+  duration    Int       @default(90) // minutes
+  topic       String?
+  notes       String?
+  isCompleted Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  attendances Attendance[]
+  grades      Grade[]
+
+  @@map("class_sessions")
+}
+
+model Attendance {
+  id             String           @id @default(cuid())
+  classSessionId String
+  classSession   ClassSession     @relation(fields: [classSessionId], references: [id], onDelete: Cascade)
+  studentId      String
+  status         AttendanceStatus @default(ABSENT)
+  notes          String?
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+
+  @@unique([classSessionId, studentId])
+  @@map("attendances")
+}
+
+model Grade {
+  id             String       @id @default(cuid())
+  studentId      String
+  classSessionId String?
+  student        Student      @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  classSession   ClassSession? @relation(fields: [classSessionId], references: [id])
+  score          Float        // 0-100
+  maxScore       Float        @default(100)
+  label          String?      // e.g. "Homework", "Quiz", "Speaking test"
+  notes          String?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@map("grades")
+}
+
+model Payment {
+  id          String        @id @default(cuid())
+  studentId   String
+  student     Student       @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  invoiceId   String?
+  invoice     Invoice?      @relation(fields: [invoiceId], references: [id])
+  amount      Float
+  currency    String        @default("UZS")
+  status      PaymentStatus @default(PENDING)
+  paidAt      DateTime?
+  method      String?       // "cash", "card", "transfer"
+  notes       String?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@map("payments")
+}
+
+model Invoice {
+  id        String        @id @default(cuid())
+  groupId   String
+  group     Group         @relation(fields: [groupId], references: [id])
+  month     Int           // 1-12
+  year      Int
+  amount    Float
+  currency  String        @default("UZS")
+  dueDate   DateTime
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  payments  Payment[]
+
+  @@unique([groupId, month, year])
+  @@map("invoices")
+}
+
+model Announcement {
+  id        String   @id @default(cuid())
+  title     String
+  body      String
+  targetRole Role?   // null = everyone, TEACHER = teachers only, STUDENT = students only
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("announcements")
+}
