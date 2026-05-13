@@ -1,6 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 
+export const dynamic = "force-dynamic";
+
 async function getStats() {
   const [students, teachers, groups, payments] = await Promise.all([
     prisma.student.count(),
@@ -71,10 +73,10 @@ export default async function AdminDashboard() {
           <h2 style={{ fontSize: "1rem", fontWeight: "600", color: "#1e293b", marginBottom: "1rem" }}>Quick Actions</h2>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem" }}>
             {[
-              { href: "/admin/students", label: "Add Student", icon: "➕👨‍🎓" },
-              { href: "/admin/teachers", label: "Add Teacher", icon: "➕👨‍🏫" },
-              { href: "/admin/groups", label: "New Group", icon: "➕📚" },
-              { href: "/admin/announcements", label: "Announce", icon: "📢" },
+              { href: "/admin/students/new", label: "Add Student", icon: "➕👨‍🎓" },
+              { href: "/admin/teachers/new", label: "Add Teacher", icon: "➕👨‍🏫" },
+              { href: "/admin/groups/new", label: "New Group", icon: "➕📚" },
+              { href: "/admin/announcements/new", label: "Announce", icon: "📢" },
             ].map((action) => (
               <Link key={action.href} href={action.href} style={{
                 display: "flex", flexDirection: "column", alignItems: "center",
