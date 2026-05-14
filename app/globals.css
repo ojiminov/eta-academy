@@ -85,3 +85,61 @@ thead tr { background: #f8fafc; }
 th { padding: 0.75rem 1rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid var(--border); }
 td { padding: 0.875rem 1rem; font-size: 0.875rem; border-bottom: 1px solid var(--border); }
 tbody tr:hover { background: #f8fafc; }
+
+/* ── Mobile layout ───────────────────────────────────── */
+@media (max-width: 768px) {
+  /* Show mobile chrome, hide desktop sidebar */
+  .eta-sidebar-desktop { display: none !important; }
+  .eta-mobile-topbar   { display: flex !important; }
+  .eta-mobile-bottomnav { display: flex !important; }
+
+  /* Push content below top bar and above bottom nav */
+  main {
+    padding-top: 56px !important;
+    padding-bottom: 68px !important;
+  }
+
+  /* Tighten page padding */
+  main > div[style*="padding: 2rem"] {
+    padding: 1rem !important;
+  }
+  main > div[style*="padding:2rem"] {
+    padding: 1rem !important;
+  }
+
+  /* Stack 2-col grids to 1 col */
+  div[style*="gridTemplateColumns: \"1fr 1fr\""],
+  div[style*="gridTemplateColumns: '1fr 1fr'"],
+  div[style*="grid-template-columns: 1fr 1fr"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Make 3-col stat grids 2-col on mobile */
+  div[style*="repeat(3, 1fr)"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  /* Make tables horizontally scrollable */
+  table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    white-space: nowrap;
+  }
+
+  /* Full-width buttons */
+  .btn { font-size: 0.8rem; }
+
+  /* Cards less padding */
+  .card { padding: 1rem !important; }
+
+  /* Headings */
+  h1[style] { font-size: 1.25rem !important; }
+}
+
+@media (max-width: 480px) {
+  div[style*="repeat(3, 1fr)"],
+  div[style*="repeat(4, 1fr)"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
