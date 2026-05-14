@@ -27,7 +27,7 @@ export default async function TeacherDashboard() {
     <div style={{ padding: "2rem" }}>
       <div style={{ marginBottom: "2rem" }}>
         <h1 style={{ fontSize: "1.75rem", fontWeight: "700", color: "#1e293b", margin: "0 0 0.25rem" }}>
-          {t("dashboard.teacherTitle", { name: user?.firstName })} 👋
+          {t("dashboard.teacherTitle", { name: user?.firstName ?? "" })} 👋
         </h1>
         <p style={{ color: "#64748b", margin: 0 }}>{t("dashboard.teacherSubtitle")}</p>
       </div>
