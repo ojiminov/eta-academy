@@ -1,9 +1,11 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 
 export const dynamic = "force-dynamic";
 
 export default async function PaymentsPage() {
+  const t = await getTranslations();
   const payments = await prisma.payment.findMany({
     include: {
       student: { include: { user: true } },
@@ -32,28 +34,22 @@ export default async function PaymentsPage() {
     CANCELLED: "badge-gray",
   };
 
-  const methodLabel: Record<string, string> = {
-    cash: "💵 Cash",
-    card: "💳 Card",
-    transfer: "🏦 Transfer",
-  };
-
   return (
     <div style={{ padding: "2rem" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
         <div>
-          <h1 style={{ fontSize: "1.5rem", fontWeight: "700", color: "#1e293b", margin: "0 0 0.25rem" }}>Payments</h1>
-          <p style={{ color: "#64748b", margin: 0 }}>{payments.length} total records</p>
+          <h1 style={{ fontSize: "1.5rem", fontWeight: "700", color: "#1e293b", margin: "0 0 0.25rem" }}>{t("payments.title")}</h1>
+          <p style={{ color: "#64748b", margin: 0 }}>{t("payments.totalRecords", { count: payments.length })}</p>
         </div>
-        <Link href="/admin/payments/new" className="btn btn-primary">+ Record Payment</Link>
+        <Link href="/admin/payments/new" className="btn btn-primary">{t("payments.newPayment")}</Link>
       </div>
 
       {/* Summary cards */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "1rem", marginBottom: "1.5rem" }}>
         {[
-          { label: "Collected", value: totalPaid, color: "#10b981", bg: "#d1fae5", icon: "✅" },
-          { label: "Pending", value: totalPending, color: "#f59e0b", bg: "#fef3c7", icon: "⏳" },
-          { label: "Overdue", value: totalOverdue, color: "#ef4444", bg: "#fee2e2", icon: "⚠️" },
+          { label: t("payments.collected"), value: totalPaid, color: "#10b981", bg: "#d1fae5", icon: "✅" },
+          { label: t("payments.pending"), value: totalPending, color: "#f59e0b", bg: "#fef3c7", icon: "⏳" },
+          { label: t("payments.overdue"), value: totalOverdue, color: "#ef4444", bg: "#fee2e2", icon: "⚠️" },
         ].map((s) => (
           <div key={s.label} className="card" style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
             <div style={{
@@ -77,20 +73,19 @@ export default async function PaymentsPage() {
         <table>
           <thead>
             <tr>
-              <th>Student</th>
-              <th>Group</th>
-              <th>Amount</th>
-              <th>Method</th>
-              <th>Status</th>
-              <th>Date</th>
+              <th>{t("grades.student")}</th>
+              <th>{t("sessions.group")}</th>
+              <th>{t("payments.amount")}</th>
+              <th>{t("payments.method")}</th>
+              <th>{t("common.status")}</th>
+              <th>{t("common.date")}</th>
             </tr>
           </thead>
           <tbody>
             {payments.length === 0 ? (
               <tr>
                 <td colSpan={6} style={{ textAlign: "center", padding: "3rem", color: "#64748b" }}>
-                  No payments recorded yet.{" "}
-                  <Link href="/admin/payments/new" style={{ color: "#6366f1" }}>Record the first payment</Link>
+                  {t("payments.noPayments")}
                 </td>
               </tr>
             ) : (
@@ -107,15 +102,17 @@ export default async function PaymentsPage() {
                   </td>
                   <td style={{ fontWeight: "600" }}>{p.amount.toLocaleString()} UZS</td>
                   <td style={{ color: "#64748b", fontSize: "0.875rem" }}>
-                    {p.method ? (methodLabel[p.method] || p.method) : "—"}
+                    {p.method ? (t(`payments.${p.method}`) || p.method) : "—"}
                   </td>
                   <td>
-                    <span className={`badge ${statusColors[p.status] || "badge-gray"}`}>{p.status}</span>
+                    <span className={`badge ${statusColors[p.status] || "badge-gray"}`}>
+                      {t(`payments.${p.status}`)}
+                    </span>
                   </td>
                   <td style={{ color: "#64748b", fontSize: "0.875rem" }}>
                     {p.paidAt
-                      ? new Date(p.paidAt).toLocaleDateString("en-GB")
-                      : new Date(p.createdAt).toLocaleDateString("en-GB")}
+                      ? new Date(p.paidAt).toLocaleDateString()
+                      : new Date(p.createdAt).toLocaleDateString()}
                   </td>
                 </tr>
               ))

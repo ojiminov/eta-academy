@@ -1,13 +1,14 @@
 import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { getTranslations } from "next-intl/server";
 
 export const dynamic = "force-dynamic";
 
 export default async function TeacherGradesPage() {
+  const t = await getTranslations();
   const user = await getCurrentUser();
   const teacher = user?.teacher;
 
-  // Get all groups with their students and grades
   const groups = teacher
     ? await prisma.group.findMany({
         where: { teacherId: teacher.id, isActive: true },
@@ -18,10 +19,7 @@ export default async function TeacherGradesPage() {
               student: {
                 include: {
                   user: true,
-                  grades: {
-                    orderBy: { createdAt: "desc" },
-                    take: 5,
-                  },
+                  grades: { orderBy: { createdAt: "desc" }, take: 5 },
                 },
               },
             },
@@ -31,16 +29,12 @@ export default async function TeacherGradesPage() {
       })
     : [];
 
-  // Recent grades across all groups
   const recentGrades = teacher
     ? await prisma.grade.findMany({
         where: {
           student: {
             groupStudents: {
-              some: {
-                group: { teacherId: teacher.id },
-                isActive: true,
-              },
+              some: { group: { teacherId: teacher.id }, isActive: true },
             },
           },
         },
@@ -56,19 +50,18 @@ export default async function TeacherGradesPage() {
   return (
     <div style={{ padding: "2rem" }}>
       <div style={{ marginBottom: "1.5rem" }}>
-        <h1 style={{ fontSize: "1.5rem", fontWeight: "700", color: "#1e293b", margin: "0 0 0.25rem" }}>Grades</h1>
-        <p style={{ color: "#64748b", margin: 0 }}>Performance overview for your students</p>
+        <h1 style={{ fontSize: "1.5rem", fontWeight: "700", color: "#1e293b", margin: "0 0 0.25rem" }}>{t("grades.teacherTitle")}</h1>
+        <p style={{ color: "#64748b", margin: 0 }}>{t("grades.teacherSubtitle")}</p>
       </div>
 
       {groups.length === 0 ? (
         <div className="card" style={{ textAlign: "center", padding: "3rem" }}>
           <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>📝</div>
-          <h3 style={{ color: "#1e293b" }}>No groups assigned</h3>
-          <p style={{ color: "#64748b" }}>Grades will appear here once you have students.</p>
+          <h3 style={{ color: "#1e293b" }}>{t("grades.noGroups")}</h3>
+          <p style={{ color: "#64748b" }}>{t("grades.noGroupsDesc")}</p>
         </div>
       ) : (
         <>
-          {/* Per-group grade summary */}
           {groups.map((g) => {
             const allGrades = g.groupStudents.flatMap((gs) => gs.student.grades);
             const avgScore = allGrades.length > 0
@@ -80,33 +73,32 @@ export default async function TeacherGradesPage() {
                 <div style={{ padding: "1.25rem 1.5rem 0.75rem", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                   <div>
                     <h2 style={{ fontSize: "1rem", fontWeight: "600", color: "#1e293b", margin: "0 0 0.2rem" }}>{g.name}</h2>
-                    <span style={{ fontSize: "0.8rem", color: "#64748b" }}>{g.groupStudents.length} students</span>
+                    <span style={{ fontSize: "0.8rem", color: "#64748b" }}>{t("common.students_count", { count: g.groupStudents.length })}</span>
                   </div>
                   {avgScore !== null && (
                     <div style={{ textAlign: "right" }}>
                       <div style={{
-                        fontSize: "1.5rem",
-                        fontWeight: "700",
+                        fontSize: "1.5rem", fontWeight: "700",
                         color: avgScore >= 80 ? "#10b981" : avgScore >= 60 ? "#f59e0b" : "#ef4444",
                       }}>
                         {avgScore}%
                       </div>
-                      <div style={{ fontSize: "0.75rem", color: "#64748b" }}>group avg</div>
+                      <div style={{ fontSize: "0.75rem", color: "#64748b" }}>{t("grades.groupAvg")}</div>
                     </div>
                   )}
                 </div>
                 {g.groupStudents.length === 0 ? (
                   <div style={{ padding: "1.5rem", color: "#94a3b8", fontSize: "0.875rem", textAlign: "center" }}>
-                    No students enrolled.
+                    {t("students.noStudentsEnrolled")}
                   </div>
                 ) : (
                   <table>
                     <thead>
                       <tr>
-                        <th>Student</th>
-                        <th>Grades (last 5)</th>
-                        <th>Average</th>
-                        <th>Trend</th>
+                        <th>{t("grades.student")}</th>
+                        <th>{t("grades.title")} (×5)</th>
+                        <th>{t("common.average")}</th>
+                        <th>{t("grades.trend")}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -124,7 +116,7 @@ export default async function TeacherGradesPage() {
                             <td>
                               <div style={{ display: "flex", gap: "0.3rem", flexWrap: "wrap" }}>
                                 {grades.length === 0 ? (
-                                  <span style={{ color: "#94a3b8", fontSize: "0.8rem" }}>No grades</span>
+                                  <span style={{ color: "#94a3b8", fontSize: "0.8rem" }}>{t("grades.noGrades")}</span>
                                 ) : (
                                   grades.map((gr) => {
                                     const pct = Math.round((gr.score / gr.maxScore) * 100);
@@ -133,7 +125,7 @@ export default async function TeacherGradesPage() {
                                         key={gr.id}
                                         className={`badge ${pct >= 80 ? "badge-green" : pct >= 60 ? "badge-yellow" : "badge-red"}`}
                                         style={{ fontSize: "0.7rem" }}
-                                        title={gr.label || "Grade"}
+                                        title={gr.label || t("grades.assignment")}
                                       >
                                         {pct}%
                                       </span>
@@ -173,22 +165,21 @@ export default async function TeacherGradesPage() {
             );
           })}
 
-          {/* Recent grades log */}
           {recentGrades.length > 0 && (
             <div className="card" style={{ padding: 0 }}>
               <div style={{ padding: "1.25rem 1.5rem 0.75rem" }}>
                 <h2 style={{ fontSize: "1rem", fontWeight: "600", color: "#1e293b", margin: 0 }}>
-                  Recent Grades Log
+                  {t("grades.recentLog")}
                 </h2>
               </div>
               <table>
                 <thead>
                   <tr>
-                    <th>Student</th>
-                    <th>Label</th>
-                    <th>Score</th>
-                    <th>Group</th>
-                    <th>Date</th>
+                    <th>{t("grades.student")}</th>
+                    <th>{t("grades.label")}</th>
+                    <th>{t("grades.score")}</th>
+                    <th>{t("sessions.group")}</th>
+                    <th>{t("common.date")}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -199,7 +190,7 @@ export default async function TeacherGradesPage() {
                         <td style={{ fontWeight: "500" }}>
                           {gr.student.user.firstName} {gr.student.user.lastName}
                         </td>
-                        <td style={{ color: "#64748b", fontSize: "0.875rem" }}>{gr.label || "Assessment"}</td>
+                        <td style={{ color: "#64748b", fontSize: "0.875rem" }}>{gr.label || t("grades.assignment")}</td>
                         <td>
                           <span className={`badge ${pct >= 80 ? "badge-green" : pct >= 60 ? "badge-yellow" : "badge-red"}`}>
                             {gr.score}/{gr.maxScore} ({pct}%)

@@ -52,7 +52,9 @@
     "of": "of",
     "viewAll": "View all",
     "manageGroup": "Manage Group",
-    "students_count": "{count} students"
+    "students_count": "{count} students",
+    "view": "View",
+    "average": "Average"
   },
   "levels": {
     "BEGINNER": "Beginner",
@@ -73,13 +75,16 @@
     "totalTeachers": "Total Teachers",
     "activeGroups": "Active Groups",
     "monthlyRevenue": "Monthly Revenue",
+    "totalRevenue": "Total Revenue",
     "pendingPayments": "Pending Payments",
     "upcomingSessions": "Upcoming Sessions",
     "myClasses": "My Classes",
     "recentGrades": "Recent Grades",
     "avgScore": "Avg Score",
     "recentActivity": "Recent Activity",
-    "quickActions": "Quick Actions"
+    "quickActions": "Quick Actions",
+    "recentPayments": "Recent Payments",
+    "noPayments": "No payments yet."
   },
   "groups": {
     "title": "Groups",
@@ -115,7 +120,9 @@
     "dateOfBirth": "Date of Birth",
     "enrolledGroups": "Enrolled Groups",
     "noStudentsEnrolled": "No students enrolled yet.",
-    "joined": "Joined"
+    "joined": "Joined",
+    "noGroup": "No group",
+    "enrolledCount": "{count} students enrolled"
   },
   "teachers": {
     "title": "Teachers",
@@ -123,7 +130,8 @@
     "noTeachers": "No teachers yet",
     "bio": "Bio",
     "subjects": "Subjects",
-    "activeGroups": "Active Groups"
+    "activeGroups": "Active Groups",
+    "onStaff": "{count} teachers on staff"
   },
   "sessions": {
     "title": "Sessions",
@@ -143,7 +151,10 @@
     "attendanceCount": "{present}/{total} present",
     "gradesCount": "{n} grades",
     "noAttendance": "Not recorded",
-    "noGrades": "No grades"
+    "noGrades": "No grades",
+    "recentSessions": "Recent Sessions",
+    "sessionsDone": "Sessions Done",
+    "sessionsTotal": "Total Sessions"
   },
   "attendance": {
     "title": "Attendance",
@@ -162,7 +173,8 @@
     "absent": "Absent",
     "late": "Late",
     "excused": "Excused",
-    "outOf": "{present} present out of {total} total sessions"
+    "outOf": "{present} present out of {total} total sessions",
+    "noSessionRecords": "No attendance recorded for this session."
   },
   "grades": {
     "title": "My Grades",
@@ -198,12 +210,14 @@
     "totalPaid": "Total Paid",
     "pending": "Pending",
     "overdue": "Overdue",
+    "collected": "Collected",
     "history": "Payment History",
     "method": "Method",
     "paidOn": "Paid On",
     "amount": "Amount",
     "month": "Month",
     "class": "Class",
+    "totalRecords": "{count} total records",
     "overdueAlert": "Overdue Payment",
     "overdueDesc": "You have {amount} UZS in overdue payments. Please contact the admin to resolve this.",
     "adminNote": "💡 For payment questions or issues, please contact the academy admin directly.",
@@ -224,6 +238,9 @@
     "everyone": "Everyone",
     "teachersOnly": "Teachers only",
     "studentsOnly": "Students only",
+    "adminsOnly": "Admins only",
+    "totalCount": "{count} announcements",
+    "postFirst": "Post your first announcement to students or teachers.",
     "body": "Message"
   },
   "forms": {

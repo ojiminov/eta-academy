@@ -1,10 +1,12 @@
 import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 
 export const dynamic = "force-dynamic";
 
 export default async function TeacherGroupsPage() {
+  const t = await getTranslations();
   const user = await getCurrentUser();
   const teacher = user?.teacher;
 
@@ -31,15 +33,15 @@ export default async function TeacherGroupsPage() {
   return (
     <div style={{ padding: "2rem" }}>
       <div style={{ marginBottom: "1.5rem" }}>
-        <h1 style={{ fontSize: "1.5rem", fontWeight: "700", color: "#1e293b", margin: "0 0 0.25rem" }}>My Groups</h1>
-        <p style={{ color: "#64748b", margin: 0 }}>{groups.filter((g) => g.isActive).length} active groups</p>
+        <h1 style={{ fontSize: "1.5rem", fontWeight: "700", color: "#1e293b", margin: "0 0 0.25rem" }}>{t("nav.myGroups")}</h1>
+        <p style={{ color: "#64748b", margin: 0 }}>{t("groups.activeGroups", { count: groups.filter((g) => g.isActive).length })}</p>
       </div>
 
       {groups.length === 0 ? (
         <div className="card" style={{ textAlign: "center", padding: "3rem" }}>
           <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>📚</div>
-          <h3 style={{ color: "#1e293b" }}>No groups assigned yet</h3>
-          <p style={{ color: "#64748b" }}>The admin will assign groups to you.</p>
+          <h3 style={{ color: "#1e293b" }}>{t("groups.noGroupsAssigned")}</h3>
+          <p style={{ color: "#64748b" }}>{t("groups.adminWillAssign")}</p>
         </div>
       ) : (
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: "1rem" }}>
@@ -48,10 +50,10 @@ export default async function TeacherGroupsPage() {
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "1rem" }}>
                 <div>
                   <h3 style={{ fontSize: "1rem", fontWeight: "600", color: "#1e293b", margin: "0 0 0.25rem" }}>{g.name}</h3>
-                  <span className={`badge ${levelColors[g.level] || "badge-blue"}`}>{g.level.replace(/_/g, " ")}</span>
+                  <span className={`badge ${levelColors[g.level] || "badge-blue"}`}>{t(`levels.${g.level}`)}</span>
                 </div>
                 <span className={`badge ${g.isActive ? "badge-green" : "badge-gray"}`}>
-                  {g.isActive ? "Active" : "Inactive"}
+                  {g.isActive ? t("common.active") : t("common.inactive")}
                 </span>
               </div>
 
@@ -60,14 +62,14 @@ export default async function TeacherGroupsPage() {
                   <span>🕐</span><span>{g.schedule}</span>
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.875rem", color: "#64748b" }}>
-                  <span>👥</span><span>{g.groupStudents.length} / {g.maxStudents} students</span>
+                  <span>👥</span><span>{g.groupStudents.length} / {g.maxStudents} {t("nav.students").toLowerCase()}</span>
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.875rem", color: "#64748b" }}>
                   <span>📅</span>
                   <span>
                     {g.classSessions[0]
-                      ? `Last session: ${new Date(g.classSessions[0].scheduledAt).toLocaleDateString()}`
-                      : "No sessions yet"}
+                      ? `${t("groups.lastSession")}: ${new Date(g.classSessions[0].scheduledAt).toLocaleDateString()}`
+                      : t("groups.noSessions")}
                   </span>
                 </div>
               </div>
@@ -89,7 +91,7 @@ export default async function TeacherGroupsPage() {
                 className="btn btn-secondary"
                 style={{ width: "100%", textAlign: "center", display: "block" }}
               >
-                Manage Group →
+                {t("common.manageGroup")} →
               </Link>
             </div>
           ))}

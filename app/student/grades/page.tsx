@@ -1,9 +1,11 @@
 import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { getTranslations } from "next-intl/server";
 
 export const dynamic = "force-dynamic";
 
 export default async function StudentGradesPage() {
+  const t = await getTranslations();
   const user = await getCurrentUser();
   const student = user?.student;
 
@@ -27,9 +29,8 @@ export default async function StudentGradesPage() {
   const pass = grades.filter((g) => (g.score / g.maxScore) >= 0.5 && (g.score / g.maxScore) < 0.7).length;
   const fail = grades.filter((g) => (g.score / g.maxScore) < 0.5).length;
 
-  // Group grades by group/class
   const byGroup = grades.reduce<Record<string, typeof grades>>((acc, g) => {
-    const groupName = g.classSession?.group?.name ?? "General";
+    const groupName = g.classSession?.group?.name ?? t("grades.assignment");
     if (!acc[groupName]) acc[groupName] = [];
     acc[groupName].push(g);
     return acc;
@@ -38,25 +39,25 @@ export default async function StudentGradesPage() {
   return (
     <div style={{ padding: "2rem" }}>
       <div style={{ marginBottom: "1.5rem" }}>
-        <h1 style={{ fontSize: "1.5rem", fontWeight: "700", color: "#1e293b", margin: "0 0 0.25rem" }}>My Grades</h1>
-        <p style={{ color: "#64748b", margin: 0 }}>Your academic performance</p>
+        <h1 style={{ fontSize: "1.5rem", fontWeight: "700", color: "#1e293b", margin: "0 0 0.25rem" }}>{t("grades.title")}</h1>
+        <p style={{ color: "#64748b", margin: 0 }}>{t("grades.subtitle")}</p>
       </div>
 
       {totalGrades === 0 ? (
         <div className="card" style={{ textAlign: "center", padding: "3rem" }}>
           <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>📝</div>
-          <h3 style={{ color: "#1e293b" }}>No grades yet</h3>
-          <p style={{ color: "#64748b" }}>Grades will appear here after your teacher records them.</p>
+          <h3 style={{ color: "#1e293b" }}>{t("grades.noGrades")}</h3>
+          <p style={{ color: "#64748b" }}>{t("grades.noGradesDesc")}</p>
         </div>
       ) : (
         <>
           {/* Summary */}
           <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1rem", marginBottom: "1.5rem" }}>
             {[
-              { label: "Excellent (90%+)", value: excellent, color: "#10b981", bg: "#d1fae5" },
-              { label: "Good (70-89%)", value: good, color: "#6366f1", bg: "#ede9fe" },
-              { label: "Pass (50-69%)", value: pass, color: "#f59e0b", bg: "#fef3c7" },
-              { label: "Needs work (<50%)", value: fail, color: "#ef4444", bg: "#fee2e2" },
+              { label: t("grades.excellent"), value: excellent, color: "#10b981", bg: "#d1fae5" },
+              { label: t("grades.good"), value: good, color: "#6366f1", bg: "#ede9fe" },
+              { label: t("grades.pass"), value: pass, color: "#f59e0b", bg: "#fef3c7" },
+              { label: t("grades.needsWork"), value: fail, color: "#ef4444", bg: "#fee2e2" },
             ].map((s) => (
               <div key={s.label} className="card" style={{ textAlign: "center" }}>
                 <div style={{ fontSize: "1.75rem", fontWeight: "700", color: s.color }}>{s.value}</div>
@@ -69,30 +70,24 @@ export default async function StudentGradesPage() {
           {avgScore !== null && (
             <div className="card" style={{ marginBottom: "1.5rem", display: "flex", alignItems: "center", gap: "1.5rem" }}>
               <div style={{
-                width: "80px",
-                height: "80px",
-                borderRadius: "50%",
+                width: "80px", height: "80px", borderRadius: "50%",
                 background: avgScore >= 80 ? "#d1fae5" : avgScore >= 60 ? "#fef3c7" : "#fee2e2",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                flexShrink: 0,
+                display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
               }}>
                 <span style={{
-                  fontSize: "1.5rem",
-                  fontWeight: "700",
+                  fontSize: "1.5rem", fontWeight: "700",
                   color: avgScore >= 80 ? "#10b981" : avgScore >= 60 ? "#f59e0b" : "#ef4444",
                 }}>
                   {avgScore}%
                 </span>
               </div>
               <div>
-                <div style={{ fontWeight: "600", fontSize: "1rem", color: "#1e293b" }}>Overall Average</div>
+                <div style={{ fontWeight: "600", fontSize: "1rem", color: "#1e293b" }}>{t("grades.overall")}</div>
                 <div style={{ color: "#64748b", fontSize: "0.875rem", marginTop: "0.25rem" }}>
-                  Based on {totalGrades} grade{totalGrades !== 1 ? "s" : ""}
+                  {t("grades.basedOn", { n: totalGrades })}
                 </div>
                 <div style={{ color: avgScore >= 80 ? "#10b981" : avgScore >= 60 ? "#f59e0b" : "#ef4444", fontWeight: "500", fontSize: "0.875rem", marginTop: "0.25rem" }}>
-                  {avgScore >= 90 ? "🌟 Excellent performance!" : avgScore >= 80 ? "👍 Good work!" : avgScore >= 70 ? "📈 Keep improving!" : "💪 More effort needed"}
+                  {avgScore >= 90 ? "🌟" : avgScore >= 80 ? "👍" : avgScore >= 70 ? "📈" : "💪"}
                 </div>
               </div>
             </div>
@@ -105,21 +100,18 @@ export default async function StudentGradesPage() {
               <div key={groupName} className="card" style={{ marginBottom: "1.5rem", padding: 0 }}>
                 <div style={{ padding: "1.25rem 1.5rem 0.75rem", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                   <h2 style={{ fontSize: "1rem", fontWeight: "600", color: "#1e293b", margin: 0 }}>{groupName}</h2>
-                  <span style={{
-                    fontWeight: "700",
-                    color: groupAvg >= 80 ? "#10b981" : groupAvg >= 60 ? "#f59e0b" : "#ef4444",
-                  }}>
-                    Avg: {groupAvg}%
+                  <span style={{ fontWeight: "700", color: groupAvg >= 80 ? "#10b981" : groupAvg >= 60 ? "#f59e0b" : "#ef4444" }}>
+                    {t("common.average")}: {groupAvg}%
                   </span>
                 </div>
                 <table>
                   <thead>
                     <tr>
-                      <th>Assignment</th>
-                      <th>Score</th>
-                      <th>Percentage</th>
-                      <th>Date</th>
-                      <th>Notes</th>
+                      <th>{t("grades.assignment")}</th>
+                      <th>{t("grades.score")}</th>
+                      <th>{t("grades.percentage")}</th>
+                      <th>{t("common.date")}</th>
+                      <th>{t("common.notes")}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -127,7 +119,7 @@ export default async function StudentGradesPage() {
                       const pct = Math.round((g.score / g.maxScore) * 100);
                       return (
                         <tr key={g.id}>
-                          <td style={{ fontWeight: "500" }}>{g.label || "Assessment"}</td>
+                          <td style={{ fontWeight: "500" }}>{g.label || t("grades.assignment")}</td>
                           <td style={{ fontSize: "0.875rem" }}>{g.score} / {g.maxScore}</td>
                           <td>
                             <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
@@ -136,8 +128,7 @@ export default async function StudentGradesPage() {
                               </span>
                               <div style={{ flex: 1, height: "4px", background: "#f1f5f9", borderRadius: "2px", minWidth: "60px", overflow: "hidden" }}>
                                 <div style={{
-                                  height: "100%",
-                                  width: `${pct}%`,
+                                  height: "100%", width: `${pct}%`,
                                   background: pct >= 80 ? "#10b981" : pct >= 60 ? "#f59e0b" : "#ef4444",
                                   borderRadius: "2px",
                                 }} />

@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 
 export const dynamic = "force-dynamic";
 
@@ -29,12 +30,13 @@ async function getStats() {
 
 export default async function AdminDashboard() {
   const stats = await getStats();
+  const t = await getTranslations();
 
   const statCards = [
-    { label: "Total Students", value: stats.students, icon: "👨‍🎓", color: "#6366f1", bg: "#ede9fe" },
-    { label: "Teachers", value: stats.teachers, icon: "👨‍🏫", color: "#10b981", bg: "#d1fae5" },
-    { label: "Active Groups", value: stats.groups, icon: "📚", color: "#f59e0b", bg: "#fef3c7" },
-    { label: "Total Revenue", value: `${stats.totalRevenue.toLocaleString()} UZS`, icon: "💰", color: "#3b82f6", bg: "#dbeafe" },
+    { label: t("dashboard.totalStudents"), value: stats.students, icon: "👨‍🎓", color: "#6366f1", bg: "#ede9fe" },
+    { label: t("dashboard.totalTeachers"), value: stats.teachers, icon: "👨‍🏫", color: "#10b981", bg: "#d1fae5" },
+    { label: t("dashboard.activeGroups"), value: stats.groups, icon: "📚", color: "#f59e0b", bg: "#fef3c7" },
+    { label: t("dashboard.totalRevenue"), value: `${stats.totalRevenue.toLocaleString()} UZS`, icon: "💰", color: "#3b82f6", bg: "#dbeafe" },
   ];
 
   return (
@@ -42,9 +44,9 @@ export default async function AdminDashboard() {
       {/* Header */}
       <div style={{ marginBottom: "2rem" }}>
         <h1 style={{ fontSize: "1.75rem", fontWeight: "700", color: "#1e293b", margin: "0 0 0.25rem" }}>
-          Dashboard
+          {t("dashboard.adminTitle")}
         </h1>
-        <p style={{ color: "#64748b", margin: 0 }}>Welcome back! Here&apos;s what&apos;s happening at ETA Academy.</p>
+        <p style={{ color: "#64748b", margin: 0 }}>{t("dashboard.adminSubtitle")}</p>
       </div>
 
       {/* Stat cards */}
@@ -70,13 +72,13 @@ export default async function AdminDashboard() {
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.5rem" }}>
         {/* Quick actions */}
         <div className="card">
-          <h2 style={{ fontSize: "1rem", fontWeight: "600", color: "#1e293b", marginBottom: "1rem" }}>Quick Actions</h2>
+          <h2 style={{ fontSize: "1rem", fontWeight: "600", color: "#1e293b", marginBottom: "1rem" }}>{t("dashboard.quickActions")}</h2>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem" }}>
             {[
-              { href: "/admin/students/new", label: "Add Student", icon: "➕👨‍🎓" },
-              { href: "/admin/teachers/new", label: "Add Teacher", icon: "➕👨‍🏫" },
-              { href: "/admin/groups/new", label: "New Group", icon: "➕📚" },
-              { href: "/admin/announcements/new", label: "Announce", icon: "📢" },
+              { href: "/admin/students/new", label: t("students.newStudent"), icon: "➕👨‍🎓" },
+              { href: "/admin/teachers/new", label: t("teachers.newTeacher"), icon: "➕👨‍🏫" },
+              { href: "/admin/groups/new", label: t("groups.newGroup"), icon: "➕📚" },
+              { href: "/admin/announcements/new", label: t("announcements.newAnnouncement"), icon: "📢" },
             ].map((action) => (
               <Link key={action.href} href={action.href} style={{
                 display: "flex", flexDirection: "column", alignItems: "center",
@@ -94,13 +96,13 @@ export default async function AdminDashboard() {
         {/* Recent payments */}
         <div className="card">
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
-            <h2 style={{ fontSize: "1rem", fontWeight: "600", color: "#1e293b", margin: 0 }}>Recent Payments</h2>
+            <h2 style={{ fontSize: "1rem", fontWeight: "600", color: "#1e293b", margin: 0 }}>{t("dashboard.recentPayments")}</h2>
             {stats.pendingPayments > 0 && (
-              <span className="badge badge-yellow">{stats.pendingPayments} pending</span>
+              <span className="badge badge-yellow">{stats.pendingPayments} {t("payments.pending").toLowerCase()}</span>
             )}
           </div>
           {stats.recentPayments.length === 0 ? (
-            <p style={{ color: "#64748b", fontSize: "0.875rem" }}>No payments yet.</p>
+            <p style={{ color: "#64748b", fontSize: "0.875rem" }}>{t("dashboard.noPayments")}</p>
           ) : (
             <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
               {stats.recentPayments.map((p) => (
@@ -116,7 +118,7 @@ export default async function AdminDashboard() {
                   <div style={{ textAlign: "right" }}>
                     <div style={{ fontSize: "0.875rem", fontWeight: "600" }}>{p.amount.toLocaleString()} UZS</div>
                     <span className={`badge ${p.status === "PAID" ? "badge-green" : p.status === "PENDING" ? "badge-yellow" : "badge-red"}`}>
-                      {p.status}
+                      {t(`payments.${p.status}`)}
                     </span>
                   </div>
                 </div>

@@ -1,30 +1,26 @@
 import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { getTranslations } from "next-intl/server";
 
 export const dynamic = "force-dynamic";
 
 export default async function TeacherAttendancePage() {
+  const t = await getTranslations();
   const user = await getCurrentUser();
   const teacher = user?.teacher;
 
-  // Get all completed sessions with attendance
   const sessions = teacher
     ? await prisma.classSession.findMany({
         where: { teacherId: teacher.id, isCompleted: true },
         include: {
           group: true,
-          attendances: {
-            include: {
-              classSession: true,
-            },
-          },
+          attendances: { include: { classSession: true } },
         },
         orderBy: { scheduledAt: "desc" },
         take: 20,
       })
     : [];
 
-  // Get all groups with their students for attendance summary
   const groups = teacher
     ? await prisma.group.findMany({
         where: { teacherId: teacher.id, isActive: true },
@@ -51,15 +47,15 @@ export default async function TeacherAttendancePage() {
   return (
     <div style={{ padding: "2rem" }}>
       <div style={{ marginBottom: "1.5rem" }}>
-        <h1 style={{ fontSize: "1.5rem", fontWeight: "700", color: "#1e293b", margin: "0 0 0.25rem" }}>Attendance</h1>
-        <p style={{ color: "#64748b", margin: 0 }}>Attendance records from completed sessions</p>
+        <h1 style={{ fontSize: "1.5rem", fontWeight: "700", color: "#1e293b", margin: "0 0 0.25rem" }}>{t("attendance.title")}</h1>
+        <p style={{ color: "#64748b", margin: 0 }}>{t("attendance.subtitle")}</p>
       </div>
 
       {groups.length === 0 ? (
         <div className="card" style={{ textAlign: "center", padding: "3rem" }}>
           <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>✅</div>
-          <h3 style={{ color: "#1e293b" }}>No groups assigned</h3>
-          <p style={{ color: "#64748b" }}>You need groups with completed sessions to view attendance.</p>
+          <h3 style={{ color: "#1e293b" }}>{t("attendance.noGroups")}</h3>
+          <p style={{ color: "#64748b" }}>{t("attendance.noGroupsDesc")}</p>
         </div>
       ) : (
         <>
@@ -75,7 +71,7 @@ export default async function TeacherAttendancePage() {
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "0.75rem" }}>
                     <div>
                       <div style={{ fontWeight: "600", color: "#1e293b" }}>{g.name}</div>
-                      <div style={{ fontSize: "0.8rem", color: "#64748b" }}>{g.groupStudents.length} students</div>
+                      <div style={{ fontSize: "0.8rem", color: "#64748b" }}>{t("common.students_count", { count: g.groupStudents.length })}</div>
                     </div>
                     {rate !== null && (
                       <div style={{
@@ -88,7 +84,7 @@ export default async function TeacherAttendancePage() {
                     )}
                   </div>
                   <div style={{ fontSize: "0.8rem", color: "#64748b" }}>
-                    {g.classSessions.length} sessions completed · {totalAttendances} records
+                    {t("attendance.sessionsCompleted", { n: g.classSessions.length })} · {t("attendance.records", { n: totalAttendances })}
                   </div>
                   <div style={{ marginTop: "0.75rem", height: "6px", background: "#f1f5f9", borderRadius: "3px", overflow: "hidden" }}>
                     <div style={{
@@ -108,7 +104,7 @@ export default async function TeacherAttendancePage() {
             <div className="card" style={{ padding: 0 }}>
               <div style={{ padding: "1.25rem 1.5rem 0.75rem" }}>
                 <h2 style={{ fontSize: "1rem", fontWeight: "600", color: "#1e293b", margin: 0 }}>
-                  Recent Session Records
+                  {t("attendance.recentRecords")}
                 </h2>
               </div>
               {sessions.map((session) => (
@@ -116,29 +112,32 @@ export default async function TeacherAttendancePage() {
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.75rem" }}>
                     <div>
                       <div style={{ fontWeight: "600", fontSize: "0.9rem", color: "#1e293b" }}>
-                        {session.group.name} — {session.topic || "Session"}
+                        {session.group.name} — {session.topic || t("sessions.title")}
                       </div>
                       <div style={{ fontSize: "0.8rem", color: "#64748b" }}>
-                        {new Date(session.scheduledAt).toLocaleDateString("en-GB", {
+                        {new Date(session.scheduledAt).toLocaleDateString(undefined, {
                           weekday: "long", day: "numeric", month: "long", year: "numeric"
                         })}
                       </div>
                     </div>
                     <div style={{ fontSize: "0.8rem", color: "#64748b" }}>
-                      {session.attendances.filter((a) => a.status === "PRESENT").length}/{session.attendances.length} present
+                      {t("sessions.attendanceCount", {
+                        present: session.attendances.filter((a) => a.status === "PRESENT").length,
+                        total: session.attendances.length,
+                      })}
                     </div>
                   </div>
                   {session.attendances.length > 0 && (
                     <div style={{ display: "flex", flexWrap: "wrap", gap: "0.4rem" }}>
                       {session.attendances.map((att) => (
                         <span key={att.id} className={`badge ${statusColor[att.status] || "badge-gray"}`} style={{ fontSize: "0.7rem" }}>
-                          {att.status}
+                          {t(`attendance.${att.status.toLowerCase()}`)}
                         </span>
                       ))}
                     </div>
                   )}
                   {session.attendances.length === 0 && (
-                    <p style={{ color: "#94a3b8", fontSize: "0.8rem", margin: 0 }}>No attendance recorded for this session.</p>
+                    <p style={{ color: "#94a3b8", fontSize: "0.8rem", margin: 0 }}>{t("attendance.noSessionRecords")}</p>
                   )}
                 </div>
               ))}

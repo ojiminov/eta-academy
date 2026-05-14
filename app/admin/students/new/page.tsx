@@ -2,9 +2,11 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 export default function NewStudentPage() {
   const router = useRouter();
+  const t = useTranslations();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -25,13 +27,13 @@ export default function NewStudentPage() {
 
       if (!res.ok) {
         const json = await res.json();
-        setError(json.error || "Failed to create student");
+        setError(json.error || t("forms.required"));
         return;
       }
 
       router.push("/admin/students");
     } catch {
-      setError("Something went wrong");
+      setError(t("forms.required"));
     } finally {
       setLoading(false);
     }
@@ -41,44 +43,44 @@ export default function NewStudentPage() {
     <div style={{ padding: "2rem", maxWidth: "600px" }}>
       <div style={{ marginBottom: "1.5rem" }}>
         <h1 style={{ fontSize: "1.5rem", fontWeight: "700", color: "#1e293b", margin: "0 0 0.25rem" }}>
-          Add New Student
+          {t("students.newStudent")}
         </h1>
-        <p style={{ color: "#64748b", margin: 0 }}>Create a student account</p>
+        <p style={{ color: "#64748b", margin: 0 }}>{t("forms.firstName")} & {t("forms.lastName")}</p>
       </div>
 
       <div className="card">
         <form onSubmit={handleSubmit}>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", marginBottom: "1rem" }}>
             <div>
-              <label className="label">First Name *</label>
+              <label className="label">{t("forms.firstName")} *</label>
               <input name="firstName" className="input" required />
             </div>
             <div>
-              <label className="label">Last Name *</label>
+              <label className="label">{t("forms.lastName")} *</label>
               <input name="lastName" className="input" required />
             </div>
           </div>
 
           <div style={{ marginBottom: "1rem" }}>
-            <label className="label">Email *</label>
+            <label className="label">{t("common.email")} *</label>
             <input name="email" type="email" className="input" required />
           </div>
 
           <div style={{ marginBottom: "1rem" }}>
-            <label className="label">Password *</label>
+            <label className="label">{t("forms.password")} *</label>
             <input name="password" type="password" className="input" required minLength={6} />
           </div>
 
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", marginBottom: "1rem" }}>
             <div>
-              <label className="label">Phone</label>
+              <label className="label">{t("common.phone")}</label>
               <input name="phone" className="input" placeholder="+998..." />
             </div>
             <div>
-              <label className="label">English Level</label>
+              <label className="label">{t("students.level")}</label>
               <select name="englishLevel" className="input">
                 {["BEGINNER","ELEMENTARY","PRE_INTERMEDIATE","INTERMEDIATE","UPPER_INTERMEDIATE","ADVANCED"].map((l) => (
-                  <option key={l} value={l}>{l.replace(/_/g, " ")}</option>
+                  <option key={l} value={l}>{t(`levels.${l}`)}</option>
                 ))}
               </select>
             </div>
@@ -86,11 +88,11 @@ export default function NewStudentPage() {
 
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", marginBottom: "1.5rem" }}>
             <div>
-              <label className="label">Parent Name</label>
+              <label className="label">{t("students.parentName")}</label>
               <input name="parentName" className="input" />
             </div>
             <div>
-              <label className="label">Parent Phone</label>
+              <label className="label">{t("students.parentPhone")}</label>
               <input name="parentPhone" className="input" placeholder="+998..." />
             </div>
           </div>
@@ -103,10 +105,10 @@ export default function NewStudentPage() {
 
           <div style={{ display: "flex", gap: "0.75rem" }}>
             <button type="submit" disabled={loading} className="btn btn-primary">
-              {loading ? "Creating..." : "Create Student"}
+              {loading ? t("common.loading") : t("forms.submit")}
             </button>
             <button type="button" onClick={() => router.back()} className="btn btn-secondary">
-              Cancel
+              {t("common.cancel")}
             </button>
           </div>
         </form>

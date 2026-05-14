@@ -52,7 +52,9 @@
     "of": "dan",
     "viewAll": "Hammasini ko'rish",
     "manageGroup": "Guruhni boshqarish",
-    "students_count": "{count} o'quvchi"
+    "students_count": "{count} o'quvchi",
+    "view": "Ko'rish",
+    "average": "O'rtacha"
   },
   "levels": {
     "BEGINNER": "Boshlang'ich",
@@ -73,13 +75,16 @@
     "totalTeachers": "Jami o'qituvchilar",
     "activeGroups": "Faol guruhlar",
     "monthlyRevenue": "Oylik daromad",
+    "totalRevenue": "Jami daromad",
     "pendingPayments": "Kutilayotgan to'lovlar",
     "upcomingSessions": "Kelgusi darslar",
     "myClasses": "Mening darslarim",
     "recentGrades": "So'nggi baholar",
     "avgScore": "O'rtacha ball",
     "recentActivity": "So'nggi faoliyat",
-    "quickActions": "Tezkor amallar"
+    "quickActions": "Tezkor amallar",
+    "recentPayments": "So'nggi to'lovlar",
+    "noPayments": "Hali to'lov yo'q."
   },
   "groups": {
     "title": "Guruhlar",
@@ -115,7 +120,9 @@
     "dateOfBirth": "Tug'ilgan sana",
     "enrolledGroups": "Qabul qilingan guruhlar",
     "noStudentsEnrolled": "Hali o'quvchi qabul qilinmagan.",
-    "joined": "Qo'shilgan"
+    "joined": "Qo'shilgan",
+    "noGroup": "Guruh yo'q",
+    "enrolledCount": "{count} ta o'quvchi qabul qilingan"
   },
   "teachers": {
     "title": "O'qituvchilar",
@@ -123,7 +130,8 @@
     "noTeachers": "Hali o'qituvchi yo'q",
     "bio": "Biografiya",
     "subjects": "Fanlar",
-    "activeGroups": "Faol guruhlar"
+    "activeGroups": "Faol guruhlar",
+    "onStaff": "{count} ta o'qituvchi"
   },
   "sessions": {
     "title": "Darslar",
@@ -143,7 +151,10 @@
     "attendanceCount": "{present}/{total} keldi",
     "gradesCount": "{n} ta baho",
     "noAttendance": "Qayd etilmagan",
-    "noGrades": "Baho yo'q"
+    "noGrades": "Baho yo'q",
+    "recentSessions": "So'nggi darslar",
+    "sessionsDone": "O'tkazilgan darslar",
+    "sessionsTotal": "Jami darslar"
   },
   "attendance": {
     "title": "Davomat",
@@ -162,7 +173,8 @@
     "absent": "Kelmadi",
     "late": "Kechikdi",
     "excused": "Sababli",
-    "outOf": "Jami {total} darsdan {present} tasi keldi"
+    "outOf": "Jami {total} darsdan {present} tasi keldi",
+    "noSessionRecords": "Bu dars uchun davomat belgilanmagan."
   },
   "grades": {
     "title": "Mening baholarim",
@@ -198,12 +210,14 @@
     "totalPaid": "Jami to'langan",
     "pending": "Kutilmoqda",
     "overdue": "Muddati o'tgan",
+    "collected": "Yig'ilgan",
     "history": "To'lov tarixi",
     "method": "Usul",
     "paidOn": "To'langan sana",
     "amount": "Miqdor",
     "month": "Oy",
     "class": "Guruh",
+    "totalRecords": "{count} ta yozuv",
     "overdueAlert": "Muddati o'tgan to'lov",
     "overdueDesc": "{amount} so'm to'lov muddati o'tgan. Iltimos, admin bilan bog'laning.",
     "adminNote": "💡 To'lov bo'yicha savol va muammolar uchun akademiya adminiga murojaat qiling.",
@@ -224,6 +238,9 @@
     "everyone": "Hammaga",
     "teachersOnly": "Faqat o'qituvchilar",
     "studentsOnly": "Faqat o'quvchilar",
+    "adminsOnly": "Faqat adminlar",
+    "totalCount": "{count} ta e'lon",
+    "postFirst": "O'quvchilar yoki o'qituvchilarga birinchi e'lonni yuboring.",
     "body": "Xabar matni"
   },
   "forms": {

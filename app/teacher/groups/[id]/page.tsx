@@ -2,10 +2,12 @@ import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 
 export const dynamic = "force-dynamic";
 
 export default async function TeacherGroupDetailPage({ params }: { params: { id: string } }) {
+  const t = await getTranslations();
   const user = await getCurrentUser();
   const teacher = user?.teacher;
 
@@ -40,22 +42,22 @@ export default async function TeacherGroupDetailPage({ params }: { params: { id:
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "1.5rem" }}>
         <div>
           <Link href="/teacher/groups" style={{ color: "#10b981", textDecoration: "none", fontSize: "0.875rem" }}>
-            ← My Groups
+            ← {t("nav.myGroups")}
           </Link>
           <h1 style={{ fontSize: "1.5rem", fontWeight: "700", color: "#1e293b", margin: "0.25rem 0 0.25rem" }}>{group.name}</h1>
-          <p style={{ color: "#64748b", margin: 0 }}>{group.level.replace(/_/g, " ")} · {group.schedule}</p>
+          <p style={{ color: "#64748b", margin: 0 }}>{t(`levels.${group.level}`)} · {group.schedule}</p>
         </div>
         <span className={`badge ${group.isActive ? "badge-green" : "badge-gray"}`} style={{ fontSize: "0.875rem", padding: "0.4rem 0.8rem" }}>
-          {group.isActive ? "Active" : "Inactive"}
+          {group.isActive ? t("common.active") : t("common.inactive")}
         </span>
       </div>
 
       {/* Stats */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "1rem", marginBottom: "1.5rem" }}>
         {[
-          { label: "Students", value: group.groupStudents.length, icon: "👥", color: "#6366f1" },
-          { label: "Sessions Done", value: completedSessions, icon: "✅", color: "#10b981" },
-          { label: "Total Sessions", value: totalSessions, icon: "📅", color: "#f59e0b" },
+          { label: t("nav.students"), value: group.groupStudents.length, icon: "👥", color: "#6366f1" },
+          { label: t("sessions.sessionsDone"), value: completedSessions, icon: "✅", color: "#10b981" },
+          { label: t("sessions.sessionsTotal"), value: totalSessions, icon: "📅", color: "#f59e0b" },
         ].map((s) => (
           <div key={s.label} className="card" style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
             <div style={{ fontSize: "1.5rem" }}>{s.icon}</div>
@@ -72,20 +74,20 @@ export default async function TeacherGroupDetailPage({ params }: { params: { id:
         <div className="card" style={{ padding: 0 }}>
           <div style={{ padding: "1.25rem 1.5rem 0.75rem" }}>
             <h2 style={{ fontSize: "1rem", fontWeight: "600", color: "#1e293b", margin: 0 }}>
-              Students ({group.groupStudents.length})
+              {t("nav.students")} ({group.groupStudents.length})
             </h2>
           </div>
           {group.groupStudents.length === 0 ? (
             <div style={{ padding: "2rem", textAlign: "center", color: "#64748b", fontSize: "0.875rem" }}>
-              No students enrolled yet.
+              {t("students.noStudentsEnrolled")}
             </div>
           ) : (
             <table>
               <thead>
                 <tr>
-                  <th>Name</th>
-                  <th>Level</th>
-                  <th>Joined</th>
+                  <th>{t("common.name")}</th>
+                  <th>{t("groups.level")}</th>
+                  <th>{t("students.joined")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -96,7 +98,7 @@ export default async function TeacherGroupDetailPage({ params }: { params: { id:
                     </td>
                     <td>
                       <span className="badge badge-blue" style={{ fontSize: "0.7rem" }}>
-                        {gs.student.englishLevel.replace(/_/g, " ")}
+                        {t(`levels.${gs.student.englishLevel}`)}
                       </span>
                     </td>
                     <td style={{ color: "#64748b", fontSize: "0.8rem" }}>
@@ -112,22 +114,22 @@ export default async function TeacherGroupDetailPage({ params }: { params: { id:
         {/* Recent Sessions */}
         <div className="card" style={{ padding: 0 }}>
           <div style={{ padding: "1.25rem 1.5rem 0.75rem", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <h2 style={{ fontSize: "1rem", fontWeight: "600", color: "#1e293b", margin: 0 }}>Recent Sessions</h2>
+            <h2 style={{ fontSize: "1rem", fontWeight: "600", color: "#1e293b", margin: 0 }}>{t("sessions.recentSessions")}</h2>
             <Link href="/teacher/sessions" style={{ fontSize: "0.8rem", color: "#10b981", textDecoration: "none" }}>
-              View all →
+              {t("common.viewAll")} →
             </Link>
           </div>
           {group.classSessions.length === 0 ? (
             <div style={{ padding: "2rem", textAlign: "center", color: "#64748b", fontSize: "0.875rem" }}>
-              No sessions yet.
+              {t("sessions.noSessions")}
             </div>
           ) : (
             <table>
               <thead>
                 <tr>
-                  <th>Date</th>
-                  <th>Topic</th>
-                  <th>Status</th>
+                  <th>{t("common.date")}</th>
+                  <th>{t("sessions.topic")}</th>
+                  <th>{t("common.status")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -139,7 +141,7 @@ export default async function TeacherGroupDetailPage({ params }: { params: { id:
                     <td style={{ fontSize: "0.875rem" }}>{s.topic || "—"}</td>
                     <td>
                       <span className={`badge ${s.isCompleted ? "badge-green" : "badge-yellow"}`} style={{ fontSize: "0.7rem" }}>
-                        {s.isCompleted ? "Done" : "Upcoming"}
+                        {s.isCompleted ? t("sessions.complete") : t("sessions.upcomingBadge")}
                       </span>
                     </td>
                   </tr>
@@ -153,13 +155,13 @@ export default async function TeacherGroupDetailPage({ params }: { params: { id:
       {/* Quick links */}
       <div style={{ display: "flex", gap: "1rem", marginTop: "1.5rem" }}>
         <Link href="/teacher/attendance" className="btn btn-secondary">
-          ✅ Take Attendance
+          ✅ {t("forms.markAttendance")}
         </Link>
         <Link href="/teacher/grades" className="btn btn-secondary">
-          📝 Enter Grades
+          📝 {t("forms.enterGrades")}
         </Link>
         <Link href="/teacher/sessions" className="btn btn-primary">
-          📅 Manage Sessions
+          📅 {t("sessions.title")}
         </Link>
       </div>
     </div>

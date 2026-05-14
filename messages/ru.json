@@ -52,7 +52,9 @@
     "of": "из",
     "viewAll": "Посмотреть все",
     "manageGroup": "Управление группой",
-    "students_count": "{count} учеников"
+    "students_count": "{count} учеников",
+    "view": "Просмотр",
+    "average": "Среднее"
   },
   "levels": {
     "BEGINNER": "Начинающий",
@@ -73,13 +75,16 @@
     "totalTeachers": "Всего учителей",
     "activeGroups": "Активные группы",
     "monthlyRevenue": "Ежемесячный доход",
+    "totalRevenue": "Общий доход",
     "pendingPayments": "Ожидающие платежи",
     "upcomingSessions": "Предстоящие занятия",
     "myClasses": "Мои классы",
     "recentGrades": "Последние оценки",
     "avgScore": "Средний балл",
     "recentActivity": "Последняя активность",
-    "quickActions": "Быстрые действия"
+    "quickActions": "Быстрые действия",
+    "recentPayments": "Последние платежи",
+    "noPayments": "Платежей пока нет."
   },
   "groups": {
     "title": "Группы",
@@ -115,7 +120,9 @@
     "dateOfBirth": "Дата рождения",
     "enrolledGroups": "Зачисленные группы",
     "noStudentsEnrolled": "Ученики пока не зачислены.",
-    "joined": "Присоединился"
+    "joined": "Присоединился",
+    "noGroup": "Нет группы",
+    "enrolledCount": "{count} учеников зачислено"
   },
   "teachers": {
     "title": "Учителя",
@@ -123,7 +130,8 @@
     "noTeachers": "Учителей пока нет",
     "bio": "Биография",
     "subjects": "Предметы",
-    "activeGroups": "Активные группы"
+    "activeGroups": "Активные группы",
+    "onStaff": "{count} учителей в штате"
   },
   "sessions": {
     "title": "Занятия",
@@ -143,7 +151,10 @@
     "attendanceCount": "{present}/{total} присутствовало",
     "gradesCount": "{n} оценок",
     "noAttendance": "Не записано",
-    "noGrades": "Оценок нет"
+    "noGrades": "Оценок нет",
+    "recentSessions": "Последние занятия",
+    "sessionsDone": "Занятий проведено",
+    "sessionsTotal": "Всего занятий"
   },
   "attendance": {
     "title": "Посещаемость",
@@ -162,7 +173,8 @@
     "absent": "Отсутствовал",
     "late": "Опоздал",
     "excused": "По уважительной причине",
-    "outOf": "{present} присутствовало из {total} занятий"
+    "outOf": "{present} присутствовало из {total} занятий",
+    "noSessionRecords": "Для этого занятия посещаемость не записана."
   },
   "grades": {
     "title": "Мои оценки",
@@ -198,12 +210,14 @@
     "totalPaid": "Итого оплачено",
     "pending": "Ожидают оплаты",
     "overdue": "Просрочено",
+    "collected": "Собрано",
     "history": "История платежей",
     "method": "Способ",
     "paidOn": "Дата оплаты",
     "amount": "Сумма",
     "month": "Месяц",
     "class": "Группа",
+    "totalRecords": "{count} записей",
     "overdueAlert": "Просроченный платёж",
     "overdueDesc": "У вас {amount} сум просроченных платежей. Обратитесь к администратору.",
     "adminNote": "💡 По вопросам оплаты обращайтесь к администратору академии.",
@@ -224,6 +238,9 @@
     "everyone": "Все",
     "teachersOnly": "Только учителя",
     "studentsOnly": "Только ученики",
+    "adminsOnly": "Только администраторы",
+    "totalCount": "{count} объявлений",
+    "postFirst": "Опубликуйте первое объявление для учеников или учителей.",
     "body": "Текст сообщения"
   },
   "forms": {

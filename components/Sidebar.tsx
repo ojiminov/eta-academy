@@ -88,10 +88,6 @@ export default function Sidebar({ role, userName }: SidebarProps) {
           </div>
         </div>
       </div>
-      {/* Language switcher */}
-      <div style={{ marginBottom: "0.625rem" }}>
-        <LanguageSwitcher />
-      </div>
       <button onClick={handleLogout} style={{
         width: "100%", padding: "0.5rem",
         background: "rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.7)",
@@ -126,8 +122,11 @@ export default function Sidebar({ role, userName }: SidebarProps) {
         width: "240px", minHeight: "100vh", background: "#1e1b4b",
         display: "flex", flexDirection: "column", flexShrink: 0,
       }}>
-        <div style={{ padding: "1.5rem", borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
+        <div style={{ padding: "1.25rem 1.5rem", borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
           <Logo />
+        </div>
+        <div style={{ padding: "0.6rem 0.75rem", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+          <LanguageSwitcher />
         </div>
         <nav style={{ flex: 1, padding: "1rem 0.75rem" }}>
           <NavLinks />
@@ -170,6 +169,9 @@ export default function Sidebar({ role, userName }: SidebarProps) {
         <div style={{ padding: "1rem 1.25rem", borderBottom: "1px solid rgba(255,255,255,0.1)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <Logo />
           <button onClick={() => setOpen(false)} style={{ background: "none", border: "none", color: "rgba(255,255,255,0.6)", fontSize: "1.3rem", cursor: "pointer" }}>✕</button>
+        </div>
+        <div style={{ padding: "0.6rem 0.75rem", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+          <LanguageSwitcher />
         </div>
         <nav style={{ flex: 1, padding: "1rem 0.75rem", overflowY: "auto" }}>
           <NavLinks onClick={() => setOpen(false)} />
