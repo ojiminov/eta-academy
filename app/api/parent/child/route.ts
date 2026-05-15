@@ -39,7 +39,7 @@ export async function GET() {
             payments: {
               orderBy: { createdAt: "desc" },
               take: 10,
-              select: { id: true, amount: true, status: true, paidAt: true, createdAt: true, month: true },
+              select: { id: true, amount: true, status: true, paidAt: true, createdAt: true, notes: true },
             },
             homeworkGrades: {
               include: { homework: { select: { title: true, dueDate: true, maxScore: true, group: { select: { name: true } } } } },

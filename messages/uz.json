@@ -20,6 +20,8 @@
     "qrScan": "QR Skaner",
     "myQR": "Mening QR kodum",
     "attendanceReport": "Davomat hisoboti",
+    "leaderboard": "Reyting",
+    "myCoins": "Mening tangalarim",
     "signOut": "Chiqish"
   },
   "roles": {
@@ -332,6 +334,7 @@
     "myExams": "Mening imtihonlarim",
     "score": "Ball",
     "leaderboard": "Reyting",
+    "myCoins": "Mening tangalarim",
     "rank": "O'rin"
   },
   "timetable": {

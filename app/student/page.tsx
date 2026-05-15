@@ -57,6 +57,22 @@ export default async function StudentDashboard() {
         </div>
       )}
 
+      {/* Coins & badge mini-banner */}
+      {student && (
+        <Link href="/student/coins" style={{ textDecoration: "none", display: "block", marginBottom: "1.5rem" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "1rem", padding: "1rem 1.5rem", background: "#faf5ff", border: "2px solid #e9d5ff", borderRadius: "1rem", cursor: "pointer" }}>
+            <div style={{ fontSize: "2rem" }}>
+              {student.badge === "PLATINUM" ? "💎" : student.badge === "GOLD" ? "🥇" : student.badge === "SILVER" ? "🥈" : "🥉"}
+            </div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontWeight: "700", color: "#6d28d9", fontSize: "0.95rem" }}>{student.badge} Member</div>
+              <div style={{ color: "#8b5cf6", fontSize: "0.8rem" }}>{(student.totalCoins ?? 0).toLocaleString()} coins earned  •  {student.currentStreak ?? 0}-day streak 🔥</div>
+            </div>
+            <div style={{ color: "#8b5cf6", fontWeight: "700", fontSize: "0.875rem" }}>View Profile →</div>
+          </div>
+        </Link>
+      )}
+
       {/* Stats */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1rem", marginBottom: "2rem" }}>
         {[

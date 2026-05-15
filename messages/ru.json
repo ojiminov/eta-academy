@@ -20,6 +20,8 @@
     "qrScan": "QR Сканер",
     "myQR": "Мой QR-код",
     "attendanceReport": "Отчёт посещаемости",
+    "leaderboard": "Рейтинг",
+    "myCoins": "Мои монеты",
     "signOut": "Выйти"
   },
   "roles": {
@@ -332,6 +334,7 @@
     "myExams": "Мои экзамены",
     "score": "Балл",
     "leaderboard": "Рейтинг",
+    "myCoins": "Мои монеты",
     "rank": "Место"
   },
   "timetable": {

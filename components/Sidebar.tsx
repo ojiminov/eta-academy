@@ -29,6 +29,7 @@ export default function Sidebar({ role, userName }: SidebarProps) {
     { href: "/admin/exams",         icon: "📝", label: t("nav.exams") },
     { href: "/admin/announcements",   icon: "📢", label: t("nav.announcements") },
     { href: "/admin/attendance",      icon: "📅", label: t("nav.attendanceReport") },
+    { href: "/leaderboard",           icon: "🏆", label: t("nav.leaderboard") },
   ];
   const teacherNav = [
     { href: "/teacher",                    icon: "📊", label: t("nav.dashboard") },
@@ -39,6 +40,7 @@ export default function Sidebar({ role, userName }: SidebarProps) {
     { href: "/teacher/grades",             icon: "📝", label: t("nav.grades") },
     { href: "/teacher/homework",           icon: "📋", label: t("nav.homework") },
     { href: "/teacher/exams",              icon: "🧪", label: t("nav.exams") },
+    { href: "/leaderboard",                icon: "🏆", label: t("nav.leaderboard") },
   ];
   const studentNav = [
     { href: "/student",             icon: "📊", label: t("nav.dashboard") },
@@ -50,6 +52,8 @@ export default function Sidebar({ role, userName }: SidebarProps) {
     { href: "/student/exams",       icon: "🧪", label: t("nav.exams") },
     { href: "/student/grades",      icon: "📝", label: t("nav.grades") },
     { href: "/student/payments",    icon: "💳", label: t("nav.payments") },
+    { href: "/student/coins",       icon: "🪙", label: t("nav.myCoins") },
+    { href: "/leaderboard",         icon: "🏆", label: t("nav.leaderboard") },
   ];
   const parentNav = [
     { href: "/parent",             icon: "📊", label: t("nav.dashboard") },
@@ -57,6 +61,7 @@ export default function Sidebar({ role, userName }: SidebarProps) {
     { href: "/parent/grades",      icon: "📝", label: t("nav.grades") },
     { href: "/parent/payments",    icon: "💳", label: t("nav.payments") },
     { href: "/parent/schedule",    icon: "🗓️", label: t("nav.timetable") },
+    { href: "/leaderboard",        icon: "🏆", label: t("nav.leaderboard") },
   ];
   const navMap = { ADMIN: adminNav, TEACHER: teacherNav, STUDENT: studentNav, PARENT: parentNav };
   const nav = navMap[role];

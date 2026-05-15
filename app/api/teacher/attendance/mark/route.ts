@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
+import { awardAttendanceCoins } from "@/lib/coins";
+import { AttendanceStatus } from "@prisma/client";
 
 export const dynamic = "force-dynamic";
 
@@ -31,11 +33,24 @@ export async function POST(req: NextRequest) {
     }
   }
 
+  // Check if this is a new record (or status is changing from non-present to present)
+  const existing = await prisma.attendance.findUnique({
+    where: { classSessionId_studentId: { classSessionId: sessionId, studentId } },
+    select: { status: true },
+  });
+
   const attendance = await prisma.attendance.upsert({
     where: { classSessionId_studentId: { classSessionId: sessionId, studentId } },
     create: { classSessionId: sessionId, studentId, status, notes: notes || null },
     update: { status, notes: notes || null },
   });
+
+  // Award coins only when status changes to a coin-eligible status (not a repeat)
+  const prevStatus = existing?.status;
+  const coinEligible = ["PRESENT", "LATE", "ABSENT", "EXCUSED"];
+  if (prevStatus !== status && coinEligible.includes(status)) {
+    await awardAttendanceCoins(studentId, status as AttendanceStatus, sessionId).catch(() => {});
+  }
 
   return NextResponse.json(attendance);
 }

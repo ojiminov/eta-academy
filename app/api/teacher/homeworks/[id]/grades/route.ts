@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
+import { awardHomeworkCoins } from "@/lib/coins";
 
 export const dynamic = "force-dynamic";
 
@@ -21,6 +22,13 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     const homework = await prisma.homework.findUnique({ where: { id }, select: { maxScore: true } });
     if (!homework) return NextResponse.json({ error: "Homework not found" }, { status: 404 });
 
+    // Fetch existing grades to detect new score assignments (avoid double-awarding)
+    const existingGrades = await prisma.homeworkGrade.findMany({
+      where: { homeworkId: id },
+      select: { studentId: true, score: true },
+    });
+    const existingMap = new Map(existingGrades.map(g => [g.studentId, g.score]));
+
     const updates = await Promise.all(
       grades.map((g: { studentId: string; score?: number; feedback?: string; status?: string }) => {
         if (g.score != null && (g.score < 0 || g.score > homework.maxScore)) {
@@ -38,6 +46,14 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
         });
       })
     );
+
+    // Award coins for newly graded homework (fire-and-forget, no score was set before)
+    for (const g of grades) {
+      if (g.score != null && existingMap.get(g.studentId) == null) {
+        awardHomeworkCoins(g.studentId, id, g.score, homework.maxScore).catch(() => {});
+      }
+    }
+
     return NextResponse.json({ updated: updates.length });
   } catch (err) {
     console.error(err);

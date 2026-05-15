@@ -78,6 +78,21 @@ enum HomeworkStatus {
   LATE
 }
 
+enum BadgeTier {
+  BRONZE
+  SILVER
+  GOLD
+  PLATINUM
+}
+
+enum CoinType {
+  ATTENDANCE
+  HOMEWORK
+  EXAM
+  STREAK
+  BONUS
+}
+
 enum NotificationType {
   INFO
   WARNING
@@ -148,6 +163,10 @@ model Student {
   contractNumber  String?
   marketingSource MarketingSource?
   enrollmentDate  DateTime?
+  totalCoins      Int             @default(0)
+  currentStreak   Int             @default(0)
+  longestStreak   Int             @default(0)
+  badge           BadgeTier       @default(BRONZE)
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
 
@@ -159,6 +178,7 @@ model Student {
   examResults     ExamResult[]
   documents       StudentDocument[]
   parent          Parent?
+  coinTransactions CoinTransaction[]
 
   @@map("students")
 }
@@ -480,4 +500,19 @@ model StudentDocument {
   createdAt  DateTime @default(now())
 
   @@map("student_documents")
+}
+
+// ─── COIN TRANSACTIONS ────────────────────────────────────────────────────────
+
+model CoinTransaction {
+  id        String   @id @default(cuid())
+  studentId String
+  student   Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  amount    Int
+  type      CoinType
+  reason    String
+  refId     String?
+  createdAt DateTime @default(now())
+
+  @@map("coin_transactions")
 }
