@@ -28,6 +28,7 @@ export default function LoginPage() {
       if (data.role === "ADMIN") router.push("/admin");
       else if (data.role === "TEACHER") router.push("/teacher");
       else if (data.role === "STUDENT") router.push("/student");
+      else if (data.role === "PARENT") router.push("/parent");
       else router.push("/");
     } catch {
       setError(t("invalidCredentials"));

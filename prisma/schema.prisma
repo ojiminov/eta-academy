@@ -9,10 +9,21 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
+// ─── ENUMS ───────────────────────────────────────────────────────────────────
+
 enum Role {
   ADMIN
   TEACHER
   STUDENT
+  PARENT
+}
+
+enum StudentStatus {
+  LEAD
+  TRIAL
+  ACTIVE
+  GRADUATE
+  INACTIVE
 }
 
 enum EnglishLevel {
@@ -36,67 +47,166 @@ enum AttendanceStatus {
   ABSENT
   LATE
   EXCUSED
+  HOLIDAY
+  HW_NOT_DONE
 }
 
+enum MarketingSource {
+  INSTAGRAM
+  TELEGRAM
+  FACEBOOK
+  REFERRAL
+  WALK_IN
+  WEBSITE
+  OTHER
+}
+
+enum ExpenseCategory {
+  RENT
+  SALARIES
+  UTILITIES
+  MARKETING
+  SUPPLIES
+  EQUIPMENT
+  OTHER
+}
+
+enum HomeworkStatus {
+  ASSIGNED
+  SUBMITTED
+  GRADED
+  LATE
+}
+
+enum NotificationType {
+  INFO
+  WARNING
+  PAYMENT
+  ATTENDANCE
+  HOMEWORK
+  EXAM
+}
+
+// ─── CORE USERS ──────────────────────────────────────────────────────────────
+
 model User {
-  id           String    @id @default(cuid())
-  email        String    @unique
+  id           String   @id @default(cuid())
+  email        String   @unique
   passwordHash String
   role         Role
   firstName    String
   lastName     String
   phone        String?
-  isActive     Boolean   @default(true)
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
-  teacher      Teacher?
-  student      Student?
+  teacher          Teacher?
+  student          Student?
+  parent           Parent?
+  notifications    Notification[]
+  sentMessages     Message[]      @relation("SentMessages")
+  receivedMessages Message[]      @relation("ReceivedMessages")
 
   @@map("users")
 }
 
+// ─── TEACHER ─────────────────────────────────────────────────────────────────
+
 model Teacher {
-  id          String   @id @default(cuid())
-  userId      String   @unique
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  bio         String?
-  subjects    String[] // e.g. ["English", "Business English"]
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bio       String?
+  subjects  String[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   groups        Group[]
   classSessions ClassSession[]
+  homeworks     Homework[]
+  exams         Exam[]
 
   @@map("teachers")
 }
 
-model Student {
-  id            String       @id @default(cuid())
-  userId        String       @unique
-  user          User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  dateOfBirth   DateTime?
-  englishLevel  EnglishLevel @default(BEGINNER)
-  parentName    String?
-  parentPhone   String?
-  notes         String?
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
+// ─── STUDENT ─────────────────────────────────────────────────────────────────
 
-  groupStudents  GroupStudent[]
-  payments       Payment[]
-  grades         Grade[]
+model Student {
+  id              String          @id @default(cuid())
+  userId          String          @unique
+  user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  status          StudentStatus   @default(ACTIVE)
+  dateOfBirth     DateTime?
+  englishLevel    EnglishLevel    @default(BEGINNER)
+  parentName      String?
+  parentPhone     String?
+  notes           String?
+  balance         Float           @default(0)
+  discountPercent Float           @default(0)
+  pinfl           String?
+  contractNumber  String?
+  marketingSource MarketingSource?
+  enrollmentDate  DateTime?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  groupStudents   GroupStudent[]
+  payments        Payment[]
+  grades          Grade[]
+  attendances     Attendance[]
+  homeworkGrades  HomeworkGrade[]
+  examResults     ExamResult[]
+  documents       StudentDocument[]
+  parent          Parent?
 
   @@map("students")
 }
 
+// ─── PARENT ──────────────────────────────────────────────────────────────────
+
+model Parent {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  studentId String   @unique
+  student   Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("parents")
+}
+
+// ─── LEAD (SALES FUNNEL) ─────────────────────────────────────────────────────
+
+model Lead {
+  id                   String           @id @default(cuid())
+  firstName            String
+  lastName             String
+  phone                String
+  email                String?
+  source               MarketingSource  @default(OTHER)
+  status               StudentStatus    @default(LEAD)
+  interestedLevel      EnglishLevel?
+  trialDate            DateTime?
+  notes                String?
+  convertedToStudentId String?
+  createdAt            DateTime         @default(now())
+  updatedAt            DateTime         @updatedAt
+
+  @@map("leads")
+}
+
+// ─── GROUP ───────────────────────────────────────────────────────────────────
+
 model Group {
   id          String       @id @default(cuid())
-  name        String       // e.g. "Morning Intermediate A"
+  name        String
   teacherId   String
   teacher     Teacher      @relation(fields: [teacherId], references: [id])
   level       EnglishLevel
-  schedule    String       // e.g. "Mon/Wed/Fri 09:00-10:30"
+  schedule    String
+  room        String?
   maxStudents Int          @default(12)
   isActive    Boolean      @default(true)
   startDate   DateTime
@@ -105,9 +215,11 @@ model Group {
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
 
-  groupStudents  GroupStudent[]
-  classSessions  ClassSession[]
-  invoices       Invoice[]
+  groupStudents GroupStudent[]
+  classSessions ClassSession[]
+  invoices      Invoice[]
+  homeworks     Homework[]
+  exams         Exam[]
 
   @@map("groups")
 }
@@ -125,19 +237,22 @@ model GroupStudent {
   @@map("group_students")
 }
 
+// ─── CLASS SESSIONS & ATTENDANCE ─────────────────────────────────────────────
+
 model ClassSession {
-  id          String    @id @default(cuid())
+  id          String   @id @default(cuid())
   groupId     String
   teacherId   String
-  group       Group     @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  teacher     Teacher   @relation(fields: [teacherId], references: [id])
+  group       Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  teacher     Teacher  @relation(fields: [teacherId], references: [id])
   scheduledAt DateTime
-  duration    Int       @default(90) // minutes
+  duration    Int      @default(90)
   topic       String?
   notes       String?
-  isCompleted Boolean   @default(false)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  room        String?
+  isCompleted Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   attendances Attendance[]
   grades      Grade[]
@@ -150,6 +265,7 @@ model Attendance {
   classSessionId String
   classSession   ClassSession     @relation(fields: [classSessionId], references: [id], onDelete: Cascade)
   studentId      String
+  student        Student          @relation(fields: [studentId], references: [id], onDelete: Cascade)
   status         AttendanceStatus @default(ABSENT)
   notes          String?
   createdAt      DateTime         @default(now())
@@ -159,65 +275,209 @@ model Attendance {
   @@map("attendances")
 }
 
+// ─── GRADES ──────────────────────────────────────────────────────────────────
+
 model Grade {
-  id             String       @id @default(cuid())
+  id             String        @id @default(cuid())
   studentId      String
   classSessionId String?
-  student        Student      @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  student        Student       @relation(fields: [studentId], references: [id], onDelete: Cascade)
   classSession   ClassSession? @relation(fields: [classSessionId], references: [id])
-  score          Float        // 0-100
-  maxScore       Float        @default(100)
-  label          String?      // e.g. "Homework", "Quiz", "Speaking test"
+  score          Float
+  maxScore       Float         @default(100)
+  label          String?
   notes          String?
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
 
   @@map("grades")
 }
 
-model Payment {
-  id          String        @id @default(cuid())
+// ─── HOMEWORK ────────────────────────────────────────────────────────────────
+
+model Homework {
+  id          String    @id @default(cuid())
+  groupId     String
+  teacherId   String
+  group       Group     @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  teacher     Teacher   @relation(fields: [teacherId], references: [id])
+  title       String
+  description String?
+  dueDate     DateTime
+  returnDate  DateTime?
+  maxScore    Float     @default(100)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  grades HomeworkGrade[]
+
+  @@map("homeworks")
+}
+
+model HomeworkGrade {
+  id          String         @id @default(cuid())
+  homeworkId  String
   studentId   String
-  student     Student       @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  invoiceId   String?
-  invoice     Invoice?      @relation(fields: [invoiceId], references: [id])
-  amount      Float
-  currency    String        @default("UZS")
-  status      PaymentStatus @default(PENDING)
-  paidAt      DateTime?
-  method      String?       // "cash", "card", "transfer"
-  notes       String?
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
+  homework    Homework       @relation(fields: [homeworkId], references: [id], onDelete: Cascade)
+  student     Student        @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  status      HomeworkStatus @default(ASSIGNED)
+  score       Float?
+  feedback    String?
+  submittedAt DateTime?
+  gradedAt    DateTime?
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  @@unique([homeworkId, studentId])
+  @@map("homework_grades")
+}
+
+// ─── EXAMS ───────────────────────────────────────────────────────────────────
+
+model Exam {
+  id          String   @id @default(cuid())
+  groupId     String
+  teacherId   String
+  group       Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  teacher     Teacher  @relation(fields: [teacherId], references: [id])
+  title       String
+  description String?
+  scheduledAt DateTime
+  duration    Int?
+  maxScore    Float    @default(100)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  results ExamResult[]
+
+  @@map("exams")
+}
+
+model ExamResult {
+  id        String    @id @default(cuid())
+  examId    String
+  studentId String
+  exam      Exam      @relation(fields: [examId], references: [id], onDelete: Cascade)
+  student   Student   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  score     Float?
+  feedback  String?
+  gradedAt  DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@unique([examId, studentId])
+  @@map("exam_results")
+}
+
+// ─── PAYMENTS & INVOICES ─────────────────────────────────────────────────────
+
+model Payment {
+  id        String        @id @default(cuid())
+  studentId String
+  student   Student       @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  invoiceId String?
+  invoice   Invoice?      @relation(fields: [invoiceId], references: [id])
+  amount    Float
+  currency  String        @default("UZS")
+  status    PaymentStatus @default(PENDING)
+  paidAt    DateTime?
+  method    String?
+  notes     String?
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
 
   @@map("payments")
 }
 
 model Invoice {
-  id        String        @id @default(cuid())
+  id        String   @id @default(cuid())
   groupId   String
-  group     Group         @relation(fields: [groupId], references: [id])
-  month     Int           // 1-12
+  group     Group    @relation(fields: [groupId], references: [id])
+  month     Int
   year      Int
   amount    Float
-  currency  String        @default("UZS")
+  currency  String   @default("UZS")
   dueDate   DateTime
-  createdAt DateTime      @default(now())
-  updatedAt DateTime      @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  payments  Payment[]
+  payments Payment[]
 
   @@unique([groupId, month, year])
   @@map("invoices")
 }
 
+// ─── EXPENSES ────────────────────────────────────────────────────────────────
+
+model Expense {
+  id          String          @id @default(cuid())
+  title       String
+  amount      Float
+  currency    String          @default("UZS")
+  category    ExpenseCategory @default(OTHER)
+  description String?
+  date        DateTime        @default(now())
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  @@map("expenses")
+}
+
+// ─── ANNOUNCEMENTS ───────────────────────────────────────────────────────────
+
 model Announcement {
-  id        String   @id @default(cuid())
-  title     String
-  body      String
-  targetRole Role?   // null = everyone, TEACHER = teachers only, STUDENT = students only
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         String   @id @default(cuid())
+  title      String
+  body       String
+  targetRole Role?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
   @@map("announcements")
+}
+
+// ─── NOTIFICATIONS ───────────────────────────────────────────────────────────
+
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      NotificationType @default(INFO)
+  title     String
+  body      String
+  isRead    Boolean          @default(false)
+  link      String?
+  createdAt DateTime         @default(now())
+
+  @@map("notifications")
+}
+
+// ─── CHAT MESSAGES ───────────────────────────────────────────────────────────
+
+model Message {
+  id         String   @id @default(cuid())
+  senderId   String
+  receiverId String
+  sender     User     @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver   User     @relation("ReceivedMessages", fields: [receiverId], references: [id], onDelete: Cascade)
+  body       String
+  isRead     Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  @@map("messages")
+}
+
+// ─── STUDENT DOCUMENTS ───────────────────────────────────────────────────────
+
+model StudentDocument {
+  id         String   @id @default(cuid())
+  studentId  String
+  student    Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  name       String
+  url        String
+  fileType   String?
+  uploadedBy String
+  createdAt  DateTime @default(now())
+
+  @@map("student_documents")
 }

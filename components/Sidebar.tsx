@@ -6,9 +6,9 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 import LanguageSwitcher from "./LanguageSwitcher";
 
-interface SidebarProps { role: "ADMIN" | "TEACHER" | "STUDENT"; userName: string; }
+interface SidebarProps { role: "ADMIN" | "TEACHER" | "STUDENT" | "PARENT"; userName: string; }
 
-const roleColor = { ADMIN: "#6366f1", TEACHER: "#10b981", STUDENT: "#f59e0b" };
+const roleColor = { ADMIN: "#6366f1", TEACHER: "#10b981", STUDENT: "#f59e0b", PARENT: "#ec4899" };
 
 export default function Sidebar({ role, userName }: SidebarProps) {
   const pathname = usePathname();
@@ -19,26 +19,46 @@ export default function Sidebar({ role, userName }: SidebarProps) {
   const adminNav = [
     { href: "/admin",               icon: "📊", label: t("nav.dashboard") },
     { href: "/admin/students",      icon: "👨‍🎓", label: t("nav.students") },
+    { href: "/admin/leads",         icon: "🎯", label: t("nav.leads") },
     { href: "/admin/teachers",      icon: "👨‍🏫", label: t("nav.teachers") },
     { href: "/admin/groups",        icon: "📚", label: t("nav.groups") },
     { href: "/admin/payments",      icon: "💳", label: t("nav.payments") },
-    { href: "/admin/announcements", icon: "📢", label: t("nav.announcements") },
+    { href: "/admin/debtors",       icon: "⚠️", label: t("nav.debtors") },
+    { href: "/admin/expenses",      icon: "💸", label: t("nav.expenses") },
+    { href: "/admin/homeworks",     icon: "📋", label: t("nav.homework") },
+    { href: "/admin/exams",         icon: "📝", label: t("nav.exams") },
+    { href: "/admin/announcements",   icon: "📢", label: t("nav.announcements") },
+    { href: "/admin/attendance",      icon: "📅", label: t("nav.attendanceReport") },
   ];
   const teacherNav = [
-    { href: "/teacher",            icon: "📊", label: t("nav.dashboard") },
-    { href: "/teacher/groups",     icon: "📚", label: t("nav.myGroups") },
-    { href: "/teacher/sessions",   icon: "📅", label: t("nav.sessions") },
-    { href: "/teacher/attendance", icon: "✅", label: t("nav.attendance") },
-    { href: "/teacher/grades",     icon: "📝", label: t("nav.grades") },
+    { href: "/teacher",                    icon: "📊", label: t("nav.dashboard") },
+    { href: "/teacher/groups",             icon: "📚", label: t("nav.myGroups") },
+    { href: "/teacher/sessions",           icon: "📅", label: t("nav.sessions") },
+    { href: "/teacher/attendance",         icon: "✅", label: t("nav.attendance") },
+    { href: "/teacher/attendance/scan",    icon: "📷", label: t("nav.qrScan") },
+    { href: "/teacher/grades",             icon: "📝", label: t("nav.grades") },
+    { href: "/teacher/homework",           icon: "📋", label: t("nav.homework") },
+    { href: "/teacher/exams",              icon: "🧪", label: t("nav.exams") },
   ];
   const studentNav = [
-    { href: "/student",            icon: "📊", label: t("nav.dashboard") },
-    { href: "/student/groups",     icon: "📚", label: t("nav.myClasses") },
-    { href: "/student/attendance", icon: "✅", label: t("nav.attendance") },
-    { href: "/student/grades",     icon: "📝", label: t("nav.grades") },
-    { href: "/student/payments",   icon: "💳", label: t("nav.payments") },
+    { href: "/student",             icon: "📊", label: t("nav.dashboard") },
+    { href: "/student/groups",      icon: "📚", label: t("nav.myClasses") },
+    { href: "/student/timetable",   icon: "🗓️", label: t("nav.timetable") },
+    { href: "/student/qr",          icon: "📱", label: t("nav.myQR") },
+    { href: "/student/attendance",  icon: "✅", label: t("nav.attendance") },
+    { href: "/student/homework",    icon: "📋", label: t("nav.homework") },
+    { href: "/student/exams",       icon: "🧪", label: t("nav.exams") },
+    { href: "/student/grades",      icon: "📝", label: t("nav.grades") },
+    { href: "/student/payments",    icon: "💳", label: t("nav.payments") },
   ];
-  const navMap = { ADMIN: adminNav, TEACHER: teacherNav, STUDENT: studentNav };
+  const parentNav = [
+    { href: "/parent",             icon: "📊", label: t("nav.dashboard") },
+    { href: "/parent/attendance",  icon: "✅", label: t("nav.attendance") },
+    { href: "/parent/grades",      icon: "📝", label: t("nav.grades") },
+    { href: "/parent/payments",    icon: "💳", label: t("nav.payments") },
+    { href: "/parent/schedule",    icon: "🗓️", label: t("nav.timetable") },
+  ];
+  const navMap = { ADMIN: adminNav, TEACHER: teacherNav, STUDENT: studentNav, PARENT: parentNav };
   const nav = navMap[role];
 
   async function handleLogout() {

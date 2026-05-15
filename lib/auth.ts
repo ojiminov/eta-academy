@@ -59,6 +59,7 @@ export async function getCurrentUser() {
     include: {
       teacher: true,
       student: true,
+      parent: { include: { student: { include: { user: true } } } },
     },
   });
 
