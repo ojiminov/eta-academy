@@ -27,14 +27,18 @@ export async function POST(req: NextRequest) {
   }
   try {
     const { title, amount, category, description, date } = await req.json();
-    if (!title || !amount) {
+    if (!title || amount == null) {
       return NextResponse.json({ error: "Required fields missing" }, { status: 400 });
+    }
+    const parsedAmount = parseFloat(amount);
+    if (isNaN(parsedAmount) || parsedAmount < 0) {
+      return NextResponse.json({ error: "Amount must be a positive number" }, { status: 400 });
     }
     const expense = await prisma.expense.create({
       data: {
         id: newId(),
         title,
-        amount: parseFloat(amount),
+        amount: parsedAmount,
         category: category || "OTHER",
         description: description || null,
         date: date ? new Date(date) : new Date(),

@@ -13,9 +13,20 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   try {
     const { id } = await params;
     const { grades } = await req.json(); // [{studentId, score, feedback, status}]
+    if (!Array.isArray(grades)) {
+      return NextResponse.json({ error: "grades must be an array" }, { status: 400 });
+    }
+
+    // Fetch homework to validate maxScore
+    const homework = await prisma.homework.findUnique({ where: { id }, select: { maxScore: true } });
+    if (!homework) return NextResponse.json({ error: "Homework not found" }, { status: 404 });
+
     const updates = await Promise.all(
-      grades.map((g: { studentId: string; score?: number; feedback?: string; status?: string }) =>
-        prisma.homeworkGrade.updateMany({
+      grades.map((g: { studentId: string; score?: number; feedback?: string; status?: string }) => {
+        if (g.score != null && (g.score < 0 || g.score > homework.maxScore)) {
+          throw new Error(`Score ${g.score} exceeds maxScore ${homework.maxScore}`);
+        }
+        return prisma.homeworkGrade.updateMany({
           where: { homeworkId: id, studentId: g.studentId },
           data: {
             score: g.score ?? undefined,
@@ -24,8 +35,8 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
             gradedAt: g.score != null ? new Date() : undefined,
             updatedAt: new Date(),
           },
-        })
-      )
+        });
+      })
     );
     return NextResponse.json({ updated: updates.length });
   } catch (err) {

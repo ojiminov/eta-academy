@@ -39,6 +39,8 @@ export default function LeadsPage() {
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ firstName:"", lastName:"", phone:"", email:"", source:"OTHER", status:"LEAD", interestedLevel:"", trialDate:"", notes:"" });
   const [saving, setSaving] = useState(false);
+  const [formError, setFormError] = useState("");
+  const [confirmStatus, setConfirmStatus] = useState<{ id: string; name: string; newStatus: string } | null>(null);
 
   async function load() {
     setLoading(true);
@@ -52,16 +54,24 @@ export default function LeadsPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setSaving(true);
-    const res = await fetch("/api/admin/leads", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
-    });
-    if (res.ok) { setShowForm(false); setForm({ firstName:"", lastName:"", phone:"", email:"", source:"OTHER", status:"LEAD", interestedLevel:"", trialDate:"", notes:"" }); await load(); }
-    setSaving(false);
+    setFormError("");
+    try {
+      const res = await fetch("/api/admin/leads", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      if (!res.ok) { const d = await res.json(); setFormError(d.error || "Failed to save lead"); return; }
+      setShowForm(false);
+      setForm({ firstName:"", lastName:"", phone:"", email:"", source:"OTHER", status:"LEAD", interestedLevel:"", trialDate:"", notes:"" });
+      await load();
+    } finally {
+      setSaving(false);
+    }
   }
 
   async function updateStatus(id: string, status: string) {
+    setConfirmStatus(null);
     await fetch("/api/admin/leads", { method:"PATCH", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ id, status }) });
     await load();
   }
@@ -142,14 +152,15 @@ export default function LeadsPage() {
                       {lead.trialDate ? new Date(lead.trialDate).toLocaleDateString() : "—"}
                     </td>
                     <td style={{ padding:"0.875rem 1rem" }}>
-                      <select value={lead.status} onChange={e => updateStatus(lead.id, e.target.value)}
+                      <select value={lead.status}
+                        onChange={e => setConfirmStatus({ id: lead.id, name: `${lead.firstName} ${lead.lastName}`, newStatus: e.target.value })}
                         style={{ padding:"0.25rem 0.5rem", borderRadius:"0.375rem", border:"none", background:sc.bg, color:sc.color, fontSize:"0.75rem", fontWeight:"700", cursor:"pointer" }}>
                         {Object.keys(STATUS_LABELS).map(s => <option key={s} value={s}>{STATUS_LABELS[s]}</option>)}
                       </select>
                     </td>
                     <td style={{ padding:"0.875rem 1rem" }}>
                       {lead.status !== "ACTIVE" && lead.status !== "GRADUATE" && (
-                        <button onClick={() => updateStatus(lead.id, "ACTIVE")}
+                        <button onClick={() => setConfirmStatus({ id: lead.id, name: `${lead.firstName} ${lead.lastName}`, newStatus: "ACTIVE" })}
                           style={{ fontSize:"0.7rem", padding:"0.25rem 0.5rem", background:"#d1fae5", color:"#065f46", border:"none", borderRadius:"0.25rem", cursor:"pointer", fontWeight:"600" }}>
                           → Enroll
                         </button>
@@ -162,6 +173,23 @@ export default function LeadsPage() {
           </table>
         )}
       </div>
+
+      {/* Status Change Confirmation Modal */}
+      {confirmStatus && (
+        <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.5)", zIndex:1000, display:"flex", alignItems:"center", justifyContent:"center" }}>
+          <div style={{ background:"white", borderRadius:"1rem", padding:"2rem", maxWidth:"360px", width:"100%", boxShadow:"0 25px 50px rgba(0,0,0,0.2)" }}>
+            <div style={{ fontSize:"2rem", textAlign:"center", marginBottom:"0.75rem" }}>⚠️</div>
+            <h3 style={{ fontWeight:"700", color:"#1e293b", textAlign:"center", margin:"0 0 0.5rem" }}>Confirm Status Change</h3>
+            <p style={{ color:"#64748b", textAlign:"center", fontSize:"0.875rem", margin:"0 0 1.5rem" }}>
+              Move <strong>{confirmStatus.name}</strong> to <strong>{STATUS_LABELS[confirmStatus.newStatus]}</strong>?
+            </p>
+            <div style={{ display:"flex", gap:"0.75rem" }}>
+              <button onClick={() => setConfirmStatus(null)} style={{ flex:1, padding:"0.625rem", background:"#f1f5f9", color:"#475569", border:"none", borderRadius:"0.5rem", cursor:"pointer", fontWeight:"600" }}>Cancel</button>
+              <button onClick={() => updateStatus(confirmStatus.id, confirmStatus.newStatus)} style={{ flex:1, padding:"0.625rem", background:"#6366f1", color:"white", border:"none", borderRadius:"0.5rem", cursor:"pointer", fontWeight:"600" }}>Confirm</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Add Lead Modal */}
       {showForm && (
@@ -218,6 +246,9 @@ export default function LeadsPage() {
                 <label className="label">Notes</label>
                 <textarea className="input" rows={2} value={form.notes} onChange={e=>setForm({...form,notes:e.target.value})} style={{ resize:"vertical" }} />
               </div>
+              {formError && (
+                <div style={{ padding:"0.75rem", background:"#fee2e2", borderRadius:"0.5rem", color:"#dc2626", fontSize:"0.875rem", marginBottom:"0.75rem" }}>{formError}</div>
+              )}
               <div style={{ display:"flex", gap:"0.75rem" }}>
                 <button type="submit" disabled={saving} style={{ flex:1, padding:"0.75rem", background:"linear-gradient(135deg,#6366f1,#8b5cf6)", color:"white", border:"none", borderRadius:"0.5rem", fontWeight:"600", cursor: saving ? "not-allowed":"pointer" }}>
                   {saving ? "Saving..." : "Add Lead"}

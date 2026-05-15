@@ -12,23 +12,42 @@ export async function GET() {
   try {
     const parent = await prisma.parent.findFirst({
       where: { userId: session.userId },
-      include: {
+      select: {
+        id: true,
+        studentId: true,
         student: {
-          include: {
-            user: true,
+          select: {
+            id: true,
+            balance: true,
+            discountPercent: true,
+            enrollmentDate: true,
+            status: true,
+            englishLevel: true,
+            user: { select: { firstName: true, lastName: true, email: true, phone: true } },
             groupStudents: {
               where: { isActive: true },
-              include: { group: { include: { teacher: { include: { user: true } } } } },
+              select: {
+                id: true,
+                group: {
+                  select: {
+                    id: true, name: true, schedule: true, level: true, monthlyFee: true, room: true,
+                    teacher: { select: { user: { select: { firstName: true, lastName: true } } } },
+                  },
+                },
+              },
             },
-            payments: { orderBy: { createdAt: "desc" }, take: 10 },
-            grades: { orderBy: { createdAt: "desc" }, take: 10 },
+            payments: {
+              orderBy: { createdAt: "desc" },
+              take: 10,
+              select: { id: true, amount: true, status: true, paidAt: true, createdAt: true, month: true },
+            },
             homeworkGrades: {
-              include: { homework: { include: { group: true } } },
+              include: { homework: { select: { title: true, dueDate: true, maxScore: true, group: { select: { name: true } } } } },
               orderBy: { homework: { dueDate: "desc" } },
               take: 10,
             },
             examResults: {
-              include: { exam: { include: { group: true } } },
+              include: { exam: { select: { title: true, scheduledAt: true, maxScore: true, group: { select: { name: true } } } } },
               orderBy: { exam: { scheduledAt: "desc" } },
               take: 10,
             },
@@ -38,11 +57,15 @@ export async function GET() {
     });
 
     if (!parent) return NextResponse.json({ error: "Parent record not found" }, { status: 404 });
+    if (!parent.student) return NextResponse.json({ error: "No student linked to this parent account" }, { status: 404 });
 
-    // Get recent attendance
+    // Run attendance fetch in parallel (already have parent data)
     const attendances = await prisma.attendance.findMany({
       where: { studentId: parent.studentId },
-      include: { classSession: { include: { group: true } } },
+      select: {
+        id: true, status: true, createdAt: true,
+        classSession: { select: { scheduledAt: true, group: { select: { name: true } } } },
+      },
       orderBy: { createdAt: "desc" },
       take: 20,
     });

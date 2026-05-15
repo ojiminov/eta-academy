@@ -52,7 +52,7 @@ export default function ExpensesPage() {
           <h1 style={{ fontSize:"1.75rem", fontWeight:"700", color:"#1e293b", margin:"0 0 0.25rem" }}>💸 Expenses</h1>
           <p style={{ color:"#64748b", margin:0 }}>Track all operational costs</p>
         </div>
-        <button onClick={() => setShowForm(true)} style={{ background:"linear-gradient(135deg,#6366f1,#8b5cf6)", color:"white", border:"none", borderRadius:"0.5rem", padding:"0.625rem 1.25rem", fontWeight:"600", cursor:"pointer", fontSize:"0.875rem" }}>
+        <button onClick={() => { setForm({ title:"", amount:"", category:"OTHER", description:"", date: new Date().toISOString().slice(0,10) }); setShowForm(true); }} style={{ background:"linear-gradient(135deg,#6366f1,#8b5cf6)", color:"white", border:"none", borderRadius:"0.5rem", padding:"0.625rem 1.25rem", fontWeight:"600", cursor:"pointer", fontSize:"0.875rem" }}>
           + Add Expense
         </button>
       </div>
@@ -62,7 +62,7 @@ export default function ExpensesPage() {
         <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:"1rem" }}>
           {[
             { label:"Total Expenses", value:`${expenses.reduce((s,e)=>s+e.amount,0).toLocaleString()} UZS`, icon:"💸", color:"#ef4444", bg:"#fee2e2" },
-            { label:"This Month", value:`${expenses.filter(e=>{ const d=new Date(e.date); const n=new Date(); return d.getMonth()===n.getMonth()&&d.getFullYear()===n.getFullYear(); }).reduce((s,e)=>s+e.amount,0).toLocaleString()} UZS`, icon:"📅", color:"#f59e0b", bg:"#fef3c7" },
+            { label:"This Month", value:`${expenses.filter(e=>{ const d=new Date(e.date); const n=new Date(); return d.getUTCMonth()===n.getUTCMonth()&&d.getUTCFullYear()===n.getUTCFullYear(); }).reduce((s,e)=>s+e.amount,0).toLocaleString()} UZS`, icon:"📅", color:"#f59e0b", bg:"#fef3c7" },
             { label:"Records", value:expenses.length, icon:"📋", color:"#6366f1", bg:"#ede9fe" },
           ].map(s => (
             <div key={s.label} className="card" style={{ display:"flex", alignItems:"center", gap:"0.75rem" }}>

@@ -10,23 +10,26 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   try {
-    // Get students with PENDING or OVERDUE payments
+    // Only fetch students who actually have PENDING or OVERDUE payments
     const students = await prisma.student.findMany({
-      include: {
-        user: true,
+      where: { payments: { some: { status: { in: ["PENDING", "OVERDUE"] } } } },
+      select: {
+        id: true,
+        balance: true,
+        user: { select: { firstName: true, lastName: true, phone: true, email: true } },
         payments: {
           where: { status: { in: ["PENDING", "OVERDUE"] } },
           orderBy: { createdAt: "asc" },
+          select: { id: true, amount: true, status: true, createdAt: true },
         },
         groupStudents: {
           where: { isActive: true },
-          include: { group: true },
+          select: { group: { select: { name: true } } },
         },
       },
     });
 
     const debtors = students
-      .filter(s => s.payments.length > 0)
       .map(s => {
         const totalOwed = s.payments.reduce((sum, p) => sum + p.amount, 0);
         const oldestPayment = s.payments[0];

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 
 type ExamResult = { studentId: string; student: { user: { firstName: string; lastName: string } }; score?: number; feedback?: string; };
@@ -36,8 +36,17 @@ export default function TeacherExamsPage() {
     setSaving(false); setSelected(null); await load();
   }
 
-  // Leaderboard for selected
-  const leaderboard = selected ? [...selected.results].filter(r=>r.score!=null).sort((a,b)=>(b.score||0)-(a.score||0)) : [];
+  // Leaderboard — memoized, with alphabetical tiebreaker
+  const leaderboard = useMemo(() =>
+    selected
+      ? [...selected.results]
+          .filter(r => r.score != null)
+          .sort((a, b) =>
+            (b.score || 0) - (a.score || 0) ||
+            a.student.user.firstName.localeCompare(b.student.user.firstName)
+          )
+      : [],
+  [selected]);
 
   return (
     <div style={{ padding:"2rem" }}>

@@ -8,37 +8,30 @@ export default async function StudentDashboard() {
   const user = await getCurrentUser();
   const student = user?.student;
 
-  const groups = student
-    ? await prisma.groupStudent.findMany({
-        where: { studentId: student.id, isActive: true },
-        include: {
-          group: { include: { teacher: { include: { user: true } } } },
-        },
-      })
-    : [];
-
-  const recentGrades = student
-    ? await prisma.grade.findMany({
-        where: { studentId: student.id },
-        orderBy: { createdAt: "desc" },
-        take: 5,
-      })
-    : [];
-
-  const pendingPayments = student
-    ? await prisma.payment.count({
-        where: { studentId: student.id, status: "PENDING" },
-      })
-    : 0;
+  const [groups, recentGrades, pendingPayments, pendingHomework] = student
+    ? await Promise.all([
+        prisma.groupStudent.findMany({
+          where: { studentId: student.id, isActive: true },
+          include: { group: { include: { teacher: { include: { user: true } } } } },
+        }),
+        prisma.grade.findMany({
+          where: { studentId: student.id },
+          orderBy: { createdAt: "desc" },
+          take: 5,
+        }),
+        prisma.payment.count({
+          where: { studentId: student.id, status: "PENDING" },
+        }),
+        prisma.homeworkGrade.count({
+          where: { studentId: student.id, status: { in: ["ASSIGNED", "LATE"] } },
+        }),
+      ])
+    : [[], [], 0, 0];
 
   const avgScore =
     recentGrades.length > 0
       ? Math.round(recentGrades.reduce((s, g) => s + (g.score / g.maxScore) * 100, 0) / recentGrades.length)
       : null;
-
-  const pendingHomework = student
-    ? await prisma.homeworkGrade.count({ where: { studentId: student.id, status: { in: ["ASSIGNED","LATE"] } } })
-    : 0;
 
   return (
     <div style={{ padding: "2rem" }}>

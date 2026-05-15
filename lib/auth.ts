@@ -2,9 +2,11 @@ import { cookies } from "next/headers";
 import { SignJWT, jwtVerify } from "jose";
 import { prisma } from "./prisma";
 
-const secret = new TextEncoder().encode(
-  process.env.JWT_SECRET || "fallback_secret_change_in_production"
-);
+const jwtSecret = process.env.JWT_SECRET;
+if (!jwtSecret && process.env.NODE_ENV === "production") {
+  throw new Error("JWT_SECRET environment variable is not set");
+}
+const secret = new TextEncoder().encode(jwtSecret || "dev_fallback_not_for_production");
 
 export interface SessionPayload {
   userId: string;
