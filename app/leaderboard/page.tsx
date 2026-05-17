@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { BADGE_ICONS, BADGE_COLORS } from "@/lib/coins";
+import { BADGE_ICONS, BADGE_COLORS } from "@/lib/coins-shared";
 
 type LeaderEntry = {
   id: string;

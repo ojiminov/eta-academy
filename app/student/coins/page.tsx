@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { BADGE_ICONS, BADGE_COLORS, BADGE_THRESHOLDS } from "@/lib/coins";
+import { BADGE_ICONS, BADGE_COLORS, BADGE_THRESHOLDS } from "@/lib/coins-shared";
 
 type Transaction = {
   id: string;

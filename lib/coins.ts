@@ -1,30 +1,15 @@
+// ─── Server-only: Prisma coin engine ─────────────────────────────────────────
+// DO NOT import this file in "use client" components.
+// Client components should import from @/lib/coins-shared instead.
+
 import { prisma } from "@/lib/prisma";
-import { CoinType, AttendanceStatus } from "@prisma/client";
+import { COIN_VALUES, BADGE_THRESHOLDS, getBadgeTier } from "@/lib/coins-shared";
 
-// ─── Coin award values ────────────────────────────────────────────────────────
+export { COIN_VALUES, BADGE_THRESHOLDS, getBadgeTier } from "@/lib/coins-shared";
+export { BADGE_ICONS, BADGE_COLORS } from "@/lib/coins-shared";
 
-export const COIN_VALUES = {
-  // Attendance
-  PRESENT: 20,
-  LATE: 8,
-  // Homework submission (base)
-  HW_SUBMIT: 15,
-  // Homework score bonus (per 10% above 60%)  → max +35 at 100%
-  HW_SCORE_PER_10PCT: 8.75, // 4 tiers × 8.75 = 35
-  // Exam score bonus (proportional, max 80 coins at 100%)
-  EXAM_MAX: 80,
-  // Streak bonuses
-  STREAK_7: 60,
-  STREAK_30: 150,
-} as const;
-
-// Badge thresholds (totalCoins)
-export const BADGE_THRESHOLDS = {
-  BRONZE: 0,
-  SILVER: 500,
-  GOLD: 1500,
-  PLATINUM: 4000,
-} as const;
+type CoinType = "ATTENDANCE" | "HOMEWORK" | "EXAM" | "STREAK" | "BONUS";
+type AttendanceStatus = "PRESENT" | "ABSENT" | "LATE" | "EXCUSED" | "HOLIDAY" | "HW_NOT_DONE";
 
 // ─── Core award function ──────────────────────────────────────────────────────
 
@@ -44,31 +29,28 @@ export async function awardCoins({
   if (amount <= 0) return;
 
   await prisma.$transaction(async (tx) => {
-    // 1. Log the transaction
-    await tx.coinTransaction.create({
+    await (tx as any).coinTransaction.create({
       data: { studentId, amount, type, reason, refId },
     });
 
-    // 2. Increment totalCoins
-    const updated = await tx.student.update({
+    const updated = await (tx as any).student.update({
       where: { id: studentId },
       data: { totalCoins: { increment: amount } },
       select: { totalCoins: true },
     });
 
-    // 3. Recalculate badge tier
     const badge = getBadgeTier(updated.totalCoins);
-    await tx.student.update({
+    await (tx as any).student.update({
       where: { id: studentId },
       data: { badge },
     });
   });
 }
 
-// ─── Streak update ────────────────────────────────────────────────────────────
+// ─── Streak ───────────────────────────────────────────────────────────────────
 
 export async function updateStreak(studentId: string): Promise<{ newStreak: number; bonusAwarded: boolean }> {
-  const student = await prisma.student.findUnique({
+  const student = await (prisma as any).student.findUnique({
     where: { id: studentId },
     select: { currentStreak: true, longestStreak: true },
   });
@@ -77,12 +59,11 @@ export async function updateStreak(studentId: string): Promise<{ newStreak: numb
   const newStreak = student.currentStreak + 1;
   const newLongest = Math.max(newStreak, student.longestStreak);
 
-  await prisma.student.update({
+  await (prisma as any).student.update({
     where: { id: studentId },
     data: { currentStreak: newStreak, longestStreak: newLongest },
   });
 
-  // Award streak milestones (only once each)
   let bonusAwarded = false;
   if (newStreak === 7) {
     await awardCoins({ studentId, amount: COIN_VALUES.STREAK_7, type: "STREAK", reason: "7-day attendance streak! 🔥", refId: studentId });
@@ -96,13 +77,13 @@ export async function updateStreak(studentId: string): Promise<{ newStreak: numb
 }
 
 export async function breakStreak(studentId: string): Promise<void> {
-  await prisma.student.update({
+  await (prisma as any).student.update({
     where: { id: studentId },
     data: { currentStreak: 0 },
   });
 }
 
-// ─── Attendance coins ─────────────────────────────────────────────────────────
+// ─── Attendance ───────────────────────────────────────────────────────────────
 
 export async function awardAttendanceCoins(
   studentId: string,
@@ -115,12 +96,11 @@ export async function awardAttendanceCoins(
   } else if (status === "LATE") {
     await awardCoins({ studentId, amount: COIN_VALUES.LATE, type: "ATTENDANCE", reason: "Attended class (late) ⏰", refId: sessionId });
   } else {
-    // ABSENT / EXCUSED → break streak
     await breakStreak(studentId);
   }
 }
 
-// ─── Homework coins ───────────────────────────────────────────────────────────
+// ─── Homework ─────────────────────────────────────────────────────────────────
 
 export async function awardHomeworkCoins(
   studentId: string,
@@ -128,25 +108,18 @@ export async function awardHomeworkCoins(
   score: number | null | undefined,
   maxScore: number
 ): Promise<void> {
-  // Base submit reward
   await awardCoins({ studentId, amount: COIN_VALUES.HW_SUBMIT, type: "HOMEWORK", reason: "Submitted homework 📝", refId: homeworkId });
 
-  // Score bonus: each 10% above 60% earns COIN_VALUES.HW_SCORE_PER_10PCT (up to 4 tiers)
   if (score != null && maxScore > 0) {
     const pct = score / maxScore;
-    if (pct >= 1.0) {
-      await awardCoins({ studentId, amount: 35, type: "HOMEWORK", reason: "Perfect homework score! 💯", refId: homeworkId });
-    } else if (pct >= 0.9) {
-      await awardCoins({ studentId, amount: 26, type: "HOMEWORK", reason: "Excellent homework score ⭐", refId: homeworkId });
-    } else if (pct >= 0.8) {
-      await awardCoins({ studentId, amount: 18, type: "HOMEWORK", reason: "Great homework score ⭐", refId: homeworkId });
-    } else if (pct >= 0.7) {
-      await awardCoins({ studentId, amount: 9, type: "HOMEWORK", reason: "Good homework score ⭐", refId: homeworkId });
-    }
+    if (pct >= 1.0)      await awardCoins({ studentId, amount: 35, type: "HOMEWORK", reason: "Perfect homework score! 💯", refId: homeworkId });
+    else if (pct >= 0.9) await awardCoins({ studentId, amount: 26, type: "HOMEWORK", reason: "Excellent homework score ⭐", refId: homeworkId });
+    else if (pct >= 0.8) await awardCoins({ studentId, amount: 18, type: "HOMEWORK", reason: "Great homework score ⭐", refId: homeworkId });
+    else if (pct >= 0.7) await awardCoins({ studentId, amount: 9,  type: "HOMEWORK", reason: "Good homework score ⭐", refId: homeworkId });
   }
 }
 
-// ─── Exam coins ───────────────────────────────────────────────────────────────
+// ─── Exam ─────────────────────────────────────────────────────────────────────
 
 export async function awardExamCoins(
   studentId: string,
@@ -161,26 +134,3 @@ export async function awardExamCoins(
     await awardCoins({ studentId, amount: coins, type: "EXAM", reason: `Exam result: ${pct}% 🧪`, refId: examId });
   }
 }
-
-// ─── Helpers ──────────────────────────────────────────────────────────────────
-
-export function getBadgeTier(totalCoins: number): "BRONZE" | "SILVER" | "GOLD" | "PLATINUM" {
-  if (totalCoins >= BADGE_THRESHOLDS.PLATINUM) return "PLATINUM";
-  if (totalCoins >= BADGE_THRESHOLDS.GOLD) return "GOLD";
-  if (totalCoins >= BADGE_THRESHOLDS.SILVER) return "SILVER";
-  return "BRONZE";
-}
-
-export const BADGE_ICONS: Record<string, string> = {
-  BRONZE: "🥉",
-  SILVER: "🥈",
-  GOLD: "🥇",
-  PLATINUM: "💎",
-};
-
-export const BADGE_COLORS: Record<string, { bg: string; color: string }> = {
-  BRONZE:   { bg: "#fef0e7", color: "#c2410c" },
-  SILVER:   { bg: "#f1f5f9", color: "#475569" },
-  GOLD:     { bg: "#fef9c3", color: "#a16207" },
-  PLATINUM: { bg: "#ede9fe", color: "#6d28d9" },
-};
