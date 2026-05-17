@@ -2,6 +2,23 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
 
+export const dynamic = "force-dynamic";
+
+export async function GET() {
+  const session = await getSession();
+  if (!session || session.role !== "ADMIN") {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  const groups = await prisma.group.findMany({
+    orderBy: { name: "asc" },
+    include: {
+      teacher: { include: { user: true } },
+      groupStudents: { where: { isActive: true }, select: { id: true } },
+    },
+  });
+  return NextResponse.json(groups);
+}
+
 export async function POST(req: NextRequest) {
   const session = await getSession();
   if (!session || session.role !== "ADMIN") {

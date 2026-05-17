@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 
 type Lead = {
   id: string; firstName: string; lastName: string; phone: string; email?: string;
