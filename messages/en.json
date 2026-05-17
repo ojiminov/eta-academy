@@ -21,7 +21,7 @@
     "myQR": "My QR Code",
     "attendanceReport": "Attendance Report",
     "leaderboard": "Leaderboard",
-    "myCoins": "My Coins "leaderboard": "Leaderboard", Badges",
+    "myCoins": "My Coins & Badges",
     "signOut": "Sign Out"
   },
   "roles": {
@@ -333,8 +333,6 @@
     "enterResults": "Enter Results",
     "myExams": "My Exams",
     "score": "Score",
-    "leaderboard": "Leaderboard",
-    "myCoins": "My Coins "leaderboard": "Leaderboard", Badges",
     "rank": "Rank"
   },
   "timetable": {
