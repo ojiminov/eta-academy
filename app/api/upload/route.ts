@@ -45,8 +45,10 @@ export async function POST(req: NextRequest) {
     .createSignedUploadUrl(path);
 
   if (error || !data) {
-    console.error("[upload]", error);
-    return NextResponse.json({ error: "Could not create upload URL" }, { status: 500 });
+    console.error("[upload] bucket:", bucketName, "error:", error);
+    return NextResponse.json({
+      error: `Upload failed for bucket "${bucketName}": ${error?.message ?? "unknown error"}`,
+    }, { status: 500 });
   }
 
   // Public URL for reading the file after upload
