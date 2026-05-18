@@ -40,7 +40,8 @@ export async function POST(req: NextRequest) {
   }
 
   const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
-  const path     = `${session.userId}/${Date.now()}-${safeName}`;
+  const userId   = session.userId.replace(/[^a-zA-Z0-9-]/g, "");
+  const path     = `${userId}/${Date.now()}-${safeName}`;
   const buffer   = Buffer.from(await file.arrayBuffer());
 
   const { error } = await supabase.storage
