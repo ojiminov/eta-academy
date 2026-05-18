@@ -52,9 +52,9 @@ export async function POST(req: NextRequest) {
     });
 
   if (error) {
-    console.error("[upload] bucket:", bucketName, "error:", error);
+    console.error("[upload] bucket:", bucketName, "path:", path, "error:", error);
     return NextResponse.json(
-      { error: `Upload failed: ${error.message}` },
+      { error: `Upload failed: ${error.message} | bucket=${bucketName} path=${path} userId=${session.userId}` },
       { status: 500 }
     );
   }
