@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   try {
-    const { groupId, title, description, dueDate, returnDate, maxScore } = await req.json();
+    const { groupId, title, description, dueDate, returnDate, maxScore, fileUrl, fileName, fileSize } = await req.json();
     if (!groupId || !title || !dueDate) {
       return NextResponse.json({ error: "Required fields missing" }, { status: 400 });
     }
@@ -64,6 +64,9 @@ export async function POST(req: NextRequest) {
         dueDate: new Date(dueDate),
         returnDate: returnDate ? new Date(returnDate) : null,
         maxScore: maxScore ? parseFloat(maxScore) : 100,
+        fileUrl: fileUrl || null,
+        fileName: fileName || null,
+        fileSize: fileSize ? parseInt(fileSize) : null,
         grades: {
           create: groupStudents.map(gs => ({
             id: newId(),

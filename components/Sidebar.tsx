@@ -47,6 +47,7 @@ export default function Sidebar({ role, userName }: SidebarProps) {
     { href: "/teacher/grades",          icon: "📝", label: t("nav.grades") },
     { href: "/teacher/homework",        icon: "📋", label: t("nav.homework") },
     { href: "/teacher/exams",           icon: "🧪", label: t("nav.exams") },
+    { href: "/teacher/materials",       icon: "📁", label: t("nav.materials") },
     { href: "/leaderboard",             icon: "🏆", label: t("nav.leaderboard") },
   ];
   const studentNav = [
@@ -54,6 +55,7 @@ export default function Sidebar({ role, userName }: SidebarProps) {
     { href: "/student/qr",         icon: "📱", label: t("nav.myQR") },
     { href: "/student/coins",      icon: "🪙", label: t("nav.myCoins") },
     { href: "/student/homework",   icon: "📋", label: t("nav.homework") },
+    { href: "/student/materials",  icon: "📁", label: t("nav.materials") },
     { href: "/student/exams",      icon: "🧪", label: t("nav.exams") },
     { href: "/student/grades",     icon: "📝", label: t("nav.grades") },
     { href: "/student/attendance", icon: "✅", label: t("nav.attendance") },

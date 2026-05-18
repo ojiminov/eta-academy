@@ -137,10 +137,11 @@ model Teacher {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  groups        Group[]
-  classSessions ClassSession[]
-  homeworks     Homework[]
-  exams         Exam[]
+  groups          Group[]
+  classSessions   ClassSession[]
+  homeworks       Homework[]
+  exams           Exam[]
+  courseMaterials CourseMaterial[]
 
   @@map("teachers")
 }
@@ -235,11 +236,12 @@ model Group {
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
 
-  groupStudents GroupStudent[]
-  classSessions ClassSession[]
-  invoices      Invoice[]
-  homeworks     Homework[]
-  exams         Exam[]
+  groupStudents   GroupStudent[]
+  classSessions   ClassSession[]
+  invoices        Invoice[]
+  homeworks       Homework[]
+  exams           Exam[]
+  courseMaterials CourseMaterial[]
 
   @@map("groups")
 }
@@ -326,6 +328,9 @@ model Homework {
   dueDate     DateTime
   returnDate  DateTime?
   maxScore    Float     @default(100)
+  fileUrl     String?   // teacher-uploaded assignment file
+  fileName    String?
+  fileSize    Int?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
@@ -340,13 +345,16 @@ model HomeworkGrade {
   studentId   String
   homework    Homework       @relation(fields: [homeworkId], references: [id], onDelete: Cascade)
   student     Student        @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  status      HomeworkStatus @default(ASSIGNED)
-  score       Float?
-  feedback    String?
-  submittedAt DateTime?
-  gradedAt    DateTime?
-  createdAt   DateTime       @default(now())
-  updatedAt   DateTime       @updatedAt
+  status         HomeworkStatus @default(ASSIGNED)
+  score          Float?
+  feedback       String?
+  submittedAt    DateTime?
+  gradedAt       DateTime?
+  submissionUrl  String?   // student-uploaded file
+  submissionName String?
+  submissionSize Int?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 
   @@unique([homeworkId, studentId])
   @@map("homework_grades")
@@ -500,6 +508,25 @@ model StudentDocument {
   createdAt  DateTime @default(now())
 
   @@map("student_documents")
+}
+
+// ─── COURSE MATERIALS ─────────────────────────────────────────────────────────
+
+model CourseMaterial {
+  id          String   @id @default(cuid())
+  groupId     String?
+  teacherId   String
+  group       Group?   @relation(fields: [groupId], references: [id], onDelete: SetNull)
+  teacher     Teacher  @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  title       String
+  description String?
+  fileUrl     String
+  fileName    String
+  fileSize    Int?
+  fileType    String?
+  createdAt   DateTime @default(now())
+
+  @@map("course_materials")
 }
 
 // ─── COIN TRANSACTIONS ────────────────────────────────────────────────────────

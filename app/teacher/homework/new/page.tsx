@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import FileUpload from "@/components/FileUpload";
 
 type Group = { id: string; name: string; level: string; };
 
@@ -9,6 +10,7 @@ export default function NewHomeworkPage() {
   const router = useRouter();
   const [groups, setGroups] = useState<Group[]>([]);
   const [form, setForm] = useState({ groupId:"", title:"", description:"", dueDate:"", returnDate:"", maxScore:"100" });
+  const [fileData, setFileData] = useState<{ url:string; name:string; size:number } | null>(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
@@ -20,14 +22,18 @@ export default function NewHomeworkPage() {
     e.preventDefault();
     setError("");
     setSaving(true);
-    const res = await fetch("/api/teacher/homeworks", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(form) });
+    const body = {
+      ...form,
+      ...(fileData ? { fileUrl: fileData.url, fileName: fileData.name, fileSize: fileData.size } : {}),
+    };
+    const res = await fetch("/api/teacher/homeworks", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(body) });
     if (res.ok) { router.push("/teacher/homework"); }
     else { const d = await res.json(); setError(d.error || "Failed to assign homework"); }
     setSaving(false);
   }
 
   return (
-    <div style={{ padding:"2rem", maxWidth:"600px" }}>
+    <div style={{ padding:"2rem", maxWidth:"640px" }}>
       <div style={{ marginBottom:"1.5rem" }}>
         <button onClick={() => router.back()} style={{ background:"none", border:"none", color:"#6366f1", cursor:"pointer", fontWeight:"600", fontSize:"0.875rem", padding:0 }}>← Back</button>
         <h1 style={{ fontSize:"1.75rem", fontWeight:"700", color:"#1e293b", margin:"0.5rem 0 0.25rem" }}>📋 Assign Homework</h1>
@@ -49,7 +55,7 @@ export default function NewHomeworkPage() {
             <label className="label">Description</label>
             <textarea className="input" rows={3} value={form.description} onChange={e=>setForm({...form,description:e.target.value})} placeholder="Instructions for students..." style={{ resize:"vertical" }} />
           </div>
-          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:"1rem", marginBottom:"1.5rem" }}>
+          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:"1rem", marginBottom:"1rem" }}>
             <div>
               <label className="label">Due Date *</label>
               <input className="input" required type="date" value={form.dueDate} onChange={e=>setForm({...form,dueDate:e.target.value})} />
@@ -63,6 +69,18 @@ export default function NewHomeworkPage() {
               <input className="input" type="number" min="1" value={form.maxScore} onChange={e=>setForm({...form,maxScore:e.target.value})} />
             </div>
           </div>
+
+          {/* File attachment */}
+          <div style={{ marginBottom:"1.5rem" }}>
+            <label className="label">Attachment (optional)</label>
+            <FileUpload
+              bucket="homework"
+              accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.jpg,.jpeg,.png,.mp4,.zip"
+              label="Attach homework file"
+              onUploaded={r => setFileData(r)}
+            />
+          </div>
+
           {error && <div style={{ background:"#fee2e2", color:"#991b1b", padding:"0.75rem", borderRadius:"0.5rem", marginBottom:"1rem", fontSize:"0.875rem" }}>{error}</div>}
           <div style={{ display:"flex", gap:"0.75rem" }}>
             <button type="submit" disabled={saving} style={{ flex:1, padding:"0.75rem", background:"linear-gradient(135deg,#6366f1,#8b5cf6)", color:"white", border:"none", borderRadius:"0.5rem", fontWeight:"600", cursor: saving?"not-allowed":"pointer" }}>
