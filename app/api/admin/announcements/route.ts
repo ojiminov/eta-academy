@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
+import { notifyAnnouncement } from "@/lib/onesignal";
 
 export async function GET() {
   const session = await getSession();
@@ -39,6 +40,15 @@ export async function POST(req: NextRequest) {
         targetRole: targetRole || null,
       },
     });
+
+    // 🔔 Push to relevant users (fire-and-forget)
+    if (targetRole) {
+      prisma.user.findMany({ where: { role: targetRole }, select: { id: true } })
+        .then(users => notifyAnnouncement(title, body, users.map(u => u.id)))
+        .catch(() => {});
+    } else {
+      notifyAnnouncement(title, body).catch(() => {}); // send to all
+    }
 
     return NextResponse.json(announcement, { status: 201 });
   } catch (err) {

@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
 import { awardAttendanceCoins } from "@/lib/coins";
 import { AttendanceStatus } from "@prisma/client";
+import { notifyAttendanceMarked } from "@/lib/onesignal";
 
 export const dynamic = "force-dynamic";
 
@@ -50,6 +51,24 @@ export async function POST(req: NextRequest) {
   const coinEligible = ["PRESENT", "LATE", "ABSENT", "EXCUSED"];
   if (prevStatus !== status && coinEligible.includes(status)) {
     await awardAttendanceCoins(studentId, status as AttendanceStatus, sessionId).catch(() => {});
+  }
+
+  // 🔔 Notify parent(s) of the student (fire-and-forget)
+  if (prevStatus !== status) {
+    prisma.student.findUnique({
+      where: { id: studentId },
+      include: {
+        user: true,
+        parent: { include: { user: true } },
+      },
+    }).then(student => {
+      if (!student) return;
+      const parentUserIds = student.parent ? [student.parent.userId] : [];
+      if (parentUserIds.length > 0) {
+        const name = `${student.user.firstName} ${student.user.lastName}`;
+        notifyAttendanceMarked(parentUserIds, name, status).catch(() => {});
+      }
+    }).catch(() => {});
   }
 
   return NextResponse.json(attendance);

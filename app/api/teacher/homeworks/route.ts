@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
 import { randomBytes } from "crypto";
+import { notifyHomeworkAssigned } from "@/lib/onesignal";
 
 export const dynamic = "force-dynamic";
 function newId() { return randomBytes(12).toString("base64url"); }
@@ -73,6 +74,16 @@ export async function POST(req: NextRequest) {
       },
       include: { group: true, grades: true },
     });
+
+    // 🔔 Notify students in the group (fire-and-forget)
+    prisma.groupStudent.findMany({
+      where: { groupId, isActive: true },
+      include: { student: { include: { user: true } } },
+    }).then(gs => {
+      const userIds = gs.map(g => g.student.userId);
+      notifyHomeworkAssigned(userIds, title, homework.group.name, new Date(dueDate)).catch(() => {});
+    }).catch(() => {});
+
     return NextResponse.json(homework, { status: 201 });
   } catch (err) {
     console.error(err);
