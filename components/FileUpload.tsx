@@ -9,7 +9,7 @@ interface UploadResult {
 }
 
 interface FileUploadProps {
-  bucket: "homework" | "submission" | "material" | "student_doc";
+  bucket: "homework" | "submission" | "material" | "student_doc" | "branding";
   onUploaded: (result: UploadResult) => void;
   accept?: string;
   label?: string;
@@ -51,30 +51,22 @@ export default function FileUpload({
   async function handleFile(file: File) {
     setError("");
     setUploading(true);
-    setProgress(10);
+    setProgress(20);
 
     try {
-      // Step 1: get signed upload URL from our API
-      const res = await fetch("/api/upload", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ bucket, fileName: file.name, contentType: file.type }),
-      });
-      const { signedUrl, publicUrl, error: apiErr } = await res.json();
-      if (apiErr || !signedUrl) throw new Error(apiErr || "Upload failed");
+      // Send file directly to our API as FormData — server uploads to Supabase
+      const fd = new FormData();
+      fd.append("file", file);
+      fd.append("bucket", bucket);
 
-      setProgress(30);
+      const res = await fetch("/api/upload", { method: "POST", body: fd });
+      setProgress(80);
 
-      // Step 2: PUT directly to Supabase Storage
-      const uploadRes = await fetch(signedUrl, {
-        method: "PUT",
-        headers: { "Content-Type": file.type || "application/octet-stream" },
-        body: file,
-      });
-      if (!uploadRes.ok) throw new Error("Upload to storage failed");
+      const json = await res.json();
+      if (!res.ok || json.error) throw new Error(json.error || "Upload failed");
 
       setProgress(100);
-      const result = { url: publicUrl, name: file.name, size: file.size };
+      const result = { url: json.publicUrl, name: file.name, size: file.size };
       setUploaded(result);
       onUploaded(result);
     } catch (err: any) {
