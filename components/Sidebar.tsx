@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import LanguageSwitcher from "./LanguageSwitcher";
+import { useBranding } from "./BrandingProvider";
 
 interface SidebarProps { role: "ADMIN" | "TEACHER" | "STUDENT" | "PARENT"; userName: string; }
 
@@ -20,6 +21,7 @@ export default function Sidebar({ role, userName }: SidebarProps) {
   const pathname = usePathname();
   const router   = useRouter();
   const t        = useTranslations();
+  const branding = useBranding();
   const [open, setOpen] = useState(false);
 
   // ── Full navigation (drawer) ──────────────────────────
@@ -37,6 +39,7 @@ export default function Sidebar({ role, userName }: SidebarProps) {
     { href: "/admin/announcements", icon: "📢", label: t("nav.announcements") },
     { href: "/admin/attendance",    icon: "📅", label: t("nav.attendanceReport") },
     { href: "/leaderboard",         icon: "🏆", label: t("nav.leaderboard") },
+    { href: "/admin/settings",      icon: "🎨", label: t("nav.branding") },
   ];
   const teacherNav = [
     { href: "/teacher",                 icon: "📊", label: t("nav.dashboard") },
@@ -119,14 +122,22 @@ export default function Sidebar({ role, userName }: SidebarProps) {
   // ── Sub-components ────────────────────────────────────
   const Logo = () => (
     <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-      <div style={{
-        width: "40px", height: "40px",
-        background: "linear-gradient(135deg,#6366f1,#8b5cf6)",
-        borderRadius: "10px", display: "flex", alignItems: "center",
-        justifyContent: "center", fontSize: "1.25rem", flexShrink: 0,
-      }}>🎓</div>
+      {branding.logoUrl ? (
+        <img
+          src={branding.logoUrl}
+          alt={branding.name}
+          style={{ width: "40px", height: "40px", objectFit: "contain", borderRadius: "10px", background: "rgba(255,255,255,0.1)", padding: "4px", flexShrink: 0 }}
+        />
+      ) : (
+        <div style={{
+          width: "40px", height: "40px",
+          background: "var(--primary-gradient, linear-gradient(135deg,#6366f1,#8b5cf6))",
+          borderRadius: "10px", display: "flex", alignItems: "center",
+          justifyContent: "center", fontSize: "1.25rem", flexShrink: 0,
+        }}>🎓</div>
+      )}
       <div>
-        <div style={{ color: "white", fontWeight: "700", fontSize: "0.9rem", letterSpacing: "-0.01em" }}>ETA Academy</div>
+        <div style={{ color: "white", fontWeight: "700", fontSize: "0.9rem", letterSpacing: "-0.01em" }}>{branding.name}</div>
         <div style={{ fontSize: "0.65rem", color: roleColor[role], fontWeight: "700", textTransform: "uppercase", letterSpacing: "0.06em" }}>
           {t(`roles.${role}`)}
         </div>
@@ -143,14 +154,14 @@ export default function Sidebar({ role, userName }: SidebarProps) {
             display: "flex", alignItems: "center", gap: "0.75rem",
             padding: "0.625rem 0.875rem", borderRadius: "0.625rem", marginBottom: "2px",
             color: active ? "white" : "rgba(255,255,255,0.55)",
-            background: active ? "rgba(99,102,241,0.35)" : "transparent",
+            background: active ? "rgba(255,255,255,0.12)" : "transparent",
             textDecoration: "none", fontSize: "0.875rem",
             fontWeight: active ? "700" : "400", transition: "all 0.15s",
-            borderLeft: active ? "3px solid #818cf8" : "3px solid transparent",
+            borderLeft: active ? `3px solid var(--primary, #818cf8)` : "3px solid transparent",
           }}>
             <span style={{ fontSize: "1.1rem", lineHeight: 1 }}>{item.icon}</span>
             <span>{item.label}</span>
-            {active && <span style={{ marginLeft: "auto", width: 6, height: 6, borderRadius: "50%", background: "#818cf8" }} />}
+            {active && <span style={{ marginLeft: "auto", width: 6, height: 6, borderRadius: "50%", background: "var(--primary, #818cf8)" }} />}
           </Link>
         );
       })}
@@ -247,8 +258,12 @@ export default function Sidebar({ role, userName }: SidebarProps) {
 
           {/* Centre logo */}
           <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", position: "absolute", left: "50%", transform: "translateX(-50%)" }}>
-            <span style={{ fontSize: "1.15rem" }}>🎓</span>
-            <span style={{ color: "white", fontWeight: "800", fontSize: "1rem", letterSpacing: "-0.02em" }}>ETA Academy</span>
+            {branding.logoUrl ? (
+              <img src={branding.logoUrl} alt={branding.name} style={{ width:28, height:28, objectFit:"contain", borderRadius:"6px" }} />
+            ) : (
+              <span style={{ fontSize: "1.15rem" }}>🎓</span>
+            )}
+            <span style={{ color: "white", fontWeight: "800", fontSize: "1rem", letterSpacing: "-0.02em" }}>{branding.name}</span>
           </div>
 
           {/* Avatar */}

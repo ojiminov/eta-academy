@@ -2,7 +2,11 @@ import type { Metadata, Viewport } from "next";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
 import PWAInit from "@/components/PWAInit";
+import { BrandingProvider } from "@/components/BrandingProvider";
+import { getBranding } from "@/lib/branding";
 import "./globals.css";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "ETA Academy",
@@ -28,21 +32,35 @@ export const viewport: Viewport = {
   themeColor: "#16132a",
   width: "device-width",
   initialScale: 1,
-  maximumScale: 5,       // allow user zoom for accessibility
+  maximumScale: 5,
   userScalable: true,
-  viewportFit: "cover",  // fills iPhone notch / home-bar area
+  viewportFit: "cover",
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const locale = await getLocale();
+  const locale   = await getLocale();
   const messages = await getMessages();
+  const branding = await getBranding();
+
+  // Inject branding as CSS variables so every component using var(--primary) updates automatically
+  const cssVars = {
+    "--primary":          branding.primaryColor,
+    "--primary-dark":     branding.primaryDark,
+    "--primary-gradient": `linear-gradient(135deg, ${branding.primaryColor}, ${branding.primaryDark})`,
+  } as React.CSSProperties;
 
   return (
-    <html lang={locale} className="h-full">
+    <html lang={locale} className="h-full" style={cssVars}>
       <body className="min-h-full">
         <NextIntlClientProvider locale={locale} messages={messages}>
-          {children}
-          <PWAInit />
+          <BrandingProvider value={{
+            name: branding.name,
+            logoUrl: branding.logoUrl,
+            primaryColor: branding.primaryColor,
+          }}>
+            {children}
+            <PWAInit />
+          </BrandingProvider>
         </NextIntlClientProvider>
       </body>
     </html>

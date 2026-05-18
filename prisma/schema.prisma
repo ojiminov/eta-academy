@@ -529,6 +529,19 @@ model CourseMaterial {
   @@map("course_materials")
 }
 
+// ─── ACADEMY SETTINGS (branding) ─────────────────────────────────────────────
+
+model AcademySetting {
+  id           String   @id @default("singleton")
+  name         String   @default("ETA Academy")
+  logoUrl      String?
+  logoName     String?
+  primaryColor String   @default("#6366f1")
+  updatedAt    DateTime @updatedAt
+
+  @@map("academy_settings")
+}
+
 // ─── COIN TRANSACTIONS ────────────────────────────────────────────────────────
 
 model CoinTransaction {

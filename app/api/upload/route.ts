@@ -19,6 +19,7 @@ const BUCKET_MAP: Record<string, string> = {
   submission:   "homework-submissions", // student submissions
   material:     "course-materials",    // syllabi / lesson resources
   student_doc:  "student-documents",   // admin uploads per student
+  branding:     "branding-files",      // academy logos and branding assets
 };
 
 export async function POST(req: NextRequest) {
