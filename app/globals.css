@@ -12,134 +12,200 @@
   --border: #e2e8f0;
   --text: #1e293b;
   --text-muted: #64748b;
+
+  /* Mobile chrome heights */
+  --topbar-h: 56px;
+  --bottomnav-h: 72px;
 }
 
-* { box-sizing: border-box; }
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
 body {
   background: var(--background);
   color: var(--text);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 
+/* ── Buttons ─────────────────────────────────────────── */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 1.125rem;
   border-radius: 0.5rem;
-  font-weight: 500;
+  font-weight: 600;
   font-size: 0.875rem;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.18s;
   border: none;
   text-decoration: none;
+  min-height: 40px;
+  white-space: nowrap;
 }
-.btn-primary { background: var(--primary); color: white; }
-.btn-primary:hover { background: var(--primary-dark); }
-.btn-secondary { background: var(--surface); color: var(--text); border: 1px solid var(--border); }
+.btn-primary  { background: var(--primary); color: white; }
+.btn-primary:hover  { background: var(--primary-dark); }
+.btn-primary:active { transform: scale(0.97); }
+.btn-secondary { background: var(--surface); color: var(--text); border: 1.5px solid var(--border); }
 .btn-secondary:hover { background: var(--background); }
 .btn-danger { background: var(--danger); color: white; }
 
+/* ── Cards ───────────────────────────────────────────── */
 .card {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 0.75rem;
+  border-radius: 0.875rem;
   padding: 1.5rem;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
 }
 
+/* ── Inputs ──────────────────────────────────────────── */
 .input {
   width: 100%;
   padding: 0.625rem 0.875rem;
-  border: 1px solid var(--border);
+  border: 1.5px solid var(--border);
   border-radius: 0.5rem;
-  font-size: 0.875rem;
+  font-size: 0.9375rem; /* 15px — no zoom on iOS */
   background: white;
   color: var(--text);
   transition: border-color 0.2s;
   outline: none;
+  min-height: 44px;
+  -webkit-appearance: none;
 }
-.input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(99,102,241,0.1); }
+.input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(99,102,241,0.12); }
 
-.label { display: block; font-size: 0.875rem; font-weight: 500; color: var(--text); margin-bottom: 0.375rem; }
+select.input { appearance: none; -webkit-appearance: none; }
 
+.label { display: block; font-size: 0.875rem; font-weight: 600; color: var(--text); margin-bottom: 0.375rem; }
+
+/* ── Badges ──────────────────────────────────────────── */
 .badge {
   display: inline-flex;
   align-items: center;
   padding: 0.25rem 0.625rem;
   border-radius: 9999px;
   font-size: 0.75rem;
-  font-weight: 500;
+  font-weight: 600;
 }
-.badge-green { background: #dcfce7; color: #166534; }
+.badge-green  { background: #dcfce7; color: #166534; }
 .badge-yellow { background: #fef9c3; color: #854d0e; }
-.badge-red { background: #fee2e2; color: #991b1b; }
-.badge-blue { background: #dbeafe; color: #1e40af; }
+.badge-red    { background: #fee2e2; color: #991b1b; }
+.badge-blue   { background: #dbeafe; color: #1e40af; }
 .badge-purple { background: #ede9fe; color: #5b21b6; }
-.badge-gray { background: #f1f5f9; color: #475569; }
+.badge-gray   { background: #f1f5f9; color: #475569; }
 
+/* ── Tables ──────────────────────────────────────────── */
 table { width: 100%; border-collapse: collapse; }
 thead tr { background: #f8fafc; }
 th { padding: 0.75rem 1rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid var(--border); }
 td { padding: 0.875rem 1rem; font-size: 0.875rem; border-bottom: 1px solid var(--border); }
 tbody tr:hover { background: #f8fafc; }
 
-/* ── Mobile layout ───────────────────────────────────── */
+/* ── Mobile chrome classes (hidden on desktop) ───────── */
+.eta-mobile-topbar   { display: none; }
+.eta-mobile-bottomnav { display: none; }
+
+/* ── Page wrapper used by all layouts ────────────────── */
+.eta-page {
+  padding: 2rem;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+/* ── Stat grid helpers ───────────────────────────────── */
+.stat-grid-4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 1rem; }
+.stat-grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; }
+.stat-grid-2 { display: grid; grid-template-columns: repeat(2,1fr); gap: 1rem; }
+
+/* ════════════════════════════════════════════════════════
+   MOBILE  ≤ 768px
+   ════════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
+
   /* Show mobile chrome, hide desktop sidebar */
-  .eta-sidebar-desktop { display: none !important; }
-  .eta-mobile-topbar   { display: flex !important; }
+  .eta-sidebar-desktop  { display: none !important; }
+  .eta-mobile-topbar    { display: flex !important; }
   .eta-mobile-bottomnav { display: flex !important; }
 
-  /* Push content below top bar and above bottom nav */
+  /* Push main content below top bar and above bottom nav */
   main {
-    padding-top: 56px !important;
-    padding-bottom: 68px !important;
+    padding-top: var(--topbar-h) !important;
+    padding-bottom: calc(var(--bottomnav-h) + 8px) !important;
   }
 
-  /* Tighten page padding */
-  main > div[style*="padding: 2rem"] {
-    padding: 1rem !important;
-  }
-  main > div[style*="padding:2rem"] {
-    padding: 1rem !important;
-  }
+  /* Page padding on mobile */
+  .eta-page { padding: 1rem !important; }
 
-  /* Stack 2-col grids to 1 col */
-  div[style*="gridTemplateColumns: \"1fr 1fr\""],
-  div[style*="gridTemplateColumns: '1fr 1fr'"],
-  div[style*="grid-template-columns: 1fr 1fr"] {
+  /* Catch inline-style padding="2rem" patterns */
+  main > div { padding-left: 1rem; padding-right: 1rem; }
+
+  /* ── Grids collapse on mobile ─────────────────── */
+  .stat-grid-4,
+  .stat-grid-3 { grid-template-columns: repeat(2,1fr) !important; }
+  .stat-grid-2 { grid-template-columns: 1fr !important; }
+
+  /* Inline-style grids */
+  [style*="gridTemplateColumns: \"1fr 1fr\""],
+  [style*="gridTemplateColumns:'1fr 1fr'"],
+  [style*="grid-template-columns: 1fr 1fr"],
+  [style*="1fr 340px"],
+  [style*="1fr 320px"] {
     grid-template-columns: 1fr !important;
   }
+  [style*="repeat(4"] { grid-template-columns: repeat(2,1fr) !important; }
+  [style*="repeat(3"] { grid-template-columns: repeat(2,1fr) !important; }
 
-  /* Make 3-col stat grids 2-col on mobile */
-  div[style*="repeat(3, 1fr)"] {
-    grid-template-columns: repeat(2, 1fr) !important;
+  /* ── Tables → horizontal scroll ──────────────── */
+  .table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 0.75rem;
+    border: 1px solid var(--border);
   }
-
-  /* Make tables horizontally scrollable */
   table {
     display: block;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     white-space: nowrap;
+    min-width: 500px;
   }
 
-  /* Full-width buttons */
-  .btn { font-size: 0.8rem; }
+  /* ── Cards ───────────────────────────────────── */
+  .card { padding: 1rem !important; border-radius: 0.75rem !important; }
 
-  /* Cards less padding */
-  .card { padding: 1rem !important; }
+  /* ── Buttons ─────────────────────────────────── */
+  .btn { min-height: 44px; font-size: 0.875rem; }
+  .btn-full-mobile { width: 100%; }
 
-  /* Headings */
-  h1[style] { font-size: 1.25rem !important; }
+  /* ── Typography ──────────────────────────────── */
+  h1 { font-size: 1.375rem !important; }
+  h2 { font-size: 1.125rem !important; }
+  h3 { font-size: 1rem !important; }
+
+  /* ── Inputs stay 16px to prevent iOS zoom ────── */
+  .input, input, select, textarea {
+    font-size: 16px !important;
+    min-height: 44px;
+  }
+
+  /* ── Stat cards compact on mobile ────────────── */
+  .stat-card { padding: 0.875rem !important; }
+  .stat-card .stat-value { font-size: 1.5rem !important; }
+  .stat-card .stat-label { font-size: 0.7rem !important; }
 }
 
+/* ════════════════════════════════════════════════════════
+   MOBILE  ≤ 480px   (small phones)
+   ════════════════════════════════════════════════════════ */
 @media (max-width: 480px) {
-  div[style*="repeat(3, 1fr)"],
-  div[style*="repeat(4, 1fr)"] {
-    grid-template-columns: repeat(2, 1fr) !important;
-  }
+  .eta-page { padding: 0.75rem !important; }
+
+  .stat-grid-4,
+  .stat-grid-3,
+  .stat-grid-2 { grid-template-columns: repeat(2,1fr) !important; gap: 0.625rem !important; }
+
+  [style*="gap: \"1.5rem\""],
+  [style*="gap: 1.5rem"] { gap: 0.75rem !important; }
 }
