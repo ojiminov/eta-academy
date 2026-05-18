@@ -208,44 +208,57 @@ export default function Sidebar({ role, userName }: SidebarProps) {
         <UserFooter />
       </aside>
 
-      {/* ══ MOBILE TOP BAR ═════════════════════════════════ */}
+      {/* ══ MOBILE TOP BAR ═════════════════════════════════
+           Height = 56px chrome + env(safe-area-inset-top) so
+           the bar extends behind the Dynamic Island / notch.
+           The inner row is pushed down by the safe-area amount.
+      ════════════════════════════════════════════════════ */}
       <div className="eta-mobile-topbar" style={{
         display: "none",
         position: "fixed", top: 0, left: 0, right: 0, zIndex: 100,
         background: "#16132a",
-        height: "var(--topbar-h)",
-        alignItems: "center", justifyContent: "space-between",
-        padding: "0 1rem",
-        boxShadow: "0 2px 12px rgba(0,0,0,0.35)",
+        /* Total height covers notch + 56px usable bar */
+        height: "calc(var(--topbar-h) + env(safe-area-inset-top, 0px))",
+        /* Flex column so we can push the row below the notch */
+        flexDirection: "column",
+        justifyContent: "flex-end",
+        boxShadow: "0 2px 16px rgba(0,0,0,0.4)",
         borderBottom: "1px solid rgba(255,255,255,0.07)",
       }}>
-        {/* Hamburger */}
-        <button onClick={() => setOpen(true)} style={{
-          background: "rgba(255,255,255,0.07)", border: "none", cursor: "pointer",
-          borderRadius: "0.5rem", width: "40px", height: "40px",
-          display: "flex", flexDirection: "column", alignItems: "center",
-          justifyContent: "center", gap: "5px", padding: "0",
-        }}>
-          {[0,1,2].map(i => (
-            <span key={i} style={{ display: "block", width: "20px", height: "2px", background: "white", borderRadius: "2px" }} />
-          ))}
-        </button>
-
-        {/* Centre logo */}
-        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", position: "absolute", left: "50%", transform: "translateX(-50%)" }}>
-          <span style={{ fontSize: "1.15rem" }}>🎓</span>
-          <span style={{ color: "white", fontWeight: "800", fontSize: "1rem", letterSpacing: "-0.02em" }}>ETA Academy</span>
-        </div>
-
-        {/* Avatar */}
+        {/* Actual 56px content row — sits below notch */}
         <div style={{
-          width: "36px", height: "36px", borderRadius: "50%",
-          background: roleGradient[role],
-          display: "flex", alignItems: "center", justifyContent: "center",
-          color: "white", fontWeight: "700", fontSize: "0.85rem",
-          boxShadow: "0 2px 6px rgba(0,0,0,0.3)",
+          height: "var(--topbar-h)",
+          display: "flex", alignItems: "center", justifyContent: "space-between",
+          padding: "0 1rem", position: "relative",
         }}>
-          {userName.charAt(0).toUpperCase()}
+          {/* Hamburger */}
+          <button onClick={() => setOpen(true)} style={{
+            background: "rgba(255,255,255,0.08)", border: "none", cursor: "pointer",
+            borderRadius: "0.625rem", width: "40px", height: "40px",
+            display: "flex", flexDirection: "column", alignItems: "center",
+            justifyContent: "center", gap: "5px", padding: "0",
+          }}>
+            {[0,1,2].map(i => (
+              <span key={i} style={{ display: "block", width: "20px", height: "2px", background: "white", borderRadius: "2px" }} />
+            ))}
+          </button>
+
+          {/* Centre logo */}
+          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", position: "absolute", left: "50%", transform: "translateX(-50%)" }}>
+            <span style={{ fontSize: "1.15rem" }}>🎓</span>
+            <span style={{ color: "white", fontWeight: "800", fontSize: "1rem", letterSpacing: "-0.02em" }}>ETA Academy</span>
+          </div>
+
+          {/* Avatar */}
+          <div style={{
+            width: "36px", height: "36px", borderRadius: "50%",
+            background: roleGradient[role],
+            display: "flex", alignItems: "center", justifyContent: "center",
+            color: "white", fontWeight: "700", fontSize: "0.85rem",
+            boxShadow: "0 2px 6px rgba(0,0,0,0.3)",
+          }}>
+            {userName.charAt(0).toUpperCase()}
+          </div>
         </div>
       </div>
 
@@ -265,6 +278,8 @@ export default function Sidebar({ role, userName }: SidebarProps) {
         transform: open ? "translateX(0)" : "translateX(-100%)",
         transition: "transform 0.28s cubic-bezier(0.4,0,0.2,1)",
         boxShadow: open ? "4px 0 24px rgba(0,0,0,0.4)" : "none",
+        /* Drawer header accounts for notch too */
+        paddingTop: "env(safe-area-inset-top, 0px)",
       }}>
         <div style={{ padding: "1rem 1.25rem", borderBottom: "1px solid rgba(255,255,255,0.08)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <Logo />

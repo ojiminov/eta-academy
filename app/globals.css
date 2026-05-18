@@ -129,10 +129,10 @@ tbody tr:hover { background: #f8fafc; }
   .eta-mobile-topbar    { display: flex !important; }
   .eta-mobile-bottomnav { display: flex !important; }
 
-  /* Push main content below top bar and above bottom nav */
+  /* Push main content below top bar (including notch) and above bottom nav */
   main {
-    padding-top: var(--topbar-h) !important;
-    padding-bottom: calc(var(--bottomnav-h) + 8px) !important;
+    padding-top: calc(var(--topbar-h) + env(safe-area-inset-top, 0px)) !important;
+    padding-bottom: calc(var(--bottomnav-h) + env(safe-area-inset-bottom, 8px)) !important;
   }
 
   /* Page padding on mobile */
