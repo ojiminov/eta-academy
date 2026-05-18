@@ -77,7 +77,7 @@ export default function LoginPage() {
         <div style={{ textAlign: "center", marginBottom: "2rem" }}>
           <div style={{
             width: "56px", height: "56px",
-            background: "linear-gradient(135deg, #6366f1, #8b5cf6)",
+            background: "var(--primary-gradient, linear-gradient(135deg,#6366f1,#8b5cf6))",
             borderRadius: "14px", display: "flex", alignItems: "center", justifyContent: "center",
             margin: "0 auto 1rem", fontSize: "1.5rem",
           }}>🎓</div>
@@ -103,7 +103,7 @@ export default function LoginPage() {
           )}
           <button type="submit" disabled={loading} style={{
             width: "100%", padding: "0.75rem",
-            background: loading ? "#a5b4fc" : "linear-gradient(135deg, #6366f1, #8b5cf6)",
+            background: loading ? "#a5b4fc" : "var(--primary-gradient, linear-gradient(135deg,#6366f1,#8b5cf6))",
             color: "white", border: "none", borderRadius: "0.5rem",
             fontSize: "1rem", fontWeight: "600", cursor: loading ? "not-allowed" : "pointer",
           }}>

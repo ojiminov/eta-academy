@@ -30,7 +30,7 @@ const TYPE_ICONS: Record<string, string> = {
 
 const TYPE_COLORS: Record<string, string> = {
   ATTENDANCE: "#10b981",
-  HOMEWORK: "#6366f1",
+  HOMEWORK: "var(--primary, #6366f1)",
   EXAM: "#f59e0b",
   STREAK: "#f97316",
   BONUS: "#ec4899",
@@ -76,7 +76,7 @@ export default function CoinsPage() {
     <div style={{ padding: "2rem", maxWidth: "800px", margin: "0 auto" }}>
       {/* Profile card */}
       <div style={{
-        background: "linear-gradient(135deg, #6366f1, #8b5cf6)",
+        background: "var(--primary-gradient, linear-gradient(135deg,#6366f1,#8b5cf6))",
         borderRadius: "1.25rem", padding: "2rem", marginBottom: "1.5rem",
         color: "white", position: "relative", overflow: "hidden",
       }}>
@@ -142,10 +142,10 @@ export default function CoinsPage() {
               <div key={type} style={{ marginBottom: "0.75rem" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.25rem", fontSize: "0.8rem" }}>
                   <span>{TYPE_ICONS[type] || "🎯"} {type.charAt(0) + type.slice(1).toLowerCase()}</span>
-                  <span style={{ fontWeight: "700", color: TYPE_COLORS[type] || "#6366f1" }}>{total}</span>
+                  <span style={{ fontWeight: "700", color: TYPE_COLORS[type] || "var(--primary, #6366f1)" }}>{total}</span>
                 </div>
                 <div style={{ height: 6, background: "#f1f5f9", borderRadius: 3, overflow: "hidden" }}>
-                  <div style={{ height: "100%", width: `${(total / max) * 100}%`, background: TYPE_COLORS[type] || "#6366f1", borderRadius: 3 }} />
+                  <div style={{ height: "100%", width: `${(total / max) * 100}%`, background: TYPE_COLORS[type] || "var(--primary, #6366f1)", borderRadius: 3 }} />
                 </div>
               </div>
             );
@@ -191,7 +191,7 @@ export default function CoinsPage() {
         ) : (
           transactions.map((t, i) => (
             <div key={t.id} style={{ display: "flex", alignItems: "center", gap: "0.875rem", padding: "0.75rem 1.25rem", borderBottom: i < transactions.length - 1 ? "1px solid #f8fafc" : "none" }}>
-              <div style={{ width: 36, height: 36, borderRadius: "50%", background: `${TYPE_COLORS[t.type] || "#6366f1"}18`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.1rem", flexShrink: 0 }}>
+              <div style={{ width: 36, height: 36, borderRadius: "50%", background: `${TYPE_COLORS[t.type] || "var(--primary, #6366f1)"}18`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.1rem", flexShrink: 0 }}>
                 {TYPE_ICONS[t.type] || "🎯"}
               </div>
               <div style={{ flex: 1 }}>

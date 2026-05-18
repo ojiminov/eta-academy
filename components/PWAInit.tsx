@@ -139,7 +139,7 @@ export default function PWAInit() {
         <button onClick={dismiss} style={{ padding: "0.375rem 0.75rem", background: "#f1f5f9", color: "#64748b", border: "none", borderRadius: "0.5rem", fontWeight: "600", fontSize: "0.8rem", cursor: "pointer" }}>
           Later
         </button>
-        <button onClick={handleInstall} style={{ padding: "0.375rem 0.875rem", background: "linear-gradient(135deg,#6366f1,#8b5cf6)", color: "white", border: "none", borderRadius: "0.5rem", fontWeight: "700", fontSize: "0.8rem", cursor: "pointer" }}>
+        <button onClick={handleInstall} style={{ padding: "0.375rem 0.875rem", background: "var(--primary-gradient, linear-gradient(135deg,#6366f1,#8b5cf6))", color: "white", border: "none", borderRadius: "0.5rem", fontWeight: "700", fontSize: "0.8rem", cursor: "pointer" }}>
           Install
         </button>
       </div>

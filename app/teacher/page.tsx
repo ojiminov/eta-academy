@@ -35,7 +35,7 @@ export default async function TeacherDashboard() {
       {/* Stats */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "1rem", marginBottom: "2rem" }}>
         {[
-          { label: t("dashboard.activeGroups"), value: groups.length, icon: "📚", color: "#6366f1", bg: "#ede9fe" },
+          { label: t("dashboard.activeGroups"), value: groups.length, icon: "📚", color: "var(--primary, #6366f1)", bg: "#ede9fe" },
           { label: t("dashboard.totalStudents"), value: totalStudents, icon: "👨‍🎓", color: "#10b981", bg: "#d1fae5" },
           { label: t("dashboard.upcomingSessions"), value: upcomingSessions.length, icon: "📅", color: "#f59e0b", bg: "#fef3c7" },
         ].map((s) => (
@@ -81,7 +81,7 @@ export default async function TeacherDashboard() {
                 <div style={{ fontSize: "0.75rem", color: "#64748b" }}>
                   {new Date(s.scheduledAt).toLocaleDateString()} · {new Date(s.scheduledAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
                 </div>
-                {s.topic && <div style={{ fontSize: "0.75rem", color: "#6366f1" }}>{s.topic}</div>}
+                {s.topic && <div style={{ fontSize: "0.75rem", color: "var(--primary, #6366f1)" }}>{s.topic}</div>}
               </div>
             ))
           )}

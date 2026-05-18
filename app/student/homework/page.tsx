@@ -70,7 +70,7 @@ export default function StudentHomeworkPage() {
       {/* Stats */}
       <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:"1rem", marginBottom:"1.5rem" }}>
         {[
-          { label:"Total",     value:homework.length,  icon:"📋", color:"#6366f1", bg:"#ede9fe" },
+          { label:"Total",     value:homework.length,  icon:"📋", color:"var(--primary, #6366f1)", bg:"#ede9fe" },
           { label:"Pending",   value:pending.length,   icon:"⏳", color:"#f59e0b", bg:"#fef3c7" },
           { label:"Submitted", value:submitted.length, icon:"📤", color:"#3b82f6", bg:"#dbeafe" },
           { label:"Average",   value: graded.length > 0 ? `${avgScore.toFixed(1)}%` : "—", icon:"⭐", color:"#10b981", bg:"#d1fae5" },
@@ -107,7 +107,7 @@ export default function StudentHomeworkPage() {
                   <div>
                     <div style={{ display:"flex", alignItems:"center", gap:"0.75rem", flexWrap:"wrap" }}>
                       <span style={{ fontWeight:"700", fontSize:"1rem", color:"#1e293b" }}>{h.homework.title}</span>
-                      <span style={{ padding:"0.125rem 0.5rem", borderRadius:"9999px", background:"#ede9fe", color:"#6366f1", fontSize:"0.7rem", fontWeight:"600" }}>{h.homework.group.name}</span>
+                      <span style={{ padding:"0.125rem 0.5rem", borderRadius:"9999px", background:"#ede9fe", color:"var(--primary, #6366f1)", fontSize:"0.7rem", fontWeight:"600" }}>{h.homework.group.name}</span>
                     </div>
                     <div style={{ fontSize:"0.8rem", color:"#64748b", marginTop:"0.25rem" }}>
                       👩‍🏫 {h.homework.teacher.user.firstName} {h.homework.teacher.user.lastName}
@@ -165,7 +165,7 @@ export default function StudentHomeworkPage() {
                     {!isExpanded ? (
                       <button
                         onClick={() => setExpandedId(h.id)}
-                        style={{ padding:"0.5rem 1.25rem", background:"linear-gradient(135deg,#6366f1,#8b5cf6)", color:"white", border:"none", borderRadius:"0.5rem", fontWeight:"600", fontSize:"0.82rem", cursor:"pointer" }}
+                        style={{ padding:"0.5rem 1.25rem", background:"var(--primary-gradient, linear-gradient(135deg,#6366f1,#8b5cf6))", color:"white", border:"none", borderRadius:"0.5rem", fontWeight:"600", fontSize:"0.82rem", cursor:"pointer" }}
                       >
                         📤 Submit Homework
                       </button>

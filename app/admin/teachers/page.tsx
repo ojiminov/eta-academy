@@ -39,7 +39,7 @@ export default async function TeachersPage() {
             {teachers.length === 0 ? (
               <tr>
                 <td colSpan={5} style={{ textAlign: "center", padding: "3rem", color: "#64748b" }}>
-                  {t("teachers.noTeachers")}. <Link href="/admin/teachers/new" style={{ color: "#6366f1" }}>{t("teachers.newTeacher")}</Link>
+                  {t("teachers.noTeachers")}. <Link href="/admin/teachers/new" style={{ color: "var(--primary, #6366f1)" }}>{t("teachers.newTeacher")}</Link>
                 </td>
               </tr>
             ) : (

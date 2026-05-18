@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 type Expense = { id: string; title: string; amount: number; currency: string; category: string; description?: string; date: string; };
 
 const CATS: Record<string, { label: string; icon: string; color: string }> = {
-  RENT:      { label:"Rent",       icon:"🏢", color:"#6366f1" },
+  RENT:      { label:"Rent",       icon:"🏢", color:"var(--primary, #6366f1)" },
   SALARIES:  { label:"Salaries",   icon:"👥", color:"#10b981" },
   UTILITIES: { label:"Utilities",  icon:"⚡", color:"#f59e0b" },
   MARKETING: { label:"Marketing",  icon:"📣", color:"#ec4899" },
@@ -52,7 +52,7 @@ export default function ExpensesPage() {
           <h1 style={{ fontSize:"1.75rem", fontWeight:"700", color:"#1e293b", margin:"0 0 0.25rem" }}>💸 Expenses</h1>
           <p style={{ color:"#64748b", margin:0 }}>Track all operational costs</p>
         </div>
-        <button onClick={() => { setForm({ title:"", amount:"", category:"OTHER", description:"", date: new Date().toISOString().slice(0,10) }); setShowForm(true); }} style={{ background:"linear-gradient(135deg,#6366f1,#8b5cf6)", color:"white", border:"none", borderRadius:"0.5rem", padding:"0.625rem 1.25rem", fontWeight:"600", cursor:"pointer", fontSize:"0.875rem" }}>
+        <button onClick={() => { setForm({ title:"", amount:"", category:"OTHER", description:"", date: new Date().toISOString().slice(0,10) }); setShowForm(true); }} style={{ background:"var(--primary-gradient, linear-gradient(135deg,#6366f1,#8b5cf6))", color:"white", border:"none", borderRadius:"0.5rem", padding:"0.625rem 1.25rem", fontWeight:"600", cursor:"pointer", fontSize:"0.875rem" }}>
           + Add Expense
         </button>
       </div>
@@ -63,7 +63,7 @@ export default function ExpensesPage() {
           {[
             { label:"Total Expenses", value:`${expenses.reduce((s,e)=>s+e.amount,0).toLocaleString()} UZS`, icon:"💸", color:"#ef4444", bg:"#fee2e2" },
             { label:"This Month", value:`${expenses.filter(e=>{ const d=new Date(e.date); const n=new Date(); return d.getUTCMonth()===n.getUTCMonth()&&d.getUTCFullYear()===n.getUTCFullYear(); }).reduce((s,e)=>s+e.amount,0).toLocaleString()} UZS`, icon:"📅", color:"#f59e0b", bg:"#fef3c7" },
-            { label:"Records", value:expenses.length, icon:"📋", color:"#6366f1", bg:"#ede9fe" },
+            { label:"Records", value:expenses.length, icon:"📋", color:"var(--primary, #6366f1)", bg:"#ede9fe" },
           ].map(s => (
             <div key={s.label} className="card" style={{ display:"flex", alignItems:"center", gap:"0.75rem" }}>
               <div style={{ width:44,height:44,borderRadius:10,background:s.bg,display:"flex",alignItems:"center",justifyContent:"center",fontSize:"1.3rem",flexShrink:0 }}>{s.icon}</div>
@@ -95,7 +95,7 @@ export default function ExpensesPage() {
       {/* Category filter tabs */}
       <div style={{ display:"flex", gap:"0.5rem", marginBottom:"1rem", flexWrap:"wrap" }}>
         {["ALL",...Object.keys(CATS)].map(k => (
-          <button key={k} onClick={() => setCatFilter(k)} style={{ padding:"0.375rem 0.875rem", borderRadius:"9999px", border:"2px solid", borderColor: catFilter===k ? "#6366f1":"#e2e8f0", background: catFilter===k?"#6366f1":"white", color: catFilter===k?"white":"#475569", fontSize:"0.8rem", fontWeight:"600", cursor:"pointer" }}>
+          <button key={k} onClick={() => setCatFilter(k)} style={{ padding:"0.375rem 0.875rem", borderRadius:"9999px", border:"2px solid", borderColor: catFilter===k ? "var(--primary, #6366f1)":"#e2e8f0", background: catFilter===k?"var(--primary, #6366f1)":"white", color: catFilter===k?"white":"#475569", fontSize:"0.8rem", fontWeight:"600", cursor:"pointer" }}>
             {k==="ALL" ? "All" : `${CATS[k].icon} ${CATS[k].label}`}
           </button>
         ))}
@@ -177,7 +177,7 @@ export default function ExpensesPage() {
                 <textarea className="input" rows={2} value={form.description} onChange={e=>setForm({...form,description:e.target.value})} style={{ resize:"vertical" }} />
               </div>
               <div style={{ display:"flex", gap:"0.75rem" }}>
-                <button type="submit" disabled={saving} style={{ flex:1, padding:"0.75rem", background:"linear-gradient(135deg,#6366f1,#8b5cf6)", color:"white", border:"none", borderRadius:"0.5rem", fontWeight:"600", cursor: saving?"not-allowed":"pointer" }}>
+                <button type="submit" disabled={saving} style={{ flex:1, padding:"0.75rem", background:"var(--primary-gradient, linear-gradient(135deg,#6366f1,#8b5cf6))", color:"white", border:"none", borderRadius:"0.5rem", fontWeight:"600", cursor: saving?"not-allowed":"pointer" }}>
                   {saving ? "Saving..." : "Save Expense"}
                 </button>
                 <button type="button" onClick={() => setShowForm(false)} style={{ flex:1, padding:"0.75rem", background:"#f1f5f9", color:"#475569", border:"none", borderRadius:"0.5rem", fontWeight:"600", cursor:"pointer" }}>Cancel</button>

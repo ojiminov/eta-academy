@@ -30,7 +30,7 @@ export default function StudentExamsPage() {
 
       <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:"1rem", marginBottom:"1.5rem" }}>
         {[
-          { label:"Total Exams", value:results.length, icon:"📋", color:"#6366f1", bg:"#ede9fe" },
+          { label:"Total Exams", value:results.length, icon:"📋", color:"var(--primary, #6366f1)", bg:"#ede9fe" },
           { label:"Graded", value:graded.length, icon:"✅", color:"#10b981", bg:"#d1fae5" },
           { label:"Average Score", value: graded.length > 0 ? `${avg.toFixed(1)}%` : "—", icon:"⭐", color:"#f59e0b", bg:"#fef3c7" },
         ].map(s => (
@@ -61,7 +61,7 @@ export default function StudentExamsPage() {
                   <div>
                     <div style={{ display:"flex", alignItems:"center", gap:"0.75rem", marginBottom:"0.25rem" }}>
                       <span style={{ fontWeight:"700", color:"#1e293b" }}>{r.exam.title}</span>
-                      <span style={{ padding:"0.125rem 0.5rem", borderRadius:"9999px", background:"#ede9fe", color:"#6366f1", fontSize:"0.7rem", fontWeight:"600" }}>{r.exam.group.name}</span>
+                      <span style={{ padding:"0.125rem 0.5rem", borderRadius:"9999px", background:"#ede9fe", color:"var(--primary, #6366f1)", fontSize:"0.7rem", fontWeight:"600" }}>{r.exam.group.name}</span>
                     </div>
                     <div style={{ fontSize:"0.8rem", color:"#64748b" }}>📅 {new Date(r.exam.scheduledAt).toLocaleString()}</div>
                   </div>

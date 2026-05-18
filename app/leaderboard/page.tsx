@@ -75,8 +75,8 @@ export default function LeaderboardPage() {
             ].map(t => (
               <button key={t.key} onClick={() => setTab(t.key as "alltime" | "monthly")} style={{
                 padding: "0.5rem 1.25rem", borderRadius: "9999px", border: "2px solid",
-                borderColor: tab === t.key ? "#6366f1" : "#e2e8f0",
-                background: tab === t.key ? "#6366f1" : "white",
+                borderColor: tab === t.key ? "var(--primary, #6366f1)" : "#e2e8f0",
+                background: tab === t.key ? "var(--primary, #6366f1)" : "white",
                 color: tab === t.key ? "white" : "#475569",
                 fontWeight: "600", fontSize: "0.875rem", cursor: "pointer",
               }}>
@@ -132,7 +132,7 @@ export default function LeaderboardPage() {
 
                     {/* Coins */}
                     <div style={{ textAlign: "right" }}>
-                      <div style={{ fontSize: "1.2rem", fontWeight: "800", color: "#6366f1" }}>
+                      <div style={{ fontSize: "1.2rem", fontWeight: "800", color: "var(--primary, #6366f1)" }}>
                         {coins.toLocaleString()}
                       </div>
                       <div style={{ fontSize: "0.7rem", color: "#94a3b8" }}>

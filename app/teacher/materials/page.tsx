@@ -97,7 +97,7 @@ export default function TeacherMaterialsPage() {
         </div>
         <button
           onClick={() => setShowForm(!showForm)}
-          style={{ padding:"0.625rem 1.25rem", background:"linear-gradient(135deg,#6366f1,#8b5cf6)", color:"white", border:"none", borderRadius:"0.625rem", fontWeight:"600", cursor:"pointer", fontSize:"0.875rem" }}
+          style={{ padding:"0.625rem 1.25rem", background:"var(--primary-gradient, linear-gradient(135deg,#6366f1,#8b5cf6))", color:"white", border:"none", borderRadius:"0.625rem", fontWeight:"600", cursor:"pointer", fontSize:"0.875rem" }}
         >
           {showForm ? "✕ Cancel" : "+ Upload Material"}
         </button>
@@ -166,7 +166,7 @@ export default function TeacherMaterialsPage() {
                   {m.fileSize && <span style={{ fontSize:"0.75rem", color:"#94a3b8" }}>{formatBytes(m.fileSize)}</span>}
                   <span style={{ fontSize:"0.75rem", color:"#94a3b8" }}>📅 {new Date(m.createdAt).toLocaleDateString()}</span>
                   {m.group ? (
-                    <span style={{ fontSize:"0.72rem", padding:"0.1rem 0.5rem", borderRadius:"9999px", background:"#ede9fe", color:"#6366f1", fontWeight:"600" }}>{m.group.name}</span>
+                    <span style={{ fontSize:"0.72rem", padding:"0.1rem 0.5rem", borderRadius:"9999px", background:"#ede9fe", color:"var(--primary, #6366f1)", fontWeight:"600" }}>{m.group.name}</span>
                   ) : (
                     <span style={{ fontSize:"0.72rem", padding:"0.1rem 0.5rem", borderRadius:"9999px", background:"#f0fdf4", color:"#16a34a", fontWeight:"600" }}>All students</span>
                   )}

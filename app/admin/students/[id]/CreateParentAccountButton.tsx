@@ -43,7 +43,7 @@ export default function CreateParentAccountButton({ studentId, studentName }: { 
         </div>
         <button
           onClick={() => setOpen(true)}
-          style={{ padding:"0.5rem 1rem", background:"#6366f1", color:"white", border:"none", borderRadius:"0.5rem", cursor:"pointer", fontSize:"0.875rem", fontWeight:"600", whiteSpace:"nowrap" }}
+          style={{ padding:"0.5rem 1rem", background:"var(--primary, #6366f1)", color:"white", border:"none", borderRadius:"0.5rem", cursor:"pointer", fontSize:"0.875rem", fontWeight:"600", whiteSpace:"nowrap" }}
         >
           + Create Account
         </button>
@@ -101,7 +101,7 @@ export default function CreateParentAccountButton({ studentId, studentName }: { 
                   Cancel
                 </button>
                 <button type="submit" disabled={loading}
-                  style={{ flex:2, padding:"0.625rem", background:"#6366f1", color:"white", border:"none", borderRadius:"0.5rem", cursor:"pointer", fontWeight:"600" }}>
+                  style={{ flex:2, padding:"0.625rem", background:"var(--primary, #6366f1)", color:"white", border:"none", borderRadius:"0.5rem", cursor:"pointer", fontWeight:"600" }}>
                   {loading ? "Creating…" : "Create Parent Account"}
                 </button>
               </div>

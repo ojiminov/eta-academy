@@ -98,12 +98,12 @@ export default function StudentMaterialsPage() {
                     {m.fileSize && <span style={{ fontSize:"0.75rem", color:"#94a3b8" }}>{formatBytes(m.fileSize)}</span>}
                     <span style={{ fontSize:"0.75rem", color:"#94a3b8" }}>📅 {new Date(m.createdAt).toLocaleDateString()}</span>
                     {m.group && (
-                      <span style={{ fontSize:"0.72rem", padding:"0.1rem 0.5rem", borderRadius:"9999px", background:"#ede9fe", color:"#6366f1", fontWeight:"600" }}>{m.group.name}</span>
+                      <span style={{ fontSize:"0.72rem", padding:"0.1rem 0.5rem", borderRadius:"9999px", background:"#ede9fe", color:"var(--primary, #6366f1)", fontWeight:"600" }}>{m.group.name}</span>
                     )}
                   </div>
                 </div>
                 <div style={{ flexShrink:0 }}>
-                  <div style={{ padding:"0.375rem 0.875rem", background:"linear-gradient(135deg,#6366f1,#8b5cf6)", color:"white", borderRadius:"0.5rem", fontSize:"0.78rem", fontWeight:"700" }}>
+                  <div style={{ padding:"0.375rem 0.875rem", background:"var(--primary-gradient, linear-gradient(135deg,#6366f1,#8b5cf6))", color:"white", borderRadius:"0.5rem", fontSize:"0.78rem", fontWeight:"700" }}>
                     ⬇️ Download
                   </div>
                 </div>

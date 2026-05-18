@@ -55,7 +55,7 @@ export default function TeacherExamsPage() {
           <h1 style={{ fontSize:"1.75rem", fontWeight:"700", color:"#1e293b", margin:"0 0 0.25rem" }}>🧪 Exams</h1>
           <p style={{ color:"#64748b", margin:0 }}>Schedule exams and enter student results</p>
         </div>
-        <Link href="/teacher/exams/new" style={{ background:"linear-gradient(135deg,#6366f1,#8b5cf6)", color:"white", borderRadius:"0.5rem", padding:"0.625rem 1.25rem", fontWeight:"600", textDecoration:"none", fontSize:"0.875rem" }}>
+        <Link href="/teacher/exams/new" style={{ background:"var(--primary-gradient, linear-gradient(135deg,#6366f1,#8b5cf6))", color:"white", borderRadius:"0.5rem", padding:"0.625rem 1.25rem", fontWeight:"600", textDecoration:"none", fontSize:"0.875rem" }}>
           + Schedule Exam
         </Link>
       </div>
@@ -65,7 +65,7 @@ export default function TeacherExamsPage() {
           <div className="card" style={{ textAlign:"center", padding:"3rem" }}>
             <div style={{ fontSize:"3rem", marginBottom:"0.75rem" }}>🧪</div>
             <div style={{ fontWeight:"600", color:"#1e293b", marginBottom:"0.5rem" }}>No exams scheduled</div>
-            <Link href="/teacher/exams/new" style={{ color:"#6366f1", fontWeight:"600" }}>Schedule your first exam →</Link>
+            <Link href="/teacher/exams/new" style={{ color:"var(--primary, #6366f1)", fontWeight:"600" }}>Schedule your first exam →</Link>
           </div>
         ) : (
         <div style={{ display:"flex", flexDirection:"column", gap:"1rem" }}>
@@ -78,7 +78,7 @@ export default function TeacherExamsPage() {
                 <div style={{ flex:1 }}>
                   <div style={{ display:"flex", alignItems:"center", gap:"0.75rem", marginBottom:"0.25rem" }}>
                     <span style={{ fontWeight:"700", color:"#1e293b" }}>{exam.title}</span>
-                    <span style={{ padding:"0.125rem 0.5rem", borderRadius:"9999px", background:"#ede9fe", color:"#6366f1", fontSize:"0.7rem", fontWeight:"600" }}>{exam.group.name}</span>
+                    <span style={{ padding:"0.125rem 0.5rem", borderRadius:"9999px", background:"#ede9fe", color:"var(--primary, #6366f1)", fontSize:"0.7rem", fontWeight:"600" }}>{exam.group.name}</span>
                     <span style={{ padding:"0.125rem 0.5rem", borderRadius:"9999px", background: isPast?"#d1fae5":"#fef3c7", color:isPast?"#065f46":"#92400e", fontSize:"0.7rem", fontWeight:"600" }}>{isPast?"Past":"Upcoming"}</span>
                   </div>
                   <div style={{ display:"flex", gap:"1.5rem", fontSize:"0.8rem", color:"#64748b" }}>
@@ -90,7 +90,7 @@ export default function TeacherExamsPage() {
                   </div>
                 </div>
                 {isPast && (
-                  <button onClick={() => openResults(exam)} style={{ padding:"0.5rem 1rem", background:"#6366f1", color:"white", border:"none", borderRadius:"0.5rem", cursor:"pointer", fontWeight:"600", fontSize:"0.8rem" }}>
+                  <button onClick={() => openResults(exam)} style={{ padding:"0.5rem 1rem", background:"var(--primary, #6366f1)", color:"white", border:"none", borderRadius:"0.5rem", cursor:"pointer", fontWeight:"600", fontSize:"0.8rem" }}>
                     Results
                   </button>
                 )}
@@ -143,7 +143,7 @@ export default function TeacherExamsPage() {
               ))}
             </div>
             <div style={{ display:"flex", gap:"0.75rem", marginTop:"1.5rem" }}>
-              <button onClick={saveResults} disabled={saving} style={{ flex:1, padding:"0.75rem", background:"linear-gradient(135deg,#6366f1,#8b5cf6)", color:"white", border:"none", borderRadius:"0.5rem", fontWeight:"600", cursor: saving?"not-allowed":"pointer" }}>
+              <button onClick={saveResults} disabled={saving} style={{ flex:1, padding:"0.75rem", background:"var(--primary-gradient, linear-gradient(135deg,#6366f1,#8b5cf6))", color:"white", border:"none", borderRadius:"0.5rem", fontWeight:"600", cursor: saving?"not-allowed":"pointer" }}>
                 {saving ? "Saving..." : "Save Results"}
               </button>
               <button onClick={() => setSelected(null)} style={{ flex:1, padding:"0.75rem", background:"#f1f5f9", color:"#475569", border:"none", borderRadius:"0.5rem", fontWeight:"600", cursor:"pointer" }}>Cancel</button>

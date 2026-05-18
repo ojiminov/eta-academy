@@ -23,7 +23,7 @@ export default async function TeacherDetailPage({ params }: { params: { id: stri
   return (
     <div style={{ padding: "2rem", maxWidth: "900px" }}>
       <div style={{ marginBottom: "1.5rem" }}>
-        <Link href="/admin/teachers" style={{ color: "#6366f1", textDecoration: "none", fontSize: "0.875rem" }}>← Teachers</Link>
+        <Link href="/admin/teachers" style={{ color: "var(--primary, #6366f1)", textDecoration: "none", fontSize: "0.875rem" }}>← Teachers</Link>
       </div>
 
       {/* Profile header */}
@@ -79,7 +79,7 @@ export default async function TeacherDetailPage({ params }: { params: { id: stri
               {teacher.groups.map((g) => (
                 <tr key={g.id}>
                   <td>
-                    <Link href={`/admin/groups/${g.id}`} style={{ color: "#6366f1", textDecoration: "none", fontWeight: "500" }}>
+                    <Link href={`/admin/groups/${g.id}`} style={{ color: "var(--primary, #6366f1)", textDecoration: "none", fontWeight: "500" }}>
                       {g.name}
                     </Link>
                   </td>

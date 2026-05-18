@@ -55,7 +55,7 @@ export default async function StudentGradesPage() {
           <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1rem", marginBottom: "1.5rem" }}>
             {[
               { label: t("grades.excellent"), value: excellent, color: "#10b981", bg: "#d1fae5" },
-              { label: t("grades.good"), value: good, color: "#6366f1", bg: "#ede9fe" },
+              { label: t("grades.good"), value: good, color: "var(--primary, #6366f1)", bg: "#ede9fe" },
               { label: t("grades.pass"), value: pass, color: "#f59e0b", bg: "#fef3c7" },
               { label: t("grades.needsWork"), value: fail, color: "#ef4444", bg: "#fee2e2" },
             ].map((s) => (

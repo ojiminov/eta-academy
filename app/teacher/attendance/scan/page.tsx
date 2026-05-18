@@ -215,7 +215,7 @@ export default function QRScanPage() {
 
             <div style={{ display: "flex", gap: "0.75rem", marginBottom: "0.75rem" }}>
               <button onClick={scanning ? stopCamera : startCamera}
-                style={{ flex: 1, padding: "0.625rem 1rem", background: scanning ? "#ef4444" : "#6366f1", color: "white", border: "none", borderRadius: "0.5rem", cursor: "pointer", fontWeight: "600" }}>
+                style={{ flex: 1, padding: "0.625rem 1rem", background: scanning ? "#ef4444" : "var(--primary, #6366f1)", color: "white", border: "none", borderRadius: "0.5rem", cursor: "pointer", fontWeight: "600" }}>
                 {scanning ? "⏹ Stop Camera" : "📷 Start Camera"}
               </button>
             </div>

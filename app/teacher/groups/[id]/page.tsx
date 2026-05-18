@@ -55,7 +55,7 @@ export default async function TeacherGroupDetailPage({ params }: { params: { id:
       {/* Stats */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "1rem", marginBottom: "1.5rem" }}>
         {[
-          { label: t("nav.students"), value: group.groupStudents.length, icon: "👥", color: "#6366f1" },
+          { label: t("nav.students"), value: group.groupStudents.length, icon: "👥", color: "var(--primary, #6366f1)" },
           { label: t("sessions.sessionsDone"), value: completedSessions, icon: "✅", color: "#10b981" },
           { label: t("sessions.sessionsTotal"), value: totalSessions, icon: "📅", color: "#f59e0b" },
         ].map((s) => (

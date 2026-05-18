@@ -6,7 +6,7 @@ import Link from "next/link";
 type HomeworkGrade = { studentId: string; student: { user: { firstName: string; lastName: string } }; status: string; score?: number; feedback?: string; };
 type Homework = { id: string; title: string; description?: string; dueDate: string; returnDate?: string; maxScore: number; group: { name: string }; teacher: { user: { firstName: string; lastName: string } }; grades: HomeworkGrade[]; };
 
-const STATUS_COLORS: Record<string, string> = { ASSIGNED:"#f59e0b", SUBMITTED:"#6366f1", GRADED:"#10b981", LATE:"#ef4444" };
+const STATUS_COLORS: Record<string, string> = { ASSIGNED:"#f59e0b", SUBMITTED:"var(--primary, #6366f1)", GRADED:"#10b981", LATE:"#ef4444" };
 
 export default function TeacherHomeworkPage() {
   const [homeworks, setHomeworks] = useState<Homework[]>([]);
@@ -49,7 +49,7 @@ export default function TeacherHomeworkPage() {
           <h1 style={{ fontSize:"1.75rem", fontWeight:"700", color:"#1e293b", margin:"0 0 0.25rem" }}>📋 Homework</h1>
           <p style={{ color:"#64748b", margin:0 }}>Assign and grade homework for your groups</p>
         </div>
-        <Link href="/teacher/homework/new" style={{ background:"linear-gradient(135deg,#6366f1,#8b5cf6)", color:"white", borderRadius:"0.5rem", padding:"0.625rem 1.25rem", fontWeight:"600", textDecoration:"none", fontSize:"0.875rem" }}>
+        <Link href="/teacher/homework/new" style={{ background:"var(--primary-gradient, linear-gradient(135deg,#6366f1,#8b5cf6))", color:"white", borderRadius:"0.5rem", padding:"0.625rem 1.25rem", fontWeight:"600", textDecoration:"none", fontSize:"0.875rem" }}>
           + Assign Homework
         </Link>
       </div>
@@ -60,7 +60,7 @@ export default function TeacherHomeworkPage() {
         <div className="card" style={{ textAlign:"center", padding:"3rem" }}>
           <div style={{ fontSize:"3rem", marginBottom:"0.75rem" }}>📋</div>
           <div style={{ fontWeight:"600", color:"#1e293b", marginBottom:"0.5rem" }}>No homework assigned yet</div>
-          <Link href="/teacher/homework/new" style={{ color:"#6366f1", fontWeight:"600" }}>Assign your first homework →</Link>
+          <Link href="/teacher/homework/new" style={{ color:"var(--primary, #6366f1)", fontWeight:"600" }}>Assign your first homework →</Link>
         </div>
       ) : (
         <div style={{ display:"flex", flexDirection:"column", gap:"1rem" }}>
@@ -74,7 +74,7 @@ export default function TeacherHomeworkPage() {
                 <div style={{ flex:1 }}>
                   <div style={{ display:"flex", alignItems:"center", gap:"0.75rem", marginBottom:"0.25rem" }}>
                     <span style={{ fontWeight:"700", fontSize:"1rem", color:"#1e293b" }}>{hw.title}</span>
-                    <span style={{ padding:"0.125rem 0.5rem", borderRadius:"9999px", background:"#ede9fe", color:"#6366f1", fontSize:"0.7rem", fontWeight:"600" }}>{hw.group.name}</span>
+                    <span style={{ padding:"0.125rem 0.5rem", borderRadius:"9999px", background:"#ede9fe", color:"var(--primary, #6366f1)", fontSize:"0.7rem", fontWeight:"600" }}>{hw.group.name}</span>
                     {overdue && <span style={{ padding:"0.125rem 0.5rem", borderRadius:"9999px", background:"#fee2e2", color:"#dc2626", fontSize:"0.7rem", fontWeight:"600" }}>OVERDUE</span>}
                   </div>
                   <div style={{ display:"flex", gap:"1.5rem", fontSize:"0.8rem", color:"#64748b" }}>
@@ -85,7 +85,7 @@ export default function TeacherHomeworkPage() {
                     {graded > 0 && <span>⭐ Avg: {avgScore.toFixed(1)}</span>}
                   </div>
                 </div>
-                <button onClick={() => openGrading(hw)} style={{ padding:"0.5rem 1rem", background:"#6366f1", color:"white", border:"none", borderRadius:"0.5rem", cursor:"pointer", fontWeight:"600", fontSize:"0.8rem" }}>
+                <button onClick={() => openGrading(hw)} style={{ padding:"0.5rem 1rem", background:"var(--primary, #6366f1)", color:"white", border:"none", borderRadius:"0.5rem", cursor:"pointer", fontWeight:"600", fontSize:"0.8rem" }}>
                   Grade
                 </button>
               </div>
@@ -118,7 +118,7 @@ export default function TeacherHomeworkPage() {
               ))}
             </div>
             <div style={{ display:"flex", gap:"0.75rem", marginTop:"1.5rem" }}>
-              <button onClick={saveGrades} disabled={saving} style={{ flex:1, padding:"0.75rem", background:"linear-gradient(135deg,#6366f1,#8b5cf6)", color:"white", border:"none", borderRadius:"0.5rem", fontWeight:"600", cursor: saving?"not-allowed":"pointer" }}>
+              <button onClick={saveGrades} disabled={saving} style={{ flex:1, padding:"0.75rem", background:"var(--primary-gradient, linear-gradient(135deg,#6366f1,#8b5cf6))", color:"white", border:"none", borderRadius:"0.5rem", fontWeight:"600", cursor: saving?"not-allowed":"pointer" }}>
                 {saving ? "Saving..." : "Save Grades"}
               </button>
               <button onClick={() => setSelected(null)} style={{ flex:1, padding:"0.75rem", background:"#f1f5f9", color:"#475569", border:"none", borderRadius:"0.5rem", fontWeight:"600", cursor:"pointer" }}>Cancel</button>

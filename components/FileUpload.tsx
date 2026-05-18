@@ -112,15 +112,15 @@ export default function FileUpload({
           {uploading ? (
             <div>
               <div style={{ fontSize: "1.5rem", marginBottom: "0.5rem" }}>⏳</div>
-              <div style={{ fontSize: "0.85rem", color: "#6366f1", fontWeight: "600" }}>Uploading…</div>
+              <div style={{ fontSize: "0.85rem", color: "var(--primary, #6366f1)", fontWeight: "600" }}>Uploading…</div>
               <div style={{ marginTop: "0.5rem", height: 6, background: "#e0e7ff", borderRadius: 3, overflow: "hidden" }}>
-                <div style={{ height: "100%", width: `${progress}%`, background: "#6366f1", transition: "width 0.3s" }} />
+                <div style={{ height: "100%", width: `${progress}%`, background: "var(--primary, #6366f1)", transition: "width 0.3s" }} />
               </div>
             </div>
           ) : (
             <div>
               <div style={{ fontSize: "2rem", marginBottom: "0.375rem" }}>📎</div>
-              <div style={{ fontSize: "0.875rem", fontWeight: "600", color: "#6366f1" }}>{label}</div>
+              <div style={{ fontSize: "0.875rem", fontWeight: "600", color: "var(--primary, #6366f1)" }}>{label}</div>
               <div style={{ fontSize: "0.75rem", color: "#94a3b8", marginTop: "0.25rem" }}>
                 Drag & drop or click to browse
               </div>

@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 type Group = { id: string; name: string; schedule: string; room?: string; level: string; monthlyFee: number; teacher: { user: { firstName: string; lastName: string } }; };
 
 const LEVEL_COLORS: Record<string, string> = {
-  BEGINNER:"#6366f1", ELEMENTARY:"#8b5cf6", PRE_INTERMEDIATE:"#06b6d4",
+  BEGINNER:"var(--primary, #6366f1)", ELEMENTARY:"#8b5cf6", PRE_INTERMEDIATE:"#06b6d4",
   INTERMEDIATE:"#10b981", UPPER_INTERMEDIATE:"#f59e0b", ADVANCED:"#ef4444"
 };
 
@@ -38,7 +38,7 @@ export default function TimetablePage() {
           {/* Cards view */}
           <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(320px,1fr))", gap:"1.25rem", marginBottom:"2rem" }}>
             {groups.map(g => {
-              const color = LEVEL_COLORS[g.level] || "#6366f1";
+              const color = LEVEL_COLORS[g.level] || "var(--primary, #6366f1)";
               return (
                 <div key={g.id} className="card" style={{ borderTop:`4px solid ${color}` }}>
                   <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:"0.75rem" }}>

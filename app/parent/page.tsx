@@ -67,7 +67,7 @@ export default function ParentDashboard() {
       <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:"1rem", marginBottom:"1.5rem" }}>
         {[
           { label:"Attendance Rate", value:`${attRate}%`, icon:"✅", color: attRate>=80?"#10b981":"#ef4444", bg: attRate>=80?"#d1fae5":"#fee2e2" },
-          { label:"Average Grade", value: avgGrade!==null?`${avgGrade}%`:"—", icon:"📝", color:"#6366f1", bg:"#ede9fe" },
+          { label:"Average Grade", value: avgGrade!==null?`${avgGrade}%`:"—", icon:"📝", color:"var(--primary, #6366f1)", bg:"#ede9fe" },
           { label:"Pending Homework", value:pendingHomework, icon:"📋", color:pendingHomework>0?"#f59e0b":"#10b981", bg:pendingHomework>0?"#fef3c7":"#d1fae5" },
           { label:"Unpaid Bills", value:pendingPayments, icon:"💳", color:pendingPayments>0?"#ef4444":"#10b981", bg:pendingPayments>0?"#fee2e2":"#d1fae5" },
         ].map(s => (
@@ -101,7 +101,7 @@ export default function ParentDashboard() {
         <div className="card">
           <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:"0.75rem" }}>
             <h3 style={{ fontSize:"0.9rem", fontWeight:"600", color:"#1e293b", margin:0 }}>📋 Recent Homework</h3>
-            <Link href="/parent/grades" style={{ fontSize:"0.75rem", color:"#6366f1", fontWeight:"600", textDecoration:"none" }}>View all →</Link>
+            <Link href="/parent/grades" style={{ fontSize:"0.75rem", color:"var(--primary, #6366f1)", fontWeight:"600", textDecoration:"none" }}>View all →</Link>
           </div>
           {child.homeworkGrades.slice(0,4).map((h,i) => (
             <div key={i} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"0.5rem 0", borderBottom:"1px solid #f1f5f9" }}>
@@ -121,7 +121,7 @@ export default function ParentDashboard() {
       <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:"1rem" }}>
         {[
           { href:"/parent/attendance", icon:"✅", label:"Attendance", color:"#10b981" },
-          { href:"/parent/grades",     icon:"📝", label:"Grades & Tests", color:"#6366f1" },
+          { href:"/parent/grades",     icon:"📝", label:"Grades & Tests", color:"var(--primary, #6366f1)" },
           { href:"/parent/payments",   icon:"💳", label:"Payments", color:"#f59e0b" },
           { href:"/parent/schedule",   icon:"🗓️", label:"Schedule", color:"#ec4899" },
         ].map(item => (

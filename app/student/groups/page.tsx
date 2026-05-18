@@ -109,7 +109,7 @@ export default async function StudentGroupsPage() {
                           <span style={{ color: "#64748b" }}>
                             {new Date(s.scheduledAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
                           </span>
-                          {s.topic && <span style={{ color: "#6366f1" }}> · {s.topic}</span>}
+                          {s.topic && <span style={{ color: "var(--primary, #6366f1)" }}> · {s.topic}</span>}
                         </div>
                       ))}
                     </div>

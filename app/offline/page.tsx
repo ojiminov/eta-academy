@@ -6,7 +6,7 @@ export default function OfflinePage() {
       <p style={{ color: "#64748b", maxWidth: "340px", marginBottom: "2rem" }}>
         No internet connection. Please check your network and try again.
       </p>
-      <button onClick={() => window.location.reload()} style={{ padding: "0.75rem 2rem", background: "linear-gradient(135deg,#6366f1,#8b5cf6)", color: "white", border: "none", borderRadius: "0.75rem", fontWeight: "700", fontSize: "1rem", cursor: "pointer" }}>
+      <button onClick={() => window.location.reload()} style={{ padding: "0.75rem 2rem", background: "var(--primary-gradient, linear-gradient(135deg,#6366f1,#8b5cf6))", color: "white", border: "none", borderRadius: "0.75rem", fontWeight: "700", fontSize: "1rem", cursor: "pointer" }}>
         Try Again
       </button>
     </div>

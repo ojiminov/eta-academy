@@ -27,7 +27,7 @@ export default async function GroupDetailPage({ params }: { params: { id: string
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "1.5rem" }}>
         <div>
           <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "0.25rem" }}>
-            <Link href="/admin/groups" style={{ color: "#6366f1", textDecoration: "none", fontSize: "0.875rem" }}>← Groups</Link>
+            <Link href="/admin/groups" style={{ color: "var(--primary, #6366f1)", textDecoration: "none", fontSize: "0.875rem" }}>← Groups</Link>
           </div>
           <h1 style={{ fontSize: "1.5rem", fontWeight: "700", color: "#1e293b", margin: "0 0 0.25rem" }}>{group.name}</h1>
           <p style={{ color: "#64748b", margin: 0 }}>{group.level.replace(/_/g, " ")} · {group.schedule}</p>
@@ -67,7 +67,7 @@ export default async function GroupDetailPage({ params }: { params: { id: string
               <div style={{
                 height: "100%",
                 width: `${fillPercent}%`,
-                background: fillPercent >= 100 ? "#ef4444" : fillPercent >= 80 ? "#f59e0b" : "#6366f1",
+                background: fillPercent >= 100 ? "#ef4444" : fillPercent >= 80 ? "#f59e0b" : "var(--primary, #6366f1)",
                 borderRadius: "4px",
                 transition: "width 0.3s",
               }} />

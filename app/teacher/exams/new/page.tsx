@@ -22,7 +22,7 @@ export default function NewExamPage() {
 
   return (
     <div style={{ padding:"2rem", maxWidth:"580px" }}>
-      <button onClick={() => router.back()} style={{ background:"none", border:"none", color:"#6366f1", cursor:"pointer", fontWeight:"600", fontSize:"0.875rem", padding:0, marginBottom:"1rem" }}>← Back</button>
+      <button onClick={() => router.back()} style={{ background:"none", border:"none", color:"var(--primary, #6366f1)", cursor:"pointer", fontWeight:"600", fontSize:"0.875rem", padding:0, marginBottom:"1rem" }}>← Back</button>
       <h1 style={{ fontSize:"1.75rem", fontWeight:"700", color:"#1e293b", margin:"0 0 1.5rem" }}>🧪 Schedule Exam</h1>
       <div className="card">
         <form onSubmit={handleSubmit}>
@@ -57,7 +57,7 @@ export default function NewExamPage() {
           </div>
           {error && <div style={{ background:"#fee2e2", color:"#991b1b", padding:"0.75rem", borderRadius:"0.5rem", marginBottom:"1rem", fontSize:"0.875rem" }}>{error}</div>}
           <div style={{ display:"flex", gap:"0.75rem" }}>
-            <button type="submit" disabled={saving} style={{ flex:1, padding:"0.75rem", background:"linear-gradient(135deg,#6366f1,#8b5cf6)", color:"white", border:"none", borderRadius:"0.5rem", fontWeight:"600", cursor:saving?"not-allowed":"pointer" }}>
+            <button type="submit" disabled={saving} style={{ flex:1, padding:"0.75rem", background:"var(--primary-gradient, linear-gradient(135deg,#6366f1,#8b5cf6))", color:"white", border:"none", borderRadius:"0.5rem", fontWeight:"600", cursor:saving?"not-allowed":"pointer" }}>
               {saving ? "Scheduling..." : "Schedule Exam"}
             </button>
             <button type="button" onClick={()=>router.back()} style={{ flex:1, padding:"0.75rem", background:"#f1f5f9", color:"#475569", border:"none", borderRadius:"0.5rem", fontWeight:"600", cursor:"pointer" }}>Cancel</button>

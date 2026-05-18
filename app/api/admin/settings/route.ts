@@ -13,7 +13,7 @@ export async function GET() {
       name: "ETA Academy",
       logoUrl: null,
       logoName: null,
-      primaryColor: "#6366f1",
+      primaryColor: "var(--primary, #6366f1)",
     });
   } catch (err) {
     console.error(err);
@@ -37,7 +37,7 @@ export async function PATCH(req: NextRequest) {
         name:         name         ?? "ETA Academy",
         logoUrl:      logoUrl      ?? null,
         logoName:     logoName     ?? null,
-        primaryColor: primaryColor ?? "#6366f1",
+        primaryColor: primaryColor ?? "var(--primary, #6366f1)",
       },
       update: {
         ...(name         !== undefined && { name }),

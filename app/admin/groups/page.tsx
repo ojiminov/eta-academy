@@ -79,7 +79,7 @@ export default async function GroupsPage() {
                   <div style={{
                     height: "100%",
                     width: `${Math.min((g.groupStudents.length / g.maxStudents) * 100, 100)}%`,
-                    background: g.groupStudents.length >= g.maxStudents ? "#ef4444" : "#6366f1",
+                    background: g.groupStudents.length >= g.maxStudents ? "#ef4444" : "var(--primary, #6366f1)",
                     borderRadius: "3px",
                     transition: "width 0.3s",
                   }} />

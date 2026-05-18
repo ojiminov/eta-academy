@@ -80,7 +80,7 @@ export default function AdminAttendancePage() {
             style={{ width: "100%", padding: "0.5rem 0.75rem", border: "1px solid #e2e8f0", borderRadius: "0.5rem", fontSize: "0.875rem" }} />
         </div>
         <button onClick={loadData} disabled={loading}
-          style={{ padding: "0.5rem 1.25rem", background: "#6366f1", color: "white", border: "none", borderRadius: "0.5rem", cursor: "pointer", fontWeight: "600", height: "38px" }}>
+          style={{ padding: "0.5rem 1.25rem", background: "var(--primary, #6366f1)", color: "white", border: "none", borderRadius: "0.5rem", cursor: "pointer", fontWeight: "600", height: "38px" }}>
           {loading ? "Loading…" : "🔍 Apply Filter"}
         </button>
         <button onClick={() => { setGroupId(""); setFrom(""); setTo(""); setTimeout(loadData, 0); }}

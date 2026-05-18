@@ -45,7 +45,7 @@ export default async function StudentsPage() {
             {students.length === 0 ? (
               <tr>
                 <td colSpan={6} style={{ textAlign: "center", padding: "3rem", color: "#64748b" }}>
-                  {t("students.noStudents")}. <Link href="/admin/students/new" style={{ color: "#6366f1" }}>{t("students.newStudent")}</Link>
+                  {t("students.noStudents")}. <Link href="/admin/students/new" style={{ color: "var(--primary, #6366f1)" }}>{t("students.newStudent")}</Link>
                 </td>
               </tr>
             ) : (

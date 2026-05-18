@@ -11,7 +11,7 @@ type Settings = {
 };
 
 const PRESETS = [
-  { label: "Indigo",    color: "#6366f1" },
+  { label: "Indigo",    color: "var(--primary, #6366f1)" },
   { label: "Blue",      color: "#3b82f6" },
   { label: "Emerald",   color: "#10b981" },
   { label: "Rose",      color: "#f43f5e" },
@@ -28,7 +28,7 @@ export default function AdminSettingsPage() {
     name: "ETA Academy",
     logoUrl: null,
     logoName: null,
-    primaryColor: "#6366f1",
+    primaryColor: "var(--primary, #6366f1)",
   });
   const [newLogo, setNewLogo] = useState<{ url: string; name: string } | null>(null);
   const [saving, setSaving] = useState(false);
@@ -38,7 +38,7 @@ export default function AdminSettingsPage() {
   useEffect(() => {
     fetch("/api/admin/settings")
       .then(r => r.json())
-      .then(d => setSettings({ name: d.name ?? "ETA Academy", logoUrl: d.logoUrl, logoName: d.logoName, primaryColor: d.primaryColor ?? "#6366f1" }))
+      .then(d => setSettings({ name: d.name ?? "ETA Academy", logoUrl: d.logoUrl, logoName: d.logoName, primaryColor: d.primaryColor ?? "var(--primary, #6366f1)" }))
       .finally(() => setLoading(false));
   }, []);
 

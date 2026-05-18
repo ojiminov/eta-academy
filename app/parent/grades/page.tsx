@@ -37,7 +37,7 @@ export default function ParentGradesPage() {
       </div>
 
       {avgGrade !== null && (
-        <div style={{ background:"linear-gradient(135deg,#6366f1,#8b5cf6)", borderRadius:"1rem", padding:"1.25rem 1.5rem", marginBottom:"1.5rem", color:"white", display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+        <div style={{ background:"var(--primary-gradient, linear-gradient(135deg,#6366f1,#8b5cf6))", borderRadius:"1rem", padding:"1.25rem 1.5rem", marginBottom:"1.5rem", color:"white", display:"flex", justifyContent:"space-between", alignItems:"center" }}>
           <div>
             <div style={{ fontSize:"0.8rem", opacity:0.85 }}>Overall Average</div>
             <div style={{ fontSize:"2.5rem", fontWeight:"800" }}>{avgGrade}%</div>
@@ -49,7 +49,7 @@ export default function ParentGradesPage() {
       {/* Tabs */}
       <div style={{ display:"flex", gap:"0.5rem", marginBottom:"1.5rem" }}>
         {(["grades","homework","exams"] as const).map(t => (
-          <button key={t} onClick={()=>setTab(t)} style={{ padding:"0.5rem 1.25rem", borderRadius:"9999px", border:"2px solid", borderColor:tab===t?"#6366f1":"#e2e8f0", background:tab===t?"#6366f1":"white", color:tab===t?"white":"#475569", fontSize:"0.875rem", fontWeight:"600", cursor:"pointer" }}>
+          <button key={t} onClick={()=>setTab(t)} style={{ padding:"0.5rem 1.25rem", borderRadius:"9999px", border:"2px solid", borderColor:tab===t?"var(--primary, #6366f1)":"#e2e8f0", background:tab===t?"var(--primary, #6366f1)":"white", color:tab===t?"white":"#475569", fontSize:"0.875rem", fontWeight:"600", cursor:"pointer" }}>
             {t==="grades"?"📝 Grades":t==="homework"?"📋 Homework":"🧪 Exams"}
           </button>
         ))}
@@ -98,7 +98,7 @@ export default function ParentGradesPage() {
                   <div style={{ fontSize:"0.75rem", color:"#64748b" }}>{h.homework.group.name} • Due: {new Date(h.homework.dueDate).toLocaleDateString()}</div>
                 </div>
                 <div style={{ textAlign:"right" }}>
-                  {h.score!=null && <div style={{ fontSize:"1.25rem", fontWeight:"700", color:"#6366f1" }}>{h.score} pts</div>}
+                  {h.score!=null && <div style={{ fontSize:"1.25rem", fontWeight:"700", color:"var(--primary, #6366f1)" }}>{h.score} pts</div>}
                   <span style={{ padding:"0.25rem 0.5rem", borderRadius:"9999px", fontSize:"0.7rem", fontWeight:"700", background:h.status==="GRADED"?"#d1fae5":h.status==="LATE"?"#fee2e2":"#fef3c7", color:h.status==="GRADED"?"#065f46":h.status==="LATE"?"#dc2626":"#92400e" }}>
                     {h.status}
                   </span>

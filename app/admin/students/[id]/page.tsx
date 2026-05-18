@@ -38,12 +38,12 @@ export default async function StudentDetailPage({ params }: { params: Promise<{ 
   return (
     <div style={{ padding:"2rem", maxWidth:"960px" }}>
       <div style={{ marginBottom:"1.5rem" }}>
-        <Link href="/admin/students" style={{ color:"#6366f1", textDecoration:"none", fontSize:"0.875rem" }}>← Students</Link>
+        <Link href="/admin/students" style={{ color:"var(--primary, #6366f1)", textDecoration:"none", fontSize:"0.875rem" }}>← Students</Link>
       </div>
 
       {/* Profile header */}
       <div className="card" style={{ display:"flex", alignItems:"center", gap:"1.5rem", marginBottom:"1.5rem" }}>
-        <div style={{ width:72,height:72,borderRadius:"50%",background:"linear-gradient(135deg,#6366f1,#4f46e5)",display:"flex",alignItems:"center",justifyContent:"center",color:"white",fontWeight:"700",fontSize:"1.5rem",flexShrink:0 }}>
+        <div style={{ width:72,height:72,borderRadius:"50%",background:"var(--primary-gradient, linear-gradient(135deg,#6366f1,#4f46e5))",display:"flex",alignItems:"center",justifyContent:"center",color:"white",fontWeight:"700",fontSize:"1.5rem",flexShrink:0 }}>
           {student.user.firstName.charAt(0)}{student.user.lastName.charAt(0)}
         </div>
         <div style={{ flex:1 }}>
@@ -68,7 +68,7 @@ export default async function StudentDetailPage({ params }: { params: Promise<{ 
       <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:"1rem", marginBottom:"1.5rem" }}>
         {[
           { label:"Balance", value:`${student.balance.toLocaleString()} UZS`, color:student.balance>=0?"#10b981":"#ef4444", bg:student.balance>=0?"#d1fae5":"#fee2e2", icon:"💰" },
-          { label:"Total Paid", value:`${totalPaid.toLocaleString()} UZS`, color:"#6366f1", bg:"#ede9fe", icon:"💳" },
+          { label:"Total Paid", value:`${totalPaid.toLocaleString()} UZS`, color:"var(--primary, #6366f1)", bg:"#ede9fe", icon:"💳" },
           { label:"Pending HW", value:student.homeworkGrades.length, color:student.homeworkGrades.length>0?"#f59e0b":"#10b981", bg:student.homeworkGrades.length>0?"#fef3c7":"#d1fae5", icon:"📋" },
         ].map(s=>(
           <div key={s.label} className="card" style={{ display:"flex", alignItems:"center", gap:"0.75rem" }}>

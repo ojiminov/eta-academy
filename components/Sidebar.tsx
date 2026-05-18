@@ -9,9 +9,9 @@ import { useBranding } from "./BrandingProvider";
 
 interface SidebarProps { role: "ADMIN" | "TEACHER" | "STUDENT" | "PARENT"; userName: string; }
 
-const roleColor   = { ADMIN: "#6366f1", TEACHER: "#10b981", STUDENT: "#f59e0b", PARENT: "#ec4899" };
+const roleColor   = { ADMIN: "var(--primary, #6366f1)", TEACHER: "#10b981", STUDENT: "#f59e0b", PARENT: "#ec4899" };
 const roleGradient = {
-  ADMIN:   "linear-gradient(135deg,#6366f1,#8b5cf6)",
+  ADMIN:   "var(--primary-gradient, linear-gradient(135deg,#6366f1,#8b5cf6))",
   TEACHER: "linear-gradient(135deg,#059669,#10b981)",
   STUDENT: "linear-gradient(135deg,#d97706,#f59e0b)",
   PARENT:  "linear-gradient(135deg,#db2777,#ec4899)",
@@ -126,12 +126,12 @@ export default function Sidebar({ role, userName }: SidebarProps) {
         <img
           src={branding.logoUrl}
           alt={branding.name}
-          style={{ width: "40px", height: "40px", objectFit: "contain", borderRadius: "10px", background: "rgba(255,255,255,0.1)", padding: "4px", flexShrink: 0 }}
+          style={{ width: "40px", height: "40px", objectFit: "contain", borderRadius: "10px", flexShrink: 0, mixBlendMode: "screen" }}
         />
       ) : (
         <div style={{
           width: "40px", height: "40px",
-          background: "var(--primary-gradient, linear-gradient(135deg,#6366f1,#8b5cf6))",
+          background: "var(--primary-gradient, var(--primary-gradient, linear-gradient(135deg,#6366f1,#8b5cf6)))",
           borderRadius: "10px", display: "flex", alignItems: "center",
           justifyContent: "center", fontSize: "1.25rem", flexShrink: 0,
         }}>🎓</div>
@@ -259,7 +259,7 @@ export default function Sidebar({ role, userName }: SidebarProps) {
           {/* Centre logo */}
           <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", position: "absolute", left: "50%", transform: "translateX(-50%)" }}>
             {branding.logoUrl ? (
-              <img src={branding.logoUrl} alt={branding.name} style={{ width:28, height:28, objectFit:"contain", borderRadius:"6px" }} />
+              <img src={branding.logoUrl} alt={branding.name} style={{ width:28, height:28, objectFit:"contain", borderRadius:"6px", mixBlendMode:"screen" }} />
             ) : (
               <span style={{ fontSize: "1.15rem" }}>🎓</span>
             )}

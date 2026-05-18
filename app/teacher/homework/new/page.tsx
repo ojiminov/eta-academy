@@ -35,7 +35,7 @@ export default function NewHomeworkPage() {
   return (
     <div style={{ padding:"2rem", maxWidth:"640px" }}>
       <div style={{ marginBottom:"1.5rem" }}>
-        <button onClick={() => router.back()} style={{ background:"none", border:"none", color:"#6366f1", cursor:"pointer", fontWeight:"600", fontSize:"0.875rem", padding:0 }}>← Back</button>
+        <button onClick={() => router.back()} style={{ background:"none", border:"none", color:"var(--primary, #6366f1)", cursor:"pointer", fontWeight:"600", fontSize:"0.875rem", padding:0 }}>← Back</button>
         <h1 style={{ fontSize:"1.75rem", fontWeight:"700", color:"#1e293b", margin:"0.5rem 0 0.25rem" }}>📋 Assign Homework</h1>
       </div>
       <div className="card">
@@ -83,7 +83,7 @@ export default function NewHomeworkPage() {
 
           {error && <div style={{ background:"#fee2e2", color:"#991b1b", padding:"0.75rem", borderRadius:"0.5rem", marginBottom:"1rem", fontSize:"0.875rem" }}>{error}</div>}
           <div style={{ display:"flex", gap:"0.75rem" }}>
-            <button type="submit" disabled={saving} style={{ flex:1, padding:"0.75rem", background:"linear-gradient(135deg,#6366f1,#8b5cf6)", color:"white", border:"none", borderRadius:"0.5rem", fontWeight:"600", cursor: saving?"not-allowed":"pointer" }}>
+            <button type="submit" disabled={saving} style={{ flex:1, padding:"0.75rem", background:"var(--primary-gradient, linear-gradient(135deg,#6366f1,#8b5cf6))", color:"white", border:"none", borderRadius:"0.5rem", fontWeight:"600", cursor: saving?"not-allowed":"pointer" }}>
               {saving ? "Assigning..." : "Assign Homework"}
             </button>
             <button type="button" onClick={() => router.back()} style={{ flex:1, padding:"0.75rem", background:"#f1f5f9", color:"#475569", border:"none", borderRadius:"0.5rem", fontWeight:"600", cursor:"pointer" }}>Cancel</button>

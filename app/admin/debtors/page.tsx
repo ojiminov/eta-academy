@@ -64,7 +64,7 @@ export default function DebtorsPage() {
               {debtors.map((d, i) => (
                 <tr key={d.id} style={{ borderBottom: "1px solid #f1f5f9", background: i%2===0?"white":"#fafafa" }}>
                   <td style={{ padding: "0.875rem 1rem" }}>
-                    <Link href={`/admin/students/${d.id}`} style={{ fontWeight: "600", color: "#6366f1", textDecoration: "none" }}>{d.name}</Link>
+                    <Link href={`/admin/students/${d.id}`} style={{ fontWeight: "600", color: "var(--primary, #6366f1)", textDecoration: "none" }}>{d.name}</Link>
                     <div style={{ fontSize: "0.75rem", color: "#64748b" }}>{d.email}</div>
                   </td>
                   <td style={{ padding: "0.875rem 1rem", color: "#475569", fontSize: "0.875rem" }}>{d.phone || "—"}</td>
@@ -85,7 +85,7 @@ export default function DebtorsPage() {
                     {d.pendingCount > 0 && <span className="badge badge-yellow" style={{ marginLeft: 4 }}>{d.pendingCount} pending</span>}
                   </td>
                   <td style={{ padding: "0.875rem 1rem" }}>
-                    <Link href={`/admin/payments?student=${d.id}`} style={{ fontSize: "0.75rem", padding: "0.25rem 0.75rem", background: "#6366f1", color: "white", borderRadius: "0.375rem", textDecoration: "none", fontWeight: "600" }}>
+                    <Link href={`/admin/payments?student=${d.id}`} style={{ fontSize: "0.75rem", padding: "0.25rem 0.75rem", background: "var(--primary, #6366f1)", color: "white", borderRadius: "0.375rem", textDecoration: "none", fontWeight: "600" }}>
                       Collect
                     </Link>
                   </td>

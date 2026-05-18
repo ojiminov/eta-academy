@@ -88,7 +88,7 @@ export default function LeadsPage() {
           <h1 style={{ fontSize:"1.75rem", fontWeight:"700", color:"#1e293b", margin:"0 0 0.25rem" }}>🎯 Leads & Sales Funnel</h1>
           <p style={{ color:"#64748b", margin:0 }}>{leads.length} total leads in pipeline</p>
         </div>
-        <button onClick={() => setShowForm(true)} style={{ background:"linear-gradient(135deg,#6366f1,#8b5cf6)", color:"white", border:"none", borderRadius:"0.5rem", padding:"0.625rem 1.25rem", fontWeight:"600", cursor:"pointer", fontSize:"0.875rem" }}>
+        <button onClick={() => setShowForm(true)} style={{ background:"var(--primary-gradient, linear-gradient(135deg,#6366f1,#8b5cf6))", color:"white", border:"none", borderRadius:"0.5rem", padding:"0.625rem 1.25rem", fontWeight:"600", cursor:"pointer", fontSize:"0.875rem" }}>
           + New Lead
         </button>
       </div>
@@ -184,7 +184,7 @@ export default function LeadsPage() {
             </p>
             <div style={{ display:"flex", gap:"0.75rem" }}>
               <button onClick={() => setConfirmStatus(null)} style={{ flex:1, padding:"0.625rem", background:"#f1f5f9", color:"#475569", border:"none", borderRadius:"0.5rem", cursor:"pointer", fontWeight:"600" }}>Cancel</button>
-              <button onClick={() => updateStatus(confirmStatus.id, confirmStatus.newStatus)} style={{ flex:1, padding:"0.625rem", background:"#6366f1", color:"white", border:"none", borderRadius:"0.5rem", cursor:"pointer", fontWeight:"600" }}>Confirm</button>
+              <button onClick={() => updateStatus(confirmStatus.id, confirmStatus.newStatus)} style={{ flex:1, padding:"0.625rem", background:"var(--primary, #6366f1)", color:"white", border:"none", borderRadius:"0.5rem", cursor:"pointer", fontWeight:"600" }}>Confirm</button>
             </div>
           </div>
         </div>
@@ -249,7 +249,7 @@ export default function LeadsPage() {
                 <div style={{ padding:"0.75rem", background:"#fee2e2", borderRadius:"0.5rem", color:"#dc2626", fontSize:"0.875rem", marginBottom:"0.75rem" }}>{formError}</div>
               )}
               <div style={{ display:"flex", gap:"0.75rem" }}>
-                <button type="submit" disabled={saving} style={{ flex:1, padding:"0.75rem", background:"linear-gradient(135deg,#6366f1,#8b5cf6)", color:"white", border:"none", borderRadius:"0.5rem", fontWeight:"600", cursor: saving ? "not-allowed":"pointer" }}>
+                <button type="submit" disabled={saving} style={{ flex:1, padding:"0.75rem", background:"var(--primary-gradient, linear-gradient(135deg,#6366f1,#8b5cf6))", color:"white", border:"none", borderRadius:"0.5rem", fontWeight:"600", cursor: saving ? "not-allowed":"pointer" }}>
                   {saving ? "Saving..." : "Add Lead"}
                 </button>
                 <button type="button" onClick={() => setShowForm(false)} style={{ flex:1, padding:"0.75rem", background:"#f1f5f9", color:"#475569", border:"none", borderRadius:"0.5rem", fontWeight:"600", cursor:"pointer" }}>

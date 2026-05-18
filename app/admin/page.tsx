@@ -33,7 +33,7 @@ export default async function AdminDashboard() {
   const t = await getTranslations();
 
   const statCards = [
-    { label: t("dashboard.totalStudents"), value: stats.students, icon: "👨‍🎓", color: "#6366f1", bg: "#ede9fe" },
+    { label: t("dashboard.totalStudents"), value: stats.students, icon: "👨‍🎓", color: "var(--primary, #6366f1)", bg: "#ede9fe" },
     { label: t("dashboard.totalTeachers"), value: stats.teachers, icon: "👨‍🏫", color: "#10b981", bg: "#d1fae5" },
     { label: t("dashboard.activeGroups"), value: stats.groups, icon: "📚", color: "#f59e0b", bg: "#fef3c7" },
     { label: t("dashboard.totalRevenue"), value: `${stats.totalRevenue.toLocaleString()} UZS`, icon: "💰", color: "#3b82f6", bg: "#dbeafe" },

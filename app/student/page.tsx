@@ -44,7 +44,7 @@ export default async function StudentDashboard() {
 
       {/* Balance banner */}
       {student && (
-        <div style={{ background: student.balance < 0 ? "linear-gradient(135deg,#ef4444,#dc2626)" : student.balance > 0 ? "linear-gradient(135deg,#10b981,#059669)" : "linear-gradient(135deg,#6366f1,#8b5cf6)", borderRadius:"1rem", padding:"1.25rem 1.5rem", marginBottom:"1.5rem", display:"flex", justifyContent:"space-between", alignItems:"center", color:"white" }}>
+        <div style={{ background: student.balance < 0 ? "linear-gradient(135deg,#ef4444,#dc2626)" : student.balance > 0 ? "linear-gradient(135deg,#10b981,#059669)" : "var(--primary-gradient, linear-gradient(135deg,#6366f1,#8b5cf6))", borderRadius:"1rem", padding:"1.25rem 1.5rem", marginBottom:"1.5rem", display:"flex", justifyContent:"space-between", alignItems:"center", color:"white" }}>
           <div>
             <div style={{ fontSize:"0.8rem", opacity:0.85, fontWeight:"500" }}>Account Balance</div>
             <div style={{ fontSize:"2rem", fontWeight:"800" }}>{student.balance.toLocaleString()} UZS</div>
@@ -76,7 +76,7 @@ export default async function StudentDashboard() {
       {/* Stats */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1rem", marginBottom: "2rem" }}>
         {[
-          { label: t("dashboard.myClasses"), value: groups.length, icon: "📚", color: "#6366f1", bg: "#ede9fe" },
+          { label: t("dashboard.myClasses"), value: groups.length, icon: "📚", color: "var(--primary, #6366f1)", bg: "#ede9fe" },
           { label: t("dashboard.avgScore"), value: avgScore !== null ? `${avgScore}%` : "—", icon: "📝", color: "#10b981", bg: "#d1fae5" },
           { label: "Pending Homework", value: pendingHomework, icon: "📋", color: pendingHomework > 0 ? "#f59e0b" : "#64748b", bg: pendingHomework > 0 ? "#fef3c7" : "#f1f5f9" },
           { label: t("dashboard.pendingPayments"), value: pendingPayments, icon: "💳", color: pendingPayments > 0 ? "#ef4444" : "#64748b", bg: pendingPayments > 0 ? "#fee2e2" : "#f1f5f9" },
