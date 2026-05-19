@@ -4,6 +4,13 @@ import { getTranslations } from "next-intl/server";
 
 export const dynamic = "force-dynamic";
 
+const STATUS_STYLE: Record<string, { bg: string; color: string; dot: string }> = {
+  PRESENT:  { bg: "#dcfce7", color: "#16a34a", dot: "#16a34a" },
+  ABSENT:   { bg: "#fee2e2", color: "#dc2626", dot: "#dc2626" },
+  LATE:     { bg: "#fef9c3", color: "#ca8a04", dot: "#ca8a04" },
+  EXCUSED:  { bg: "#f1f5f9", color: "#64748b", dot: "#94a3b8" },
+};
+
 export default async function TeacherAttendancePage() {
   const t = await getTranslations();
   const user = await getCurrentUser();
@@ -25,74 +32,58 @@ export default async function TeacherAttendancePage() {
     ? await prisma.group.findMany({
         where: { teacherId: teacher.id, isActive: true },
         include: {
-          groupStudents: {
-            where: { isActive: true },
-            include: { student: { include: { user: true } } },
-          },
-          classSessions: {
-            where: { isCompleted: true },
-            include: { attendances: true },
-          },
+          groupStudents: { where: { isActive: true }, include: { student: { include: { user: true } } } },
+          classSessions: { where: { isCompleted: true }, include: { attendances: true } },
         },
       })
     : [];
 
-  const statusColor: Record<string, string> = {
-    PRESENT: "badge-green",
-    ABSENT: "badge-red",
-    LATE: "badge-yellow",
-    EXCUSED: "badge-gray",
-  };
-
   return (
-    <div style={{ padding: "2rem" }}>
-      <div style={{ marginBottom: "1.5rem" }}>
-        <h1 style={{ fontSize: "1.5rem", fontWeight: "700", color: "#1e293b", margin: "0 0 0.25rem" }}>{t("attendance.title")}</h1>
-        <p style={{ color: "#64748b", margin: 0 }}>{t("attendance.subtitle")}</p>
+    <div style={{ padding: "2rem", maxWidth: "1100px" }}>
+      <div style={{ marginBottom: "1.75rem" }}>
+        <h1 style={{ fontSize: "1.625rem", fontWeight: "700", color: "#0f172a", margin: "0 0 0.25rem" }}>{t("attendance.title")}</h1>
+        <p style={{ color: "#64748b", margin: 0, fontSize: "0.875rem" }}>{t("attendance.subtitle")}</p>
       </div>
 
       {groups.length === 0 ? (
-        <div className="card" style={{ textAlign: "center", padding: "3rem" }}>
-          <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>✅</div>
-          <h3 style={{ color: "#1e293b" }}>{t("attendance.noGroups")}</h3>
-          <p style={{ color: "#64748b" }}>{t("attendance.noGroupsDesc")}</p>
+        <div style={{ background: "white", border: "1px solid #e2e8f0", borderRadius: "0.875rem", padding: "4rem", textAlign: "center", boxShadow: "0 1px 3px rgba(0,0,0,0.06)" }}>
+          <div style={{ fontSize: "2.5rem", marginBottom: "0.875rem" }}>✅</div>
+          <div style={{ fontWeight: "600", color: "#0f172a", marginBottom: "0.375rem" }}>{t("attendance.noGroups")}</div>
+          <div style={{ color: "#64748b", fontSize: "0.875rem" }}>{t("attendance.noGroupsDesc")}</div>
         </div>
       ) : (
         <>
-          {/* Attendance summary per group */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "1rem", marginBottom: "1.5rem" }}>
+          {/* Group summary cards */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "1rem", marginBottom: "1.75rem" }}>
             {groups.map((g) => {
               const totalAttendances = g.classSessions.flatMap((s) => s.attendances).length;
               const presentCount = g.classSessions.flatMap((s) => s.attendances).filter((a) => a.status === "PRESENT").length;
               const rate = totalAttendances > 0 ? Math.round((presentCount / totalAttendances) * 100) : null;
+              const rateColor = rate === null ? "#94a3b8" : rate >= 80 ? "#10b981" : rate >= 60 ? "#f59e0b" : "#ef4444";
 
               return (
-                <div key={g.id} className="card">
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "0.75rem" }}>
+                <div key={g.id} style={{
+                  background: "white", border: "1px solid #e2e8f0",
+                  borderTop: `3px solid ${rateColor}`,
+                  borderRadius: "0.875rem", padding: "1.25rem 1.5rem",
+                  boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+                }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "0.875rem" }}>
                     <div>
-                      <div style={{ fontWeight: "600", color: "#1e293b" }}>{g.name}</div>
-                      <div style={{ fontSize: "0.8rem", color: "#64748b" }}>{t("common.students_count", { count: g.groupStudents.length })}</div>
+                      <div style={{ fontWeight: "600", color: "#0f172a", fontSize: "0.9375rem" }}>{g.name}</div>
+                      <div style={{ fontSize: "0.75rem", color: "#64748b", marginTop: "0.125rem" }}>{g.groupStudents.length} students · {g.classSessions.length} sessions</div>
                     </div>
                     {rate !== null && (
-                      <div style={{
-                        fontWeight: "700",
-                        fontSize: "1.25rem",
-                        color: rate >= 80 ? "#10b981" : rate >= 60 ? "#f59e0b" : "#ef4444",
-                      }}>
+                      <div style={{ fontWeight: "800", fontSize: "1.5rem", color: rateColor, lineHeight: 1 }}>
                         {rate}%
                       </div>
                     )}
                   </div>
-                  <div style={{ fontSize: "0.8rem", color: "#64748b" }}>
-                    {t("attendance.sessionsCompleted", { n: g.classSessions.length })} · {t("attendance.records", { n: totalAttendances })}
+                  <div style={{ height: "5px", background: "#f1f5f9", borderRadius: "9999px", overflow: "hidden" }}>
+                    <div style={{ height: "100%", width: `${rate ?? 0}%`, background: rateColor, borderRadius: "9999px" }} />
                   </div>
-                  <div style={{ marginTop: "0.75rem", height: "6px", background: "#f1f5f9", borderRadius: "3px", overflow: "hidden" }}>
-                    <div style={{
-                      height: "100%",
-                      width: `${rate ?? 0}%`,
-                      background: (rate ?? 0) >= 80 ? "#10b981" : (rate ?? 0) >= 60 ? "#f59e0b" : "#ef4444",
-                      borderRadius: "3px",
-                    }} />
+                  <div style={{ fontSize: "0.72rem", color: "#94a3b8", marginTop: "0.5rem" }}>
+                    {presentCount} present / {totalAttendances} total records
                   </div>
                 </div>
               );
@@ -101,46 +92,57 @@ export default async function TeacherAttendancePage() {
 
           {/* Recent session attendance */}
           {sessions.length > 0 && (
-            <div className="card" style={{ padding: 0 }}>
-              <div style={{ padding: "1.25rem 1.5rem 0.75rem" }}>
-                <h2 style={{ fontSize: "1rem", fontWeight: "600", color: "#1e293b", margin: 0 }}>
-                  {t("attendance.recentRecords")}
-                </h2>
+            <div style={{ background: "white", border: "1px solid #e2e8f0", borderRadius: "0.875rem", boxShadow: "0 1px 3px rgba(0,0,0,0.06)", overflow: "hidden" }}>
+              <div style={{ padding: "1.25rem 1.5rem", borderBottom: "1px solid #f8fafc" }}>
+                <h2 style={{ fontSize: "0.9375rem", fontWeight: "700", color: "#0f172a", margin: 0 }}>{t("attendance.recentRecords")}</h2>
+                <p style={{ fontSize: "0.75rem", color: "#94a3b8", margin: "0.125rem 0 0" }}>Completed session records</p>
               </div>
-              {sessions.map((session) => (
-                <div key={session.id} style={{ borderTop: "1px solid #f1f5f9", padding: "1rem 1.5rem" }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.75rem" }}>
-                    <div>
-                      <div style={{ fontWeight: "600", fontSize: "0.9rem", color: "#1e293b" }}>
-                        {session.group.name} — {session.topic || t("sessions.title")}
+              {sessions.map((session, i) => {
+                const present = session.attendances.filter((a) => a.status === "PRESENT").length;
+                const total = session.attendances.length;
+                return (
+                  <div key={session.id} style={{ padding: "1rem 1.5rem", borderBottom: i < sessions.length - 1 ? "1px solid #f8fafc" : "none" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.625rem" }}>
+                      <div>
+                        <div style={{ fontWeight: "600", fontSize: "0.875rem", color: "#0f172a" }}>
+                          {session.group.name}{session.topic ? ` — ${session.topic}` : ""}
+                        </div>
+                        <div style={{ fontSize: "0.75rem", color: "#64748b" }}>
+                          {new Date(session.scheduledAt).toLocaleDateString("en-US", { weekday: "long", day: "numeric", month: "long" })}
+                        </div>
                       </div>
-                      <div style={{ fontSize: "0.8rem", color: "#64748b" }}>
-                        {new Date(session.scheduledAt).toLocaleDateString(undefined, {
-                          weekday: "long", day: "numeric", month: "long", year: "numeric"
+                      <span style={{
+                        padding: "0.2rem 0.75rem", borderRadius: "9999px", fontSize: "0.72rem", fontWeight: "600",
+                        background: total > 0 && present / total >= 0.8 ? "#dcfce7" : "#fef9c3",
+                        color: total > 0 && present / total >= 0.8 ? "#16a34a" : "#ca8a04",
+                      }}>
+                        {present}/{total} present
+                      </span>
+                    </div>
+                    {session.attendances.length > 0 && (
+                      <div style={{ display: "flex", flexWrap: "wrap", gap: "0.375rem" }}>
+                        {session.attendances.map((att) => {
+                          const st = STATUS_STYLE[att.status] || STATUS_STYLE.EXCUSED;
+                          return (
+                            <span key={att.id} style={{
+                              display: "inline-flex", alignItems: "center", gap: "0.25rem",
+                              padding: "0.15rem 0.5rem", borderRadius: "9999px",
+                              fontSize: "0.65rem", fontWeight: "600",
+                              background: st.bg, color: st.color,
+                            }}>
+                              <span style={{ width: "4px", height: "4px", borderRadius: "50%", background: st.dot }} />
+                              {t(`attendance.${att.status.toLowerCase()}`)}
+                            </span>
+                          );
                         })}
                       </div>
-                    </div>
-                    <div style={{ fontSize: "0.8rem", color: "#64748b" }}>
-                      {t("sessions.attendanceCount", {
-                        present: session.attendances.filter((a) => a.status === "PRESENT").length,
-                        total: session.attendances.length,
-                      })}
-                    </div>
+                    )}
+                    {session.attendances.length === 0 && (
+                      <p style={{ color: "#94a3b8", fontSize: "0.78rem", margin: 0 }}>{t("attendance.noSessionRecords")}</p>
+                    )}
                   </div>
-                  {session.attendances.length > 0 && (
-                    <div style={{ display: "flex", flexWrap: "wrap", gap: "0.4rem" }}>
-                      {session.attendances.map((att) => (
-                        <span key={att.id} className={`badge ${statusColor[att.status] || "badge-gray"}`} style={{ fontSize: "0.7rem" }}>
-                          {t(`attendance.${att.status.toLowerCase()}`)}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                  {session.attendances.length === 0 && (
-                    <p style={{ color: "#94a3b8", fontSize: "0.8rem", margin: 0 }}>{t("attendance.noSessionRecords")}</p>
-                  )}
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </>
