@@ -9,32 +9,21 @@ async function getStats() {
     prisma.student.count(),
     prisma.teacher.count(),
     prisma.group.count({ where: { isActive: true } }),
-    prisma.payment.aggregate({
-      _sum: { amount: true },
-      where: { status: "PAID" },
-    }),
+    prisma.payment.aggregate({ _sum: { amount: true }, where: { status: "PAID" } }),
   ]);
-
   const recentPayments = await prisma.payment.findMany({
-    take: 6,
-    orderBy: { createdAt: "desc" },
+    take: 6, orderBy: { createdAt: "desc" },
     include: { student: { include: { user: true } } },
   });
-
   const pendingPayments = await prisma.payment.count({ where: { status: "PENDING" } });
+  const overduePayments = await prisma.payment.count({ where: { status: "OVERDUE" } });
   const activeStudents = await prisma.student.count({ where: { user: { isActive: true } } });
-
-  return { students, teachers, groups, totalRevenue: payments._sum.amount || 0, recentPayments, pendingPayments, activeStudents };
-}
-
-function initials(first: string, last: string) {
-  return `${first.charAt(0)}${last.charAt(0)}`.toUpperCase();
+  return { students, teachers, groups, totalRevenue: payments._sum.amount || 0, recentPayments, pendingPayments, overduePayments, activeStudents };
 }
 
 const AVATAR_COLORS = ["#6366f1","#10b981","#f59e0b","#3b82f6","#ec4899","#8b5cf6","#14b8a6","#f97316"];
 function avatarColor(name: string) {
-  let h = 0;
-  for (let i = 0; i < name.length; i++) h = name.charCodeAt(i) + ((h << 5) - h);
+  let h = 0; for (let i = 0; i < name.length; i++) h = name.charCodeAt(i) + ((h << 5) - h);
   return AVATAR_COLORS[Math.abs(h) % AVATAR_COLORS.length];
 }
 
@@ -42,174 +31,161 @@ export default async function AdminDashboard() {
   const stats = await getStats();
   const t = await getTranslations();
 
-  const today = new Date().toLocaleDateString("en-US", {
-    weekday: "long", year: "numeric", month: "long", day: "numeric",
-  });
-
-  const statCards = [
-    {
-      label: t("dashboard.totalStudents"),
-      value: stats.students,
-      sub: `${stats.activeStudents} active`,
-      color: "var(--primary, #6366f1)",
-      bg: "#ede9fe",
-      icon: (
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
-          <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-        </svg>
-      ),
-    },
-    {
-      label: t("dashboard.totalTeachers"),
-      value: stats.teachers,
-      sub: "on staff",
-      color: "#10b981",
-      bg: "#d1fae5",
-      icon: (
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/>
-        </svg>
-      ),
-    },
-    {
-      label: t("dashboard.activeGroups"),
-      value: stats.groups,
-      sub: "currently running",
-      color: "#f59e0b",
-      bg: "#fef3c7",
-      icon: (
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
-        </svg>
-      ),
-    },
-    {
-      label: t("dashboard.totalRevenue"),
-      value: `${(stats.totalRevenue / 1_000_000).toFixed(1)}M`,
-      sub: "UZS collected",
-      color: "#3b82f6",
-      bg: "#dbeafe",
-      icon: (
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
-        </svg>
-      ),
-    },
-  ];
-
-  const quickActions = [
-    { href: "/admin/students/new", label: t("students.newStudent"), desc: "Enroll a new student" },
-    { href: "/admin/teachers/new", label: t("teachers.newTeacher"), desc: "Add a teacher" },
-    { href: "/admin/groups/new", label: t("groups.newGroup"), desc: "Create a class group" },
-    { href: "/admin/announcements/new", label: t("announcements.newAnnouncement"), desc: "Notify all students" },
-    { href: "/admin/payments/new", label: t("payments.recordPayment"), desc: "Log a payment" },
-  ];
+  const today = new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" });
 
   return (
-    <div style={{ padding: "2rem", maxWidth: "1200px" }}>
+    <div style={{ padding: "0", maxWidth: "100%" }}>
 
-      {/* Page header */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "2rem" }}>
-        <div>
-          <h1 style={{ fontSize: "1.625rem", fontWeight: "700", color: "#0f172a", margin: "0 0 0.25rem" }}>
-            {t("dashboard.adminTitle")}
+      {/* Hero banner */}
+      <div style={{
+        background: "linear-gradient(135deg, var(--primary, #6366f1) 0%, #8b5cf6 50%, #a78bfa 100%)",
+        padding: "2rem 2.5rem 3.5rem",
+        position: "relative",
+        overflow: "hidden",
+      }}>
+        {/* Decorative circles */}
+        <div style={{ position: "absolute", top: "-40px", right: "-40px", width: "200px", height: "200px", borderRadius: "50%", background: "rgba(255,255,255,0.06)" }} />
+        <div style={{ position: "absolute", bottom: "-60px", right: "120px", width: "160px", height: "160px", borderRadius: "50%", background: "rgba(255,255,255,0.04)" }} />
+        <div style={{ position: "relative", zIndex: 1 }}>
+          <p style={{ color: "rgba(255,255,255,0.75)", fontSize: "0.875rem", margin: "0 0 0.375rem", fontWeight: "500" }}>{today}</p>
+          <h1 style={{ color: "white", fontSize: "1.875rem", fontWeight: "800", margin: "0 0 0.375rem", letterSpacing: "-0.025em" }}>
+            {t("dashboard.adminTitle")} 👋
           </h1>
-          <p style={{ color: "#64748b", margin: 0, fontSize: "0.9rem" }}>{t("dashboard.adminSubtitle")}</p>
-        </div>
-        <div style={{ fontSize: "0.8rem", color: "#94a3b8", textAlign: "right", paddingTop: "0.25rem" }}>
-          {today}
-        </div>
-      </div>
+          <p style={{ color: "rgba(255,255,255,0.8)", margin: 0, fontSize: "0.9rem" }}>{t("dashboard.adminSubtitle")}</p>
 
-      {/* Stat cards */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1rem", marginBottom: "1.75rem" }}>
-        {statCards.map((card) => (
-          <div key={card.label} style={{
-            background: "white",
-            border: "1px solid #e2e8f0",
-            borderRadius: "0.875rem",
-            padding: "1.25rem 1.5rem",
-            boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
-            borderTop: `3px solid ${card.color}`,
-          }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "0.875rem" }}>
-              <div style={{ fontSize: "0.78rem", fontWeight: "600", color: "#64748b", textTransform: "uppercase", letterSpacing: "0.05em" }}>
-                {card.label}
-              </div>
-              <div style={{ color: card.color, opacity: 0.8 }}>{card.icon}</div>
-            </div>
-            <div style={{ fontSize: "2rem", fontWeight: "800", color: "#0f172a", lineHeight: 1, marginBottom: "0.25rem" }}>
-              {card.value}
-            </div>
-            <div style={{ fontSize: "0.75rem", color: "#94a3b8" }}>{card.sub}</div>
-          </div>
-        ))}
-      </div>
-
-      {/* Main grid */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 320px", gap: "1.25rem" }}>
-
-        {/* Recent payments */}
-        <div style={{ background: "white", border: "1px solid #e2e8f0", borderRadius: "0.875rem", boxShadow: "0 1px 3px rgba(0,0,0,0.06)", overflow: "hidden" }}>
-          <div style={{ padding: "1.25rem 1.5rem", borderBottom: "1px solid #f1f5f9", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <div>
-              <h2 style={{ fontSize: "0.9375rem", fontWeight: "600", color: "#0f172a", margin: "0 0 0.125rem" }}>{t("dashboard.recentPayments")}</h2>
+          {/* Alert banners */}
+          {(stats.pendingPayments > 0 || stats.overduePayments > 0) && (
+            <div style={{ display: "flex", gap: "0.75rem", marginTop: "1.25rem", flexWrap: "wrap" }}>
               {stats.pendingPayments > 0 && (
-                <p style={{ fontSize: "0.75rem", color: "#f59e0b", margin: 0 }}>
-                  {stats.pendingPayments} payment{stats.pendingPayments > 1 ? "s" : ""} pending review
-                </p>
+                <Link href="/admin/payments" style={{
+                  display: "inline-flex", alignItems: "center", gap: "0.4rem",
+                  background: "rgba(255,255,255,0.18)", backdropFilter: "blur(8px)",
+                  color: "white", textDecoration: "none", padding: "0.4rem 0.875rem",
+                  borderRadius: "9999px", fontSize: "0.8rem", fontWeight: "600",
+                  border: "1px solid rgba(255,255,255,0.25)",
+                }}>
+                  ⏳ {stats.pendingPayments} pending payment{stats.pendingPayments > 1 ? "s" : ""}
+                </Link>
+              )}
+              {stats.overduePayments > 0 && (
+                <Link href="/admin/debtors" style={{
+                  display: "inline-flex", alignItems: "center", gap: "0.4rem",
+                  background: "rgba(239,68,68,0.25)", backdropFilter: "blur(8px)",
+                  color: "white", textDecoration: "none", padding: "0.4rem 0.875rem",
+                  borderRadius: "9999px", fontSize: "0.8rem", fontWeight: "600",
+                  border: "1px solid rgba(239,68,68,0.4)",
+                }}>
+                  ⚠️ {stats.overduePayments} overdue
+                </Link>
               )}
             </div>
-            <Link href="/admin/payments" style={{ fontSize: "0.8rem", color: "var(--primary, #6366f1)", fontWeight: "500", textDecoration: "none" }}>
-              View all →
+          )}
+        </div>
+      </div>
+
+      {/* Stat cards — overlap the banner */}
+      <div style={{ padding: "0 2rem", marginTop: "-1.5rem" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1rem" }}>
+          {[
+            { label: t("dashboard.totalStudents"), value: stats.students, sub: `${stats.activeStudents} active`, color: "#6366f1", light: "#ede9fe" },
+            { label: t("dashboard.totalTeachers"), value: stats.teachers, sub: "on staff", color: "#10b981", light: "#d1fae5" },
+            { label: t("dashboard.activeGroups"), value: stats.groups, sub: "running now", color: "#f59e0b", light: "#fef3c7" },
+            { label: t("dashboard.totalRevenue"), value: `${(stats.totalRevenue / 1_000_000).toFixed(1)}M`, sub: "UZS collected", color: "#3b82f6", light: "#dbeafe" },
+          ].map((card) => (
+            <div key={card.label} style={{
+              background: "white",
+              borderRadius: "1rem",
+              padding: "1.375rem 1.5rem",
+              boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
+              border: "1px solid #f1f5f9",
+              position: "relative",
+              overflow: "hidden",
+            }}>
+              <div style={{
+                position: "absolute", top: 0, left: 0, right: 0, height: "3px",
+                background: card.color,
+              }} />
+              <div style={{
+                width: "44px", height: "44px", borderRadius: "0.75rem",
+                background: card.light, display: "flex", alignItems: "center",
+                justifyContent: "center", marginBottom: "1rem",
+              }}>
+                <div style={{ width: "20px", height: "20px", borderRadius: "50%", background: card.color }} />
+              </div>
+              <div style={{ fontSize: "2.25rem", fontWeight: "800", color: "#0f172a", lineHeight: 1, letterSpacing: "-0.025em" }}>
+                {card.value}
+              </div>
+              <div style={{ fontSize: "0.75rem", fontWeight: "600", color: "#94a3b8", marginTop: "0.25rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                {card.label}
+              </div>
+              <div style={{ fontSize: "0.72rem", color: "#cbd5e1", marginTop: "0.125rem" }}>{card.sub}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Main content grid */}
+      <div style={{ padding: "1.5rem 2rem 2rem", display: "grid", gridTemplateColumns: "1fr 300px", gap: "1.25rem" }}>
+
+        {/* Recent payments */}
+        <div style={{ background: "white", borderRadius: "1rem", border: "1px solid #f1f5f9", boxShadow: "0 1px 4px rgba(0,0,0,0.05)", overflow: "hidden" }}>
+          <div style={{ padding: "1.25rem 1.5rem", borderBottom: "1px solid #f8fafc", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div>
+              <h2 style={{ fontSize: "0.9375rem", fontWeight: "700", color: "#0f172a", margin: 0 }}>{t("dashboard.recentPayments")}</h2>
+              <p style={{ fontSize: "0.75rem", color: "#94a3b8", margin: "0.125rem 0 0" }}>Latest transactions</p>
+            </div>
+            <Link href="/admin/payments" style={{
+              fontSize: "0.78rem", color: "var(--primary, #6366f1)", fontWeight: "600",
+              textDecoration: "none", padding: "0.375rem 0.75rem",
+              background: "#f5f3ff", borderRadius: "0.5rem", border: "1px solid #e0e7ff",
+            }}>
+              View all
             </Link>
           </div>
 
           {stats.recentPayments.length === 0 ? (
-            <div style={{ padding: "3rem", textAlign: "center", color: "#94a3b8" }}>
-              <div style={{ fontSize: "2rem", marginBottom: "0.5rem" }}>💳</div>
-              <div style={{ fontSize: "0.875rem" }}>{t("dashboard.noPayments")}</div>
+            <div style={{ padding: "3rem", textAlign: "center" }}>
+              <div style={{ fontSize: "2.5rem", marginBottom: "0.75rem" }}>💳</div>
+              <div style={{ color: "#94a3b8", fontSize: "0.875rem" }}>{t("dashboard.noPayments")}</div>
             </div>
           ) : (
-            <div style={{ padding: "0 0.5rem" }}>
+            <div>
               {stats.recentPayments.map((p, i) => {
                 const name = `${p.student.user.firstName} ${p.student.user.lastName}`;
                 const color = avatarColor(name);
+                const statusStyle = p.status === "PAID"
+                  ? { bg: "#dcfce7", color: "#16a34a" }
+                  : p.status === "PENDING"
+                  ? { bg: "#fef9c3", color: "#ca8a04" }
+                  : { bg: "#fee2e2", color: "#dc2626" };
                 return (
                   <div key={p.id} style={{
-                    display: "flex", alignItems: "center", gap: "0.875rem",
-                    padding: "0.875rem 1rem",
+                    display: "flex", alignItems: "center", gap: "1rem",
+                    padding: "0.875rem 1.5rem",
                     borderBottom: i < stats.recentPayments.length - 1 ? "1px solid #f8fafc" : "none",
                   }}>
                     <div style={{
-                      width: "36px", height: "36px", borderRadius: "50%",
-                      background: color, display: "flex", alignItems: "center",
-                      justifyContent: "center", color: "white", fontSize: "0.75rem",
-                      fontWeight: "700", flexShrink: 0,
+                      width: "38px", height: "38px", borderRadius: "50%", background: color,
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      color: "white", fontSize: "0.75rem", fontWeight: "700", flexShrink: 0,
                     }}>
-                      {initials(p.student.user.firstName, p.student.user.lastName)}
+                      {`${p.student.user.firstName.charAt(0)}${p.student.user.lastName.charAt(0)}`.toUpperCase()}
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontSize: "0.875rem", fontWeight: "500", color: "#0f172a", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                        {name}
-                      </div>
+                      <div style={{ fontSize: "0.875rem", fontWeight: "600", color: "#0f172a" }}>{name}</div>
                       <div style={{ fontSize: "0.72rem", color: "#94a3b8" }}>
-                        {new Date(p.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                        {new Date(p.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
                       </div>
                     </div>
                     <div style={{ textAlign: "right", flexShrink: 0 }}>
-                      <div style={{ fontSize: "0.875rem", fontWeight: "600", color: "#0f172a" }}>
-                        {p.amount.toLocaleString()} <span style={{ fontSize: "0.7rem", color: "#94a3b8", fontWeight: "400" }}>UZS</span>
+                      <div style={{ fontSize: "0.9rem", fontWeight: "700", color: "#0f172a" }}>
+                        {(p.amount / 1000).toFixed(0)}K <span style={{ fontSize: "0.68rem", color: "#94a3b8", fontWeight: "400" }}>UZS</span>
                       </div>
                       <span style={{
-                        display: "inline-block", fontSize: "0.68rem", fontWeight: "600", padding: "0.15rem 0.5rem",
-                        borderRadius: "9999px", marginTop: "0.125rem",
-                        ...(p.status === "PAID"
-                          ? { background: "#dcfce7", color: "#16a34a" }
-                          : p.status === "PENDING"
-                          ? { background: "#fef9c3", color: "#ca8a04" }
-                          : { background: "#fee2e2", color: "#dc2626" }),
+                        display: "inline-block", fontSize: "0.65rem", fontWeight: "700",
+                        padding: "0.125rem 0.5rem", borderRadius: "9999px",
+                        background: statusStyle.bg, color: statusStyle.color, marginTop: "0.125rem",
+                        textTransform: "uppercase", letterSpacing: "0.03em",
                       }}>
                         {p.status}
                       </span>
@@ -222,22 +198,32 @@ export default async function AdminDashboard() {
         </div>
 
         {/* Quick actions */}
-        <div style={{ background: "white", border: "1px solid #e2e8f0", borderRadius: "0.875rem", boxShadow: "0 1px 3px rgba(0,0,0,0.06)", overflow: "hidden" }}>
-          <div style={{ padding: "1.25rem 1.5rem", borderBottom: "1px solid #f1f5f9" }}>
-            <h2 style={{ fontSize: "0.9375rem", fontWeight: "600", color: "#0f172a", margin: 0 }}>{t("dashboard.quickActions")}</h2>
+        <div style={{ background: "white", borderRadius: "1rem", border: "1px solid #f1f5f9", boxShadow: "0 1px 4px rgba(0,0,0,0.05)", overflow: "hidden" }}>
+          <div style={{ padding: "1.25rem 1.5rem", borderBottom: "1px solid #f8fafc" }}>
+            <h2 style={{ fontSize: "0.9375rem", fontWeight: "700", color: "#0f172a", margin: 0 }}>{t("dashboard.quickActions")}</h2>
+            <p style={{ fontSize: "0.75rem", color: "#94a3b8", margin: "0.125rem 0 0" }}>Common tasks</p>
           </div>
-          <div style={{ padding: "0.5rem" }}>
-            {quickActions.map((a) => (
+          <div style={{ padding: "0.75rem" }}>
+            {[
+              { href: "/admin/students/new", icon: "👤", label: t("students.newStudent"), color: "#6366f1", bg: "#ede9fe" },
+              { href: "/admin/teachers/new", icon: "👨‍🏫", label: t("teachers.newTeacher"), color: "#10b981", bg: "#d1fae5" },
+              { href: "/admin/groups/new", icon: "📚", label: t("groups.newGroup"), color: "#f59e0b", bg: "#fef3c7" },
+              { href: "/admin/payments/new", icon: "💳", label: t("payments.recordPayment"), color: "#3b82f6", bg: "#dbeafe" },
+              { href: "/admin/announcements/new", icon: "📢", label: t("announcements.newAnnouncement"), color: "#8b5cf6", bg: "#ede9fe" },
+            ].map((a) => (
               <Link key={a.href} href={a.href} className="admin-quick-action" style={{
-                display: "flex", alignItems: "center", justifyContent: "space-between",
-                padding: "0.75rem 1rem", borderRadius: "0.625rem", textDecoration: "none",
-                gap: "0.75rem",
+                display: "flex", alignItems: "center", gap: "0.75rem",
+                padding: "0.75rem", borderRadius: "0.625rem", textDecoration: "none",
               }}>
-                <div>
-                  <div style={{ fontSize: "0.875rem", fontWeight: "500", color: "#0f172a" }}>{a.label}</div>
-                  <div style={{ fontSize: "0.72rem", color: "#94a3b8" }}>{a.desc}</div>
+                <div style={{
+                  width: "36px", height: "36px", borderRadius: "0.625rem",
+                  background: a.bg, display: "flex", alignItems: "center",
+                  justifyContent: "center", fontSize: "1rem", flexShrink: 0,
+                }}>
+                  {a.icon}
                 </div>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                <span style={{ fontSize: "0.875rem", fontWeight: "500", color: "#0f172a" }}>{a.label}</span>
+                <svg style={{ marginLeft: "auto", flexShrink: 0 }} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M9 18l6-6-6-6"/>
                 </svg>
               </Link>
