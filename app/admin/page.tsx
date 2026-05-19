@@ -228,14 +228,11 @@ export default async function AdminDashboard() {
           </div>
           <div style={{ padding: "0.5rem" }}>
             {quickActions.map((a) => (
-              <Link key={a.href} href={a.href} style={{
+              <Link key={a.href} href={a.href} className="admin-quick-action" style={{
                 display: "flex", alignItems: "center", justifyContent: "space-between",
                 padding: "0.75rem 1rem", borderRadius: "0.625rem", textDecoration: "none",
-                gap: "0.75rem", transition: "background 0.15s",
-              }}
-                onMouseOver={(e) => (e.currentTarget.style.background = "#f8fafc")}
-                onMouseOut={(e) => (e.currentTarget.style.background = "transparent")}
-              >
+                gap: "0.75rem",
+              }}>
                 <div>
                   <div style={{ fontSize: "0.875rem", fontWeight: "500", color: "#0f172a" }}>{a.label}</div>
                   <div style={{ fontSize: "0.72rem", color: "#94a3b8" }}>{a.desc}</div>
