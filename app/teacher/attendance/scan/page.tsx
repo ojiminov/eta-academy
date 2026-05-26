@@ -18,7 +18,7 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }
   ABSENT:      { label: "Absent",       color: "#991b1b", bg: "#fee2e2" },
   LATE:        { label: "Late",         color: "#92400e", bg: "#fef3c7" },
   EXCUSED:     { label: "Excused",      color: "#1e40af", bg: "#dbeafe" },
-  HOLIDAY:     { label: "Holiday",      color: "#4c1d95", bg: "#ede9fe" },
+  HOLIDAY:     { label: "Holiday",      color: "#4c1d95", bg: "var(--primary-light, #ede9fe)" },
   HW_NOT_DONE: { label: "HW Not Done",  color: "#7c2d12", bg: "#ffedd5" },
 };
 
@@ -176,7 +176,7 @@ export default function QRScanPage() {
           <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
             {sessions.map(s => (
               <button key={s.id} onClick={() => selectSession(s)}
-                style={{ padding: "0.75rem 1rem", textAlign: "left", background: selectedSession?.id === s.id ? "#ede9fe" : "#f8fafc", border: selectedSession?.id === s.id ? "2px solid #6366f1" : "1px solid #e2e8f0", borderRadius: "0.5rem", cursor: "pointer" }}>
+                style={{ padding: "0.75rem 1rem", textAlign: "left", background: selectedSession?.id === s.id ? "var(--primary-light, #ede9fe)" : "#f8fafc", border: selectedSession?.id === s.id ? "2px solid var(--primary)" : "1px solid #e2e8f0", borderRadius: "0.5rem", cursor: "pointer" }}>
                 <div style={{ fontWeight: "600", color: "#1e293b" }}>{s.group.name}</div>
                 <div style={{ fontSize: "0.75rem", color: "#64748b" }}>
                   {new Date(s.scheduledAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })} · {s.group.groupStudents.length} students
@@ -209,7 +209,7 @@ export default function QRScanPage() {
                 </div>
               )}
               {scanning && (
-                <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", width: "180px", height: "180px", border: "3px solid #6366f1", borderRadius: "12px", boxShadow: "0 0 0 9999px rgba(0,0,0,0.4)" }} />
+                <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", width: "180px", height: "180px", border: "3px solid var(--primary)", borderRadius: "12px", boxShadow: "0 0 0 9999px rgba(0,0,0,0.4)" }} />
               )}
             </div>
 

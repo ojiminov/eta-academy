@@ -63,7 +63,7 @@ export default function ExpensesPage() {
           {[
             { label:"Total Expenses", value:`${expenses.reduce((s,e)=>s+e.amount,0).toLocaleString()} UZS`, icon:"💸", color:"#ef4444", bg:"#fee2e2" },
             { label:"This Month", value:`${expenses.filter(e=>{ const d=new Date(e.date); const n=new Date(); return d.getUTCMonth()===n.getUTCMonth()&&d.getUTCFullYear()===n.getUTCFullYear(); }).reduce((s,e)=>s+e.amount,0).toLocaleString()} UZS`, icon:"📅", color:"#f59e0b", bg:"#fef3c7" },
-            { label:"Records", value:expenses.length, icon:"📋", color:"var(--primary, #6366f1)", bg:"#ede9fe" },
+            { label:"Records", value:expenses.length, icon:"📋", color:"var(--primary, #6366f1)", bg:"var(--primary-light, #ede9fe)" },
           ].map(s => (
             <div key={s.label} className="card" style={{ display:"flex", alignItems:"center", gap:"0.75rem" }}>
               <div style={{ width:44,height:44,borderRadius:10,background:s.bg,display:"flex",alignItems:"center",justifyContent:"center",fontSize:"1.3rem",flexShrink:0 }}>{s.icon}</div>

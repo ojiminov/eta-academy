@@ -102,7 +102,7 @@ export default async function GroupDetailPage({ params }: { params: { id: string
                       <div style={{ display: "flex", alignItems: "center", gap: "0.625rem" }}>
                         <div style={{
                           width: "30px", height: "30px", borderRadius: "50%",
-                          background: "linear-gradient(135deg, #6366f1, #4f46e5)",
+                          background: "var(--primary-gradient, linear-gradient(135deg, #6366f1, #4f46e5))",
                           display: "flex", alignItems: "center", justifyContent: "center",
                           color: "white", fontWeight: "700", fontSize: "0.75rem", flexShrink: 0,
                         }}>

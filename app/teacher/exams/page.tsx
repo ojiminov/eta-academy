@@ -83,7 +83,7 @@ export default function TeacherExamsPage() {
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: "0.625rem", marginBottom: "0.5rem", flexWrap: "wrap" }}>
                     <span style={{ fontWeight: "700", fontSize: "0.9375rem", color: "#0f172a" }}>{exam.title}</span>
-                    <span style={{ padding: "0.125rem 0.5rem", borderRadius: "9999px", background: "#ede9fe", color: "#5b21b6", fontSize: "0.7rem", fontWeight: "600" }}>{exam.group.name}</span>
+                    <span style={{ padding: "0.125rem 0.5rem", borderRadius: "9999px", background: "var(--primary-light, #ede9fe)", color: "#5b21b6", fontSize: "0.7rem", fontWeight: "600" }}>{exam.group.name}</span>
                     <span style={{ padding: "0.125rem 0.5rem", borderRadius: "9999px", fontSize: "0.7rem", fontWeight: "600", background: isPast ? "#dcfce7" : "#fef3c7", color: isPast ? "#16a34a" : "#b45309" }}>
                       {isPast ? "Past" : "Upcoming"}
                     </span>

@@ -153,7 +153,7 @@ export default function TeacherMaterialsPage() {
               padding: "1.125rem 1.375rem", boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
               display: "flex", alignItems: "center", gap: "1rem",
             }}>
-              <div style={{ width: "46px", height: "46px", borderRadius: "0.75rem", background: "#ede9fe", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.4rem", flexShrink: 0 }}>
+              <div style={{ width: "46px", height: "46px", borderRadius: "0.75rem", background: "var(--primary-light, #ede9fe)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.4rem", flexShrink: 0 }}>
                 {fileIcon(m.fileName)}
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
@@ -164,7 +164,7 @@ export default function TeacherMaterialsPage() {
                   {m.fileSize && <span style={{ fontSize: "0.72rem", color: "#94a3b8" }}>{formatBytes(m.fileSize)}</span>}
                   <span style={{ fontSize: "0.72rem", color: "#94a3b8" }}>📅 {new Date(m.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</span>
                   {m.group ? (
-                    <span style={{ fontSize: "0.68rem", padding: "0.1rem 0.5rem", borderRadius: "9999px", background: "#ede9fe", color: "#5b21b6", fontWeight: "600" }}>{m.group.name}</span>
+                    <span style={{ fontSize: "0.68rem", padding: "0.1rem 0.5rem", borderRadius: "9999px", background: "var(--primary-light, #ede9fe)", color: "#5b21b6", fontWeight: "600" }}>{m.group.name}</span>
                   ) : (
                     <span style={{ fontSize: "0.68rem", padding: "0.1rem 0.5rem", borderRadius: "9999px", background: "#f0fdf4", color: "#16a34a", fontWeight: "600" }}>All students</span>
                   )}

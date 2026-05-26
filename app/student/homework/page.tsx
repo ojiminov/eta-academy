@@ -63,7 +63,7 @@ export default function StudentHomeworkPage() {
       {/* Stat cards */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1rem", marginBottom: "1.5rem" }}>
         {[
-          { label: "Total",     value: homework.length,  color: "#6366f1", borderColor: "#6366f1" },
+          { label: "Total",     value: homework.length,  color: "var(--primary)", borderColor: "var(--primary)" },
           { label: "Pending",   value: pending.length,   color: pending.length > 0 ? "#f59e0b" : "#10b981", borderColor: pending.length > 0 ? "#f59e0b" : "#10b981" },
           { label: "Submitted", value: submitted.length, color: "#3b82f6", borderColor: "#3b82f6" },
           { label: "Avg Score", value: graded.length > 0 ? `${avgScore.toFixed(0)}%` : "—", color: "#10b981", borderColor: "#10b981" },
@@ -101,7 +101,7 @@ export default function StudentHomeworkPage() {
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ display: "flex", alignItems: "center", gap: "0.625rem", flexWrap: "wrap", marginBottom: "0.25rem" }}>
                       <span style={{ fontWeight: "700", fontSize: "0.9375rem", color: "#0f172a" }}>{h.homework.title}</span>
-                      <span style={{ padding: "0.1rem 0.5rem", borderRadius: "9999px", background: "#ede9fe", color: "#5b21b6", fontSize: "0.68rem", fontWeight: "600" }}>{h.homework.group.name}</span>
+                      <span style={{ padding: "0.1rem 0.5rem", borderRadius: "9999px", background: "var(--primary-light, #ede9fe)", color: "#5b21b6", fontSize: "0.68rem", fontWeight: "600" }}>{h.homework.group.name}</span>
                     </div>
                     <div style={{ fontSize: "0.75rem", color: "#94a3b8" }}>
                       👩‍🏫 {h.homework.teacher.user.firstName} {h.homework.teacher.user.lastName}

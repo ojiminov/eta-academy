@@ -75,7 +75,7 @@ function QRDisplay({ studentId, name }: { studentId: string | null; name: string
         )}
 
         {/* Instructions */}
-        <div style={{ padding: "0.875rem 1rem", background: "#ede9fe", borderRadius: "0.75rem", textAlign: "left" }}>
+        <div style={{ padding: "0.875rem 1rem", background: "var(--primary-light, #ede9fe)", borderRadius: "0.75rem", textAlign: "left" }}>
           <div style={{ fontWeight: "600", color: "#4c1d95", fontSize: "0.875rem", marginBottom: "0.375rem" }}>How to use:</div>
           <ol style={{ margin: 0, paddingLeft: "1.25rem", color: "#6d28d9", fontSize: "0.8rem", lineHeight: "1.6" }}>
             <li>Open this page before class</li>

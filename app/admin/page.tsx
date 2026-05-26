@@ -38,7 +38,7 @@ export default async function AdminDashboard() {
 
       {/* Hero banner */}
       <div style={{
-        background: "linear-gradient(135deg, var(--primary, #6366f1) 0%, #8b5cf6 50%, #a78bfa 100%)",
+        background: "var(--primary-gradient, linear-gradient(135deg, #6366f1, #8b5cf6))",
         padding: "2rem 2.5rem 3.5rem",
         position: "relative",
         overflow: "hidden",
@@ -87,7 +87,7 @@ export default async function AdminDashboard() {
       <div style={{ padding: "0 2rem", marginTop: "-1.5rem" }}>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1rem" }}>
           {[
-            { label: t("dashboard.totalStudents"), value: stats.students, sub: `${stats.activeStudents} active`, color: "#6366f1", light: "#ede9fe" },
+            { label: t("dashboard.totalStudents"), value: stats.students, sub: `${stats.activeStudents} active`, color: "var(--primary)", light: "var(--primary-light, #ede9fe)" },
             { label: t("dashboard.totalTeachers"), value: stats.teachers, sub: "on staff", color: "#10b981", light: "#d1fae5" },
             { label: t("dashboard.activeGroups"), value: stats.groups, sub: "running now", color: "#f59e0b", light: "#fef3c7" },
             { label: t("dashboard.totalRevenue"), value: `${(stats.totalRevenue / 1_000_000).toFixed(1)}M`, sub: "UZS collected", color: "#3b82f6", light: "#dbeafe" },
@@ -205,11 +205,11 @@ export default async function AdminDashboard() {
           </div>
           <div style={{ padding: "0.75rem" }}>
             {[
-              { href: "/admin/students/new", icon: "👤", label: t("students.newStudent"), color: "#6366f1", bg: "#ede9fe" },
+              { href: "/admin/students/new", icon: "👤", label: t("students.newStudent"), color: "var(--primary)", bg: "var(--primary-light, #ede9fe)" },
               { href: "/admin/teachers/new", icon: "👨‍🏫", label: t("teachers.newTeacher"), color: "#10b981", bg: "#d1fae5" },
               { href: "/admin/groups/new", icon: "📚", label: t("groups.newGroup"), color: "#f59e0b", bg: "#fef3c7" },
               { href: "/admin/payments/new", icon: "💳", label: t("payments.recordPayment"), color: "#3b82f6", bg: "#dbeafe" },
-              { href: "/admin/announcements/new", icon: "📢", label: t("announcements.newAnnouncement"), color: "#8b5cf6", bg: "#ede9fe" },
+              { href: "/admin/announcements/new", icon: "📢", label: t("announcements.newAnnouncement"), color: "#8b5cf6", bg: "var(--primary-light, #ede9fe)" },
             ].map((a) => (
               <Link key={a.href} href={a.href} className="admin-quick-action" style={{
                 display: "flex", alignItems: "center", gap: "0.75rem",

@@ -41,7 +41,7 @@ export default async function StudentDashboard() {
       <div style={{
         background: student && student.balance < 0
           ? "linear-gradient(135deg, #ef4444 0%, #dc2626 100%)"
-          : "linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a78bfa 100%)",
+          : "var(--primary-gradient, linear-gradient(135deg, #6366f1, #8b5cf6))",
         padding: "2rem 2.5rem 3.5rem",
         position: "relative",
         overflow: "hidden",
@@ -98,7 +98,7 @@ export default async function StudentDashboard() {
       <div style={{ padding: "0 2rem", marginTop: "-1.5rem" }}>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1rem" }}>
           {[
-            { label: t("dashboard.myClasses"), value: groups.length, sub: "enrolled", color: "#6366f1", light: "#ede9fe" },
+            { label: t("dashboard.myClasses"), value: groups.length, sub: "enrolled", color: "var(--primary)", light: "var(--primary-light, #ede9fe)" },
             { label: t("dashboard.avgScore"), value: avgScore !== null ? `${avgScore}%` : "—", sub: "recent avg", color: "#10b981", light: "#d1fae5" },
             { label: "Pending HW", value: pendingHomework, sub: "to complete", color: pendingHomework > 0 ? "#f59e0b" : "#64748b", light: pendingHomework > 0 ? "#fef3c7" : "#f1f5f9" },
             { label: t("dashboard.pendingPayments"), value: pendingPayments, sub: "awaiting", color: pendingPayments > 0 ? "#ef4444" : "#64748b", light: pendingPayments > 0 ? "#fee2e2" : "#f1f5f9" },

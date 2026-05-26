@@ -101,7 +101,7 @@ export default function ParentDashboard() {
         <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1rem" }}>
           {[
             { label: "Attendance", value: `${attRate}%`, sub: `${attPresent}/${attTotal} sessions`, color: attRate >= 80 ? "#10b981" : "#ef4444", light: attRate >= 80 ? "#d1fae5" : "#fee2e2" },
-            { label: "Avg Grade", value: avgGrade !== null ? `${avgGrade}%` : "—", sub: `${child.grades.length} grades`, color: "#6366f1", light: "#ede9fe" },
+            { label: "Avg Grade", value: avgGrade !== null ? `${avgGrade}%` : "—", sub: `${child.grades.length} grades`, color: "var(--primary)", light: "var(--primary-light, #ede9fe)" },
             { label: "Pending HW", value: pendingHomework, sub: "to submit", color: pendingHomework > 0 ? "#f59e0b" : "#10b981", light: pendingHomework > 0 ? "#fef3c7" : "#d1fae5" },
             { label: "Unpaid Bills", value: pendingPayments, sub: "balance: " + child.balance.toLocaleString(), color: pendingPayments > 0 ? "#ef4444" : "#10b981", light: pendingPayments > 0 ? "#fee2e2" : "#d1fae5" },
           ].map(card => (
@@ -190,7 +190,7 @@ export default function ParentDashboard() {
         <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1rem" }}>
           {[
             { href: "/parent/attendance", icon: "✅", label: "Attendance", color: "#10b981", bg: "#d1fae5" },
-            { href: "/parent/grades",     icon: "📝", label: "Grades & Tests", color: "#6366f1", bg: "#ede9fe" },
+            { href: "/parent/grades",     icon: "📝", label: "Grades & Tests", color: "var(--primary)", bg: "var(--primary-light, #ede9fe)" },
             { href: "/parent/payments",   icon: "💳", label: "Payments", color: "#f59e0b", bg: "#fef3c7" },
             { href: "/parent/schedule",   icon: "🗓️", label: "Schedule", color: "#ec4899", bg: "#fce7f3" },
           ].map(item => (

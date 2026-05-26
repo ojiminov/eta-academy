@@ -12,7 +12,7 @@ const STATUS_INFO: Record<string, { label:string; bg:string; color:string; icon:
   ABSENT:     { label:"Absent",       bg:"#fee2e2", color:"#991b1b", icon:"❌" },
   LATE:       { label:"Late",         bg:"#fef3c7", color:"#92400e", icon:"⏰" },
   EXCUSED:    { label:"Excused",      bg:"#dbeafe", color:"#1e40af", icon:"📋" },
-  HOLIDAY:    { label:"Holiday",      bg:"#ede9fe", color:"#5b21b6", icon:"🎉" },
+  HOLIDAY:    { label:"Holiday",      bg:"var(--primary-light, #ede9fe)", color:"#5b21b6", icon:"🎉" },
   HW_NOT_DONE:{ label:"HW Not Done",  bg:"#fef9c3", color:"#854d0e", icon:"📚" },
 };
 

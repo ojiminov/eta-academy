@@ -35,7 +35,7 @@ export default function ParentPaymentsPage() {
         {[
           { label:"Total Paid", value:`${totalPaid.toLocaleString()} UZS`, icon:"✅", color:"#10b981", bg:"#d1fae5" },
           { label:"Outstanding", value:`${totalPending.toLocaleString()} UZS`, icon:"⏳", color: totalPending>0?"#ef4444":"#10b981", bg:totalPending>0?"#fee2e2":"#d1fae5" },
-          { label:"Total Records", value:payments.length, icon:"📋", color:"var(--primary, #6366f1)", bg:"#ede9fe" },
+          { label:"Total Records", value:payments.length, icon:"📋", color:"var(--primary, #6366f1)", bg:"var(--primary-light, #ede9fe)" },
         ].map(s=>(
           <div key={s.label} className="card" style={{ display:"flex", alignItems:"center", gap:"0.75rem" }}>
             <div style={{ width:44,height:44,borderRadius:10,background:s.bg,display:"flex",alignItems:"center",justifyContent:"center",fontSize:"1.3rem",flexShrink:0 }}>{s.icon}</div>

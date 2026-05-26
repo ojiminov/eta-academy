@@ -85,7 +85,7 @@ export default function StudentMaterialsPage() {
                 onMouseEnter={e => (e.currentTarget.style.borderColor = "#c7d2fe")}
                 onMouseLeave={e => (e.currentTarget.style.borderColor = "transparent")}
               >
-                <div style={{ width:52, height:52, borderRadius:14, background:"#ede9fe", display:"flex", alignItems:"center", justifyContent:"center", fontSize:"1.75rem", flexShrink:0 }}>
+                <div style={{ width:52, height:52, borderRadius:14, background:"var(--primary-light, #ede9fe)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:"1.75rem", flexShrink:0 }}>
                   {fileIcon(m.fileName)}
                 </div>
                 <div style={{ flex:1, minWidth:0 }}>
@@ -98,7 +98,7 @@ export default function StudentMaterialsPage() {
                     {m.fileSize && <span style={{ fontSize:"0.75rem", color:"#94a3b8" }}>{formatBytes(m.fileSize)}</span>}
                     <span style={{ fontSize:"0.75rem", color:"#94a3b8" }}>📅 {new Date(m.createdAt).toLocaleDateString()}</span>
                     {m.group && (
-                      <span style={{ fontSize:"0.72rem", padding:"0.1rem 0.5rem", borderRadius:"9999px", background:"#ede9fe", color:"var(--primary, #6366f1)", fontWeight:"600" }}>{m.group.name}</span>
+                      <span style={{ fontSize:"0.72rem", padding:"0.1rem 0.5rem", borderRadius:"9999px", background:"var(--primary-light, #ede9fe)", color:"var(--primary, #6366f1)", fontWeight:"600" }}>{m.group.name}</span>
                     )}
                   </div>
                 </div>

@@ -12,7 +12,7 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }
   ABSENT:      { label: "Absent",      color: "#991b1b", bg: "#fee2e2" },
   LATE:        { label: "Late",        color: "#92400e", bg: "#fef3c7" },
   EXCUSED:     { label: "Excused",     color: "#1e40af", bg: "#dbeafe" },
-  HOLIDAY:     { label: "Holiday",     color: "#4c1d95", bg: "#ede9fe" },
+  HOLIDAY:     { label: "Holiday",     color: "#4c1d95", bg: "var(--primary-light, #ede9fe)" },
   HW_NOT_DONE: { label: "HW Not Done", color: "#7c2d12", bg: "#ffedd5" },
 };
 

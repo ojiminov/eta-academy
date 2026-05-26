@@ -100,7 +100,7 @@ export default function LeadsPage() {
           const cnt = s === "ALL" ? leads.length : (counts[s] || 0);
           return (
             <button key={s} onClick={() => setStatusFilter(s)} style={{
-              padding:"1rem", borderRadius:"0.75rem", border: statusFilter===s ? "2px solid #6366f1" : "2px solid transparent",
+              padding:"1rem", borderRadius:"0.75rem", border: statusFilter===s ? "2px solid var(--primary)" : "2px solid transparent",
               background: col.bg, cursor:"pointer", textAlign:"center"
             }}>
               <div style={{ fontSize:"1.5rem", fontWeight:"700", color: col.color }}>{cnt}</div>

@@ -55,7 +55,7 @@ export default async function TeacherDashboard() {
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "1rem" }}>
           {[
             { label: t("dashboard.activeGroups"), value: groups.length, sub: "assigned to you", color: "#10b981", light: "#d1fae5" },
-            { label: t("dashboard.totalStudents"), value: totalStudents, sub: "across all groups", color: "#6366f1", light: "#ede9fe" },
+            { label: t("dashboard.totalStudents"), value: totalStudents, sub: "across all groups", color: "var(--primary)", light: "var(--primary-light, #ede9fe)" },
             { label: t("dashboard.upcomingSessions"), value: upcomingSessions.length, sub: "scheduled ahead", color: "#f59e0b", light: "#fef3c7" },
           ].map((card) => (
             <div key={card.label} style={{

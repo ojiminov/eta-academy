@@ -106,7 +106,7 @@ export default async function StudentsPage() {
                       </div>
                     </td>
                     <td style={{ padding: "0.875rem 1rem" }}>
-                      <span style={{ display: "inline-flex", padding: "0.2rem 0.6rem", borderRadius: "9999px", fontSize: "0.72rem", fontWeight: "600", background: "#ede9fe", color: "#5b21b6" }}>
+                      <span style={{ display: "inline-flex", padding: "0.2rem 0.6rem", borderRadius: "9999px", fontSize: "0.72rem", fontWeight: "600", background: "var(--primary-light, #ede9fe)", color: "#5b21b6" }}>
                         {t(`levels.${s.englishLevel}`)}
                       </span>
                     </td>

@@ -86,7 +86,7 @@ export default function TeacherHomeworkPage() {
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: "0.625rem", marginBottom: "0.5rem", flexWrap: "wrap" }}>
                     <span style={{ fontWeight: "700", fontSize: "0.9375rem", color: "#0f172a" }}>{hw.title}</span>
-                    <span style={{ padding: "0.125rem 0.5rem", borderRadius: "9999px", background: "#ede9fe", color: "#5b21b6", fontSize: "0.7rem", fontWeight: "600" }}>{hw.group.name}</span>
+                    <span style={{ padding: "0.125rem 0.5rem", borderRadius: "9999px", background: "var(--primary-light, #ede9fe)", color: "#5b21b6", fontSize: "0.7rem", fontWeight: "600" }}>{hw.group.name}</span>
                     {overdue && <span style={{ padding: "0.125rem 0.5rem", borderRadius: "9999px", background: "#fee2e2", color: "#dc2626", fontSize: "0.7rem", fontWeight: "600" }}>OVERDUE</span>}
                   </div>
                   <div style={{ display: "flex", gap: "1.25rem", fontSize: "0.78rem", color: "#64748b", flexWrap: "wrap" }}>
