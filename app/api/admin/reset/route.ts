@@ -63,9 +63,8 @@ export async function POST() {
     const adminUserId   = randomUUID();
     const teacherUserId = randomUUID();
     const teacherId     = randomUUID();
-    const s1UserId = randomUUID(); const s1Id = randomUUID();
-    const s2UserId = randomUUID(); const s2Id = randomUUID();
-    const s3UserId = randomUUID(); const s3Id = randomUUID();
+    const studentUserId = randomUUID();
+    const studentId     = randomUUID();
 
     // ── 4. Admin ──────────────────────────────────────────────────────────────
     await pool.query(`
@@ -84,39 +83,27 @@ export async function POST() {
       VALUES ($1, $2, '{}', NOW(), NOW())
     `, [teacherId, teacherUserId]);
 
-    // ── 6. Students ───────────────────────────────────────────────────────────
-    const students = [
-      { userId: s1UserId, id: s1Id, email: "sample1@student.uz", last: "Student One"   },
-      { userId: s2UserId, id: s2Id, email: "sample2@student.uz", last: "Student Two"   },
-      { userId: s3UserId, id: s3Id, email: "sample3@student.uz", last: "Student Three" },
-    ];
+    // ── 6. Student ────────────────────────────────────────────────────────────
+    await pool.query(`
+      INSERT INTO users (id, email, "passwordHash", role, "firstName", "lastName", "isActive", "createdAt", "updatedAt")
+      VALUES ($1, 'student@eta.uz', $2, 'STUDENT', 'Sample', 'Student', true, NOW(), NOW())
+    `, [studentUserId, studentHash]);
 
-    for (const s of students) {
-      await pool.query(`
-        INSERT INTO users (id, email, "passwordHash", role, "firstName", "lastName", "isActive", "createdAt", "updatedAt")
-        VALUES ($1, $2, $3, 'STUDENT', 'Sample', $4, true, NOW(), NOW())
-      `, [s.userId, s.email, studentHash, s.last]);
-
-      await pool.query(`
-        INSERT INTO students (
-          id, "userId", status, "englishLevel", balance, "discountPercent",
-          "totalCoins", "currentStreak", "longestStreak", badge, "createdAt", "updatedAt"
-        )
-        VALUES ($1, $2, 'ACTIVE', 'BEGINNER', 0, 0, 0, 0, 0, 'BRONZE', NOW(), NOW())
-      `, [s.id, s.userId]);
-    }
+    await pool.query(`
+      INSERT INTO students (
+        id, "userId", status, "englishLevel", balance, "discountPercent",
+        "totalCoins", "currentStreak", "longestStreak", badge, "createdAt", "updatedAt"
+      )
+      VALUES ($1, $2, 'ACTIVE', 'BEGINNER', 0, 0, 0, 0, 0, 'BRONZE', NOW(), NOW())
+    `, [studentId, studentUserId]);
 
     return NextResponse.json({
       success: true,
       message: "Database wiped and re-seeded successfully.",
       accounts: {
-        admin:   { email: "admin@eta.uz",    password: "admin123"   },
-        teacher: { email: "teacher@eta.uz",  password: "teacher123" },
-        students: [
-          { email: "sample1@student.uz", password: "student123" },
-          { email: "sample2@student.uz", password: "student123" },
-          { email: "sample3@student.uz", password: "student123" },
-        ],
+        admin:   { email: "admin@eta.uz",   password: "admin123"   },
+        teacher: { email: "teacher@eta.uz", password: "teacher123" },
+        student: { email: "student@eta.uz", password: "student123" },
       },
     });
   } catch (err: unknown) {
