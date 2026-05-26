@@ -46,7 +46,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const cssVars = {
     "--primary":          branding.primaryColor,
     "--primary-dark":     branding.primaryDark,
+    "--primary-light":    branding.primaryLight,
     "--primary-gradient": `linear-gradient(135deg, ${branding.primaryColor}, ${branding.primaryDark})`,
+    "--sidebar-bg":       branding.sidebarBg,
   } as React.CSSProperties;
 
   return (

@@ -9,6 +9,8 @@ export type BrandingData = {
   logoName: string | null;
   primaryColor: string;
   primaryDark: string;
+  primaryLight: string;  // subtle tint for backgrounds / focus rings
+  sidebarBg: string;     // dark sidebar — same hue as primary, very low lightness
 };
 
 const DEFAULTS: BrandingData = {
@@ -17,6 +19,8 @@ const DEFAULTS: BrandingData = {
   logoName: null,
   primaryColor: "#6366f1",
   primaryDark: "#4f46e5",
+  primaryLight: "#ede9fe",
+  sidebarBg: "#16132a",
 };
 
 export async function getBranding(): Promise<BrandingData> {
@@ -25,22 +29,58 @@ export async function getBranding(): Promise<BrandingData> {
     if (!s) return DEFAULTS;
     const primary = s.primaryColor ?? "#6366f1";
     return {
-      name: s.name ?? "ETA Academy",
-      logoUrl: s.logoUrl ?? null,
-      logoName: s.logoName ?? null,
+      name:         s.name ?? "ETA Academy",
+      logoUrl:      s.logoUrl ?? null,
+      logoName:     s.logoName ?? null,
       primaryColor: primary,
-      primaryDark: darken(primary, 20),
+      primaryDark:  shiftLightness(primary, -15),
+      primaryLight: shiftLightness(primary, 40, 80),
+      sidebarBg:    toSidebarBg(primary),
     };
   } catch {
     return DEFAULTS;
   }
 }
 
-function darken(hex: string, amount = 20): string {
-  const clean = hex.replace("#", "");
-  if (clean.length !== 6) return "#4f46e5";
-  const r = Math.max(0, parseInt(clean.slice(0, 2), 16) - amount);
-  const g = Math.max(0, parseInt(clean.slice(2, 4), 16) - amount);
-  const b = Math.max(0, parseInt(clean.slice(4, 6), 16) - amount);
-  return `#${r.toString(16).padStart(2, "0")}${g.toString(16).padStart(2, "0")}${b.toString(16).padStart(2, "0")}`;
+// ── Colour helpers ────────────────────────────────────────────────────────────
+
+function hexToHsl(hex: string): [number, number, number] {
+  const c = hex.replace("#", "");
+  if (c.length !== 6) return [250, 30, 12];
+  const r = parseInt(c.slice(0, 2), 16) / 255;
+  const g = parseInt(c.slice(2, 4), 16) / 255;
+  const b = parseInt(c.slice(4, 6), 16) / 255;
+  const max = Math.max(r, g, b), min = Math.min(r, g, b);
+  const l = (max + min) / 2;
+  if (max === min) return [0, 0, Math.round(l * 100)];
+  const d = max - min;
+  const s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+  let h = 0;
+  if (max === r)      h = ((g - b) / d + (g < b ? 6 : 0)) / 6;
+  else if (max === g) h = ((b - r) / d + 2) / 6;
+  else                h = ((r - g) / d + 4) / 6;
+  return [Math.round(h * 360), Math.round(s * 100), Math.round(l * 100)];
+}
+
+function hslToHex(h: number, s: number, l: number): string {
+  const ll = l / 100, ss = s / 100;
+  const a = ss * Math.min(ll, 1 - ll);
+  const f = (n: number) => {
+    const k = (n + h / 30) % 12;
+    const color = ll - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+    return Math.round(255 * color).toString(16).padStart(2, "0");
+  };
+  return `#${f(0)}${f(8)}${f(4)}`;
+}
+
+/** Shift lightness by `delta`, optionally override saturation */
+function shiftLightness(hex: string, delta: number, newS?: number): string {
+  const [h, s, l] = hexToHsl(hex);
+  return hslToHex(h, newS ?? s, Math.max(5, Math.min(95, l + delta)));
+}
+
+/** Dark sidebar: same hue as primary, desaturated, very dark */
+function toSidebarBg(hex: string): string {
+  const [h] = hexToHsl(hex);
+  return hslToHex(h, 30, 11);
 }

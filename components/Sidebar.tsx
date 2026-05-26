@@ -205,7 +205,7 @@ export default function Sidebar({ role, userName }: SidebarProps) {
     <>
       {/* ══ DESKTOP SIDEBAR ════════════════════════════════ */}
       <aside className="eta-sidebar-desktop" style={{
-        width: "240px", minHeight: "100vh", background: "#16132a",
+        width: "240px", minHeight: "100vh", background: "var(--sidebar-bg)",
         display: "flex", flexDirection: "column", flexShrink: 0,
         borderRight: "1px solid rgba(255,255,255,0.06)",
       }}>
@@ -229,7 +229,7 @@ export default function Sidebar({ role, userName }: SidebarProps) {
       <div className="eta-mobile-topbar" style={{
         display: "none",
         position: "fixed", top: 0, left: 0, right: 0, zIndex: 100,
-        background: "#16132a",
+        background: "var(--sidebar-bg)",
         /* Total height covers notch + 56px usable bar */
         height: "calc(var(--topbar-h) + env(safe-area-inset-top, 0px))",
         /* Flex column so we can push the row below the notch */
@@ -290,7 +290,7 @@ export default function Sidebar({ role, userName }: SidebarProps) {
       {/* ══ MOBILE DRAWER ══════════════════════════════════ */}
       <div style={{
         position: "fixed", top: 0, left: 0, bottom: 0, zIndex: 201,
-        width: "280px", background: "#16132a",
+        width: "280px", background: "var(--sidebar-bg)",
         display: "flex", flexDirection: "column",
         transform: open ? "translateX(0)" : "translateX(-100%)",
         transition: "transform 0.28s cubic-bezier(0.4,0,0.2,1)",
@@ -319,7 +319,7 @@ export default function Sidebar({ role, userName }: SidebarProps) {
       <div className="eta-mobile-bottomnav" style={{
         display: "none",
         position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 100,
-        background: "#16132a",
+        background: "var(--sidebar-bg)",
         borderTop: "1px solid rgba(255,255,255,0.08)",
         height: "var(--bottomnav-h)",
         alignItems: "stretch", justifyContent: "space-around",
