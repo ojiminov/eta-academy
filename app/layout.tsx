@@ -4,7 +4,15 @@ import { getLocale, getMessages } from "next-intl/server";
 import PWAInit from "@/components/PWAInit";
 import { BrandingProvider } from "@/components/BrandingProvider";
 import { getBranding } from "@/lib/branding";
+import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
+
+const jakartaSans = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-jakarta",
+  display: "swap",
+});
 
 export const dynamic = "force-dynamic";
 
@@ -52,7 +60,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   } as React.CSSProperties;
 
   return (
-    <html lang={locale} className="h-full" style={cssVars}>
+    <html lang={locale} className={`h-full ${jakartaSans.variable}`} style={cssVars}>
       <body className="min-h-full">
         <NextIntlClientProvider locale={locale} messages={messages}>
           <BrandingProvider value={{

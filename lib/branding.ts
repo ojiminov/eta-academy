@@ -17,10 +17,10 @@ const DEFAULTS: BrandingData = {
   name: "ETA Academy",
   logoUrl: null,
   logoName: null,
-  primaryColor: "#6366f1",
-  primaryDark: "#4f46e5",
-  primaryLight: "#ede9fe",
-  sidebarBg: "#16132a",
+  primaryColor: "#7C3AED",
+  primaryDark: "#6D28D9",
+  primaryLight: "#EDE9FE",
+  sidebarBg: "#1E1040",
 };
 
 export async function getBranding(): Promise<BrandingData> {
