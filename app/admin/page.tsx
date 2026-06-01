@@ -87,10 +87,10 @@ export default async function AdminDashboard() {
       <div style={{ padding: "0 2rem", marginTop: "-1.5rem" }}>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1rem" }}>
           {[
-            { label: t("dashboard.totalStudents"), value: stats.students, sub: `${stats.activeStudents} active`, color: "var(--primary)", light: "var(--primary-light, #ede9fe)" },
-            { label: t("dashboard.totalTeachers"), value: stats.teachers, sub: "on staff", color: "#10b981", light: "#d1fae5" },
-            { label: t("dashboard.activeGroups"), value: stats.groups, sub: "running now", color: "#f59e0b", light: "#fef3c7" },
-            { label: t("dashboard.totalRevenue"), value: `${(stats.totalRevenue / 1_000_000).toFixed(1)}M`, sub: "UZS collected", color: "#3b82f6", light: "#dbeafe" },
+            { label: t("dashboard.totalStudents"), value: stats.students, sub: `${stats.activeStudents} active`, color: "var(--primary, #2a5c45)", light: "var(--primary-light, #d4ede1)", icon: "ti-users" },
+            { label: t("dashboard.totalTeachers"), value: stats.teachers, sub: "on staff", color: "#2a5c45", light: "#d4ede1", icon: "ti-school" },
+            { label: t("dashboard.activeGroups"), value: stats.groups, sub: "running now", color: "#d97706", light: "#fef3c7", icon: "ti-books" },
+            { label: t("dashboard.totalRevenue"), value: `${(stats.totalRevenue / 1_000_000).toFixed(1)}M`, sub: "UZS collected", color: "#1e40af", light: "#dbeafe", icon: "ti-cash" },
           ].map((card) => (
             <div key={card.label} style={{
               background: "white",
@@ -109,8 +109,9 @@ export default async function AdminDashboard() {
                 width: "44px", height: "44px", borderRadius: "0.75rem",
                 background: card.light, display: "flex", alignItems: "center",
                 justifyContent: "center", marginBottom: "1rem",
+                fontSize: "1.375rem", color: card.color,
               }}>
-                <div style={{ width: "20px", height: "20px", borderRadius: "50%", background: card.color }} />
+                <i className={`ti ${card.icon}`} aria-hidden="true" />
               </div>
               <div style={{ fontSize: "2.25rem", fontWeight: "800", color: "#0f172a", lineHeight: 1, letterSpacing: "-0.025em" }}>
                 {card.value}

@@ -205,7 +205,7 @@ tbody tr:last-child td { border-bottom: none; }
   font-size: 0.58rem; font-weight: 800; letter-spacing: 0.02em;
   transition: color 0.15s, background 0.15s;
 }
-.eta-nav-link:hover .nav-icon { color: rgba(255,255,255,0.85); background: rgba(255,255,255,0.12); }
+.eta-nav-link:hover .nav-icon { color: rgba(255,255,255,0.95); background: rgba(255,255,255,0.12); }
 .eta-nav-link.is-active .nav-icon { color: #1e3d2d !important; background: #6ee7b7; }
 .nav-icon.red { color: #fca5a5 !important; }
 .nav-icon.amber { color: #fcd34d !important; }
@@ -387,7 +387,7 @@ tbody tr:last-child td { border-bottom: none; }
   gap: 0.625rem;
   padding: 0.5rem 0.75rem;
   border-radius: var(--radius-sm);
-  color: rgba(255,255,255,0.5);
+  color: rgba(255,255,255,0.72);
   font-size: 0.835rem;
   font-weight: 500;
   text-decoration: none;
@@ -397,7 +397,7 @@ tbody tr:last-child td { border-bottom: none; }
 }
 .eta-nav-link:hover {
   background: rgba(255,255,255,0.07);
-  color: rgba(255,255,255,0.85);
+  color: rgba(255,255,255,0.95);
   transform: translateX(2px);
 }
 .eta-nav-link.is-active {

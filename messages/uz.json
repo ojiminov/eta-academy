@@ -244,7 +244,8 @@
     "cash": "Naqd",
     "card": "Karta",
     "transfer": "O'tkazma",
-    "newPayment": "+ To'lov qayd etish"
+    "newPayment": "+ To'lov qayd etish",
+    "recordPayment": "To'lov qilish"
   },
   "announcements": {
     "title": "E'lonlar",

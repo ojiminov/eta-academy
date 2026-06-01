@@ -145,9 +145,12 @@ export default function Sidebar({ role, userName }: SidebarProps) {
     <>
       {nav.map((item) => {
         const active = isActive(item.href);
+        const iconText = item.label.slice(0, 2).toUpperCase();
         return (
           <Link key={item.href} href={item.href} onClick={onClick} className={`eta-nav-link${active ? " is-active" : ""}`}>
-            <i className={`ti ${item.icon} nav-icon accent`} aria-hidden="true" />
+            <span className={`nav-icon ${item.icon.includes("red") ? "red" : ""} ${item.icon.includes("amber") ? "amber" : ""}`} aria-hidden="true">
+              {iconText}
+            </span>
             <span>{item.label}</span>
           </Link>
         );

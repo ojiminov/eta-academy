@@ -244,7 +244,8 @@
     "cash": "Cash",
     "card": "Card",
     "transfer": "Transfer",
-    "newPayment": "+ Record Payment"
+    "newPayment": "+ Record Payment",
+    "recordPayment": "Record Payment"
   },
   "announcements": {
     "title": "Announcements",
