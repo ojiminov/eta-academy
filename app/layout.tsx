@@ -4,13 +4,20 @@ import { getLocale, getMessages } from "next-intl/server";
 import PWAInit from "@/components/PWAInit";
 import { BrandingProvider } from "@/components/BrandingProvider";
 import { getBranding } from "@/lib/branding";
-import { Plus_Jakarta_Sans } from "next/font/google";
+import { Plus_Jakarta_Sans, Playfair_Display } from "next/font/google";
 import "./globals.css";
 
 const jakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
   variable: "--font-jakarta",
+  display: "swap",
+});
+
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  weight: ["700", "800"],
+  variable: "--font-playfair",
   display: "swap",
 });
 
@@ -37,7 +44,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#16132a",
+  themeColor: "#1e3d2d",
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,
@@ -60,7 +67,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   } as React.CSSProperties;
 
   return (
-    <html lang={locale} className={`h-full ${jakartaSans.variable}`} style={cssVars}>
+    <html lang={locale} className={`h-full ${jakartaSans.variable} ${playfair.variable}`} style={cssVars}>
+      <head>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.x/dist/tabler-icons.min.css" />
+      </head>
       <body className="min-h-full">
         <NextIntlClientProvider locale={locale} messages={messages}>
           <BrandingProvider value={{

@@ -10,9 +10,9 @@ export default async function ParentLayout({ children }: { children: React.React
   if (user.role !== "PARENT") redirect("/login");
 
   return (
-    <div style={{ display: "flex", minHeight: "100vh" }}>
+    <div className="app-shell">
       <Sidebar role="PARENT" userName={`${user.firstName} ${user.lastName}`} />
-      <main style={{ flex: 1, background: "#f8fafc", overflow: "auto", minWidth: 0 }}>
+      <main className="app-main">
         {children}
       </main>
     </div>

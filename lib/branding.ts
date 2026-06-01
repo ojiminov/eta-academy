@@ -17,17 +17,17 @@ const DEFAULTS: BrandingData = {
   name: "ETA Academy",
   logoUrl: null,
   logoName: null,
-  primaryColor: "#7C3AED",
-  primaryDark: "#6D28D9",
-  primaryLight: "#EDE9FE",
-  sidebarBg: "#1E1040",
+  primaryColor: "#2a5c45",
+  primaryDark: "#1e3d2d",
+  primaryLight: "#d4ede1",
+  sidebarBg: "#1e3d2d",
 };
 
 export async function getBranding(): Promise<BrandingData> {
   try {
     const s = await prisma.academySetting.findFirst({ where: { id: "singleton" } });
     if (!s) return DEFAULTS;
-    const primary = s.primaryColor ?? "#6366f1";
+    const primary = s.primaryColor ?? "#2a5c45";
     return {
       name:         s.name ?? "ETA Academy",
       logoUrl:      s.logoUrl ?? null,

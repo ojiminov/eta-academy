@@ -10,9 +10,9 @@ export default async function TeacherLayout({ children }: { children: React.Reac
   if (user.role !== "TEACHER") redirect("/login");
 
   return (
-    <div style={{ display: "flex", minHeight: "100vh" }}>
+    <div className="app-shell">
       <Sidebar role="TEACHER" userName={`${user.firstName} ${user.lastName}`} />
-      <main style={{ flex: 1, background: "#f8fafc", overflow: "auto", minWidth: 0 }}>
+      <main className="app-main">
         {children}
       </main>
     </div>

@@ -11,9 +11,9 @@ export default async function LeaderboardLayout({ children }: { children: React.
   const role = user.role as "ADMIN" | "TEACHER" | "STUDENT" | "PARENT";
 
   return (
-    <div style={{ display: "flex", minHeight: "100vh" }}>
+    <div className="app-shell">
       <Sidebar role={role} userName={`${user.firstName} ${user.lastName}`} />
-      <main style={{ flex: 1, background: "#f8fafc", overflow: "auto", minWidth: 0 }}>
+      <main className="app-main">
         {children}
       </main>
     </div>

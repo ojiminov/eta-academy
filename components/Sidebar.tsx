@@ -9,12 +9,12 @@ import { useBranding } from "./BrandingProvider";
 
 interface SidebarProps { role: "ADMIN" | "TEACHER" | "STUDENT" | "PARENT"; userName: string; }
 
-const roleColor   = { ADMIN: "var(--primary, #6366f1)", TEACHER: "#10b981", STUDENT: "#f59e0b", PARENT: "#ec4899" };
+const roleColor   = { ADMIN: "#6ee7b7", TEACHER: "#6ee7b7", STUDENT: "#6ee7b7", PARENT: "#6ee7b7" };
 const roleGradient = {
-  ADMIN:   "var(--primary-gradient, linear-gradient(135deg,#6366f1,#8b5cf6))",
-  TEACHER: "linear-gradient(135deg,#059669,#10b981)",
-  STUDENT: "linear-gradient(135deg,#d97706,#f59e0b)",
-  PARENT:  "linear-gradient(135deg,#db2777,#ec4899)",
+  ADMIN:   "linear-gradient(135deg,#2a5c45,#3a7a5c)",
+  TEACHER: "linear-gradient(135deg,#2a5c45,#3a7a5c)",
+  STUDENT: "linear-gradient(135deg,#2a5c45,#3a7a5c)",
+  PARENT:  "linear-gradient(135deg,#2a5c45,#3a7a5c)",
 };
 
 export default function Sidebar({ role, userName }: SidebarProps) {
@@ -26,81 +26,81 @@ export default function Sidebar({ role, userName }: SidebarProps) {
 
   // ── Full navigation (drawer) ──────────────────────────
   const adminNav = [
-    { href: "/admin",               icon: "📊", label: t("nav.dashboard") },
-    { href: "/admin/students",      icon: "👨‍🎓", label: t("nav.students") },
-    { href: "/admin/leads",         icon: "🎯", label: t("nav.leads") },
-    { href: "/admin/teachers",      icon: "👨‍🏫", label: t("nav.teachers") },
-    { href: "/admin/groups",        icon: "📚", label: t("nav.groups") },
-    { href: "/admin/payments",      icon: "💳", label: t("nav.payments") },
-    { href: "/admin/debtors",       icon: "⚠️", label: t("nav.debtors") },
-    { href: "/admin/expenses",      icon: "💸", label: t("nav.expenses") },
-    { href: "/admin/homeworks",     icon: "📋", label: t("nav.homework") },
-    { href: "/admin/exams",         icon: "📝", label: t("nav.exams") },
-    { href: "/admin/announcements", icon: "📢", label: t("nav.announcements") },
-    { href: "/admin/attendance",    icon: "📅", label: t("nav.attendanceReport") },
-    { href: "/leaderboard",         icon: "🏆", label: t("nav.leaderboard") },
-    { href: "/admin/settings",      icon: "🎨", label: t("nav.branding") },
+    { href: "/admin",               icon: "ti-layout-dashboard", label: t("nav.dashboard") },
+    { href: "/admin/students",      icon: "ti-users", label: t("nav.students") },
+    { href: "/admin/leads",         icon: "ti-target", label: t("nav.leads") },
+    { href: "/admin/teachers",      icon: "ti-school", label: t("nav.teachers") },
+    { href: "/admin/groups",        icon: "ti-books", label: t("nav.groups") },
+    { href: "/admin/payments",      icon: "ti-credit-card", label: t("nav.payments") },
+    { href: "/admin/debtors",       icon: "ti-alert-triangle red", label: t("nav.debtors") },
+    { href: "/admin/expenses",      icon: "ti-report-money", label: t("nav.expenses") },
+    { href: "/admin/homeworks",     icon: "ti-clipboard-list", label: t("nav.homework") },
+    { href: "/admin/exams",         icon: "ti-pencil", label: t("nav.exams") },
+    { href: "/admin/announcements", icon: "ti-speakerphone", label: t("nav.announcements") },
+    { href: "/admin/attendance",    icon: "ti-calendar-check", label: t("nav.attendanceReport") },
+    { href: "/leaderboard",         icon: "ti-trophy amber", label: t("nav.leaderboard") },
+    { href: "/admin/settings",      icon: "ti-palette", label: t("nav.branding") },
   ];
   const teacherNav = [
-    { href: "/teacher",                 icon: "📊", label: t("nav.dashboard") },
-    { href: "/teacher/groups",          icon: "📚", label: t("nav.myGroups") },
-    { href: "/teacher/sessions",        icon: "📅", label: t("nav.sessions") },
-    { href: "/teacher/attendance",      icon: "✅", label: t("nav.attendance") },
-    { href: "/teacher/attendance/scan", icon: "📷", label: t("nav.qrScan") },
-    { href: "/teacher/grades",          icon: "📝", label: t("nav.grades") },
-    { href: "/teacher/homework",        icon: "📋", label: t("nav.homework") },
-    { href: "/teacher/exams",           icon: "🧪", label: t("nav.exams") },
-    { href: "/teacher/materials",       icon: "📁", label: t("nav.materials") },
-    { href: "/leaderboard",             icon: "🏆", label: t("nav.leaderboard") },
+    { href: "/teacher",                 icon: "ti-layout-dashboard", label: t("nav.dashboard") },
+    { href: "/teacher/groups",          icon: "ti-books", label: t("nav.myGroups") },
+    { href: "/teacher/sessions",        icon: "ti-calendar-event", label: t("nav.sessions") },
+    { href: "/teacher/attendance",      icon: "ti-calendar-check", label: t("nav.attendance") },
+    { href: "/teacher/attendance/scan", icon: "ti-qrcode", label: t("nav.qrScan") },
+    { href: "/teacher/grades",          icon: "ti-chart-bar", label: t("nav.grades") },
+    { href: "/teacher/homework",        icon: "ti-clipboard-list", label: t("nav.homework") },
+    { href: "/teacher/exams",           icon: "ti-pencil", label: t("nav.exams") },
+    { href: "/teacher/materials",       icon: "ti-folder", label: t("nav.materials") },
+    { href: "/leaderboard",             icon: "ti-trophy amber", label: t("nav.leaderboard") },
   ];
   const studentNav = [
-    { href: "/student",            icon: "🏠", label: t("nav.dashboard") },
-    { href: "/student/qr",         icon: "📱", label: t("nav.myQR") },
-    { href: "/student/coins",      icon: "🪙", label: t("nav.myCoins") },
-    { href: "/student/homework",   icon: "📋", label: t("nav.homework") },
-    { href: "/student/materials",  icon: "📁", label: t("nav.materials") },
-    { href: "/student/exams",      icon: "🧪", label: t("nav.exams") },
-    { href: "/student/grades",     icon: "📝", label: t("nav.grades") },
-    { href: "/student/attendance", icon: "✅", label: t("nav.attendance") },
-    { href: "/student/groups",     icon: "📚", label: t("nav.myClasses") },
-    { href: "/student/timetable",  icon: "🗓️", label: t("nav.timetable") },
-    { href: "/student/payments",   icon: "💳", label: t("nav.payments") },
-    { href: "/leaderboard",        icon: "🏆", label: t("nav.leaderboard") },
+    { href: "/student",            icon: "ti-layout-dashboard", label: t("nav.dashboard") },
+    { href: "/student/qr",         icon: "ti-qrcode", label: t("nav.myQR") },
+    { href: "/student/coins",      icon: "ti-coin amber", label: t("nav.myCoins") },
+    { href: "/student/homework",   icon: "ti-clipboard-list", label: t("nav.homework") },
+    { href: "/student/materials",  icon: "ti-folder", label: t("nav.materials") },
+    { href: "/student/exams",      icon: "ti-pencil", label: t("nav.exams") },
+    { href: "/student/grades",     icon: "ti-chart-bar", label: t("nav.grades") },
+    { href: "/student/attendance", icon: "ti-calendar-check", label: t("nav.attendance") },
+    { href: "/student/groups",     icon: "ti-books", label: t("nav.myClasses") },
+    { href: "/student/timetable",  icon: "ti-calendar", label: t("nav.timetable") },
+    { href: "/student/payments",   icon: "ti-credit-card", label: t("nav.payments") },
+    { href: "/leaderboard",        icon: "ti-trophy amber", label: t("nav.leaderboard") },
   ];
   const parentNav = [
-    { href: "/parent",            icon: "🏠", label: t("nav.dashboard") },
-    { href: "/parent/attendance", icon: "✅", label: t("nav.attendance") },
-    { href: "/parent/grades",     icon: "📝", label: t("nav.grades") },
-    { href: "/parent/payments",   icon: "💳", label: t("nav.payments") },
-    { href: "/parent/schedule",   icon: "🗓️", label: t("nav.timetable") },
-    { href: "/leaderboard",       icon: "🏆", label: t("nav.leaderboard") },
+    { href: "/parent",            icon: "ti-layout-dashboard", label: t("nav.dashboard") },
+    { href: "/parent/attendance", icon: "ti-calendar-check", label: t("nav.attendance") },
+    { href: "/parent/grades",     icon: "ti-chart-bar", label: t("nav.grades") },
+    { href: "/parent/payments",   icon: "ti-credit-card", label: t("nav.payments") },
+    { href: "/parent/schedule",   icon: "ti-calendar", label: t("nav.timetable") },
+    { href: "/leaderboard",       icon: "ti-trophy amber", label: t("nav.leaderboard") },
   ];
 
   // ── Role-curated bottom nav (most useful on mobile) ───
   const bottomNavMap: Record<string, { href: string; icon: string; label: string }[]> = {
     STUDENT: [
-      { href: "/student",       icon: "🏠",  label: "Home" },
-      { href: "/student/qr",    icon: "📱",  label: "My QR" },
-      { href: "/student/coins", icon: "🪙",  label: "Coins" },
-      { href: "/leaderboard",   icon: "🏆",  label: "Ranks" },
+      { href: "/student",       icon: "ti-layout-dashboard",  label: "Home" },
+      { href: "/student/qr",    icon: "ti-qrcode",  label: "My QR" },
+      { href: "/student/coins", icon: "ti-coin amber",  label: "Coins" },
+      { href: "/leaderboard",   icon: "ti-trophy amber",  label: "Ranks" },
     ],
     TEACHER: [
-      { href: "/teacher",                 icon: "🏠", label: "Home" },
-      { href: "/teacher/attendance/scan", icon: "📷", label: "Scan QR" },
-      { href: "/teacher/sessions",        icon: "📅", label: "Sessions" },
-      { href: "/teacher/groups",          icon: "📚", label: "Groups" },
+      { href: "/teacher",                 icon: "ti-layout-dashboard", label: "Home" },
+      { href: "/teacher/attendance/scan", icon: "ti-qrcode", label: "Scan QR" },
+      { href: "/teacher/sessions",        icon: "ti-calendar-event", label: "Sessions" },
+      { href: "/teacher/groups",          icon: "ti-books", label: "Groups" },
     ],
     ADMIN: [
-      { href: "/admin",          icon: "📊", label: "Dashboard" },
-      { href: "/admin/students", icon: "👨‍🎓", label: "Students" },
-      { href: "/admin/payments", icon: "💳", label: "Payments" },
-      { href: "/leaderboard",    icon: "🏆", label: "Ranks" },
+      { href: "/admin",          icon: "ti-layout-dashboard", label: "Dashboard" },
+      { href: "/admin/students", icon: "ti-users", label: "Students" },
+      { href: "/admin/payments", icon: "ti-credit-card", label: "Payments" },
+      { href: "/leaderboard",    icon: "ti-trophy amber", label: "Ranks" },
     ],
     PARENT: [
-      { href: "/parent",            icon: "🏠", label: "Home" },
-      { href: "/parent/attendance", icon: "✅", label: "Attend" },
-      { href: "/parent/grades",     icon: "📝", label: "Grades" },
-      { href: "/parent/payments",   icon: "💳", label: "Payments" },
+      { href: "/parent",            icon: "ti-layout-dashboard", label: "Home" },
+      { href: "/parent/attendance", icon: "ti-calendar-check", label: "Attend" },
+      { href: "/parent/grades",     icon: "ti-chart-bar", label: "Grades" },
+      { href: "/parent/payments",   icon: "ti-credit-card", label: "Payments" },
     ],
   };
 
@@ -120,63 +120,45 @@ export default function Sidebar({ role, userName }: SidebarProps) {
   }
 
   // ── Sub-components ────────────────────────────────────
-  const Logo = () => (
+  const renderLogo = () => (
     <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
       {branding.logoUrl ? (
         <img
           src={branding.logoUrl}
           alt={branding.name}
-          style={{ width: "40px", height: "40px", objectFit: "contain", borderRadius: "10px", flexShrink: 0, mixBlendMode: "screen" }}
+          className="eta-brand-mark"
+          style={{ objectFit: "contain", mixBlendMode: "screen" }}
         />
       ) : (
-        <div style={{
-          width: "40px", height: "40px",
-          background: "var(--primary-gradient, var(--primary-gradient, linear-gradient(135deg,#6366f1,#8b5cf6)))",
-          borderRadius: "10px", display: "flex", alignItems: "center",
-          justifyContent: "center", fontSize: "1.25rem", flexShrink: 0,
-        }}>🎓</div>
+        <div className="eta-brand-mark">ETA</div>
       )}
       <div>
-        <div style={{ color: "white", fontWeight: "700", fontSize: "0.9rem", letterSpacing: "-0.01em" }}>{branding.name}</div>
-        <div style={{ fontSize: "0.65rem", color: roleColor[role], fontWeight: "700", textTransform: "uppercase", letterSpacing: "0.06em" }}>
+        <div style={{ color: "white", fontWeight: "800", fontSize: "0.95rem", letterSpacing: 0 }}>{branding.name}</div>
+        <div style={{ fontSize: "0.68rem", color: "#cbd5e1", fontWeight: "800", textTransform: "uppercase", letterSpacing: "0.06em" }}>
           {t(`roles.${role}`)}
         </div>
       </div>
     </div>
   );
 
-  const NavLinks = ({ onClick }: { onClick?: () => void }) => (
+  const renderNavLinks = (onClick?: () => void) => (
     <>
       {nav.map((item) => {
         const active = isActive(item.href);
         return (
-          <Link key={item.href} href={item.href} onClick={onClick} style={{
-            display: "flex", alignItems: "center", gap: "0.75rem",
-            padding: "0.625rem 0.875rem", borderRadius: "0.625rem", marginBottom: "2px",
-            color: active ? "white" : "rgba(255,255,255,0.55)",
-            background: active ? "rgba(255,255,255,0.12)" : "transparent",
-            textDecoration: "none", fontSize: "0.875rem",
-            fontWeight: active ? "700" : "400", transition: "all 0.15s",
-            borderLeft: active ? `3px solid var(--primary, #818cf8)` : "3px solid transparent",
-          }}>
-            <span style={{ fontSize: "1.1rem", lineHeight: 1 }}>{item.icon}</span>
+          <Link key={item.href} href={item.href} onClick={onClick} className={`eta-nav-link${active ? " is-active" : ""}`}>
+            <i className={`ti ${item.icon} ti nav-icon accent`} aria-hidden="true" />
             <span>{item.label}</span>
-            {active && <span style={{ marginLeft: "auto", width: 6, height: 6, borderRadius: "50%", background: "var(--primary, #818cf8)" }} />}
           </Link>
         );
       })}
     </>
   );
 
-  const UserFooter = ({ compact }: { compact?: boolean }) => (
+  const renderUserFooter = (compact?: boolean) => (
     <div style={{ padding: compact ? "0.875rem" : "1rem 1.25rem", borderTop: "1px solid rgba(255,255,255,0.08)" }}>
       <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "0.625rem" }}>
-        <div style={{
-          width: "36px", height: "36px", background: roleGradient[role], borderRadius: "50%",
-          display: "flex", alignItems: "center", justifyContent: "center",
-          color: "white", fontWeight: "700", fontSize: "0.875rem", flexShrink: 0,
-          boxShadow: "0 2px 6px rgba(0,0,0,0.25)",
-        }}>
+        <div className="eta-avatar" style={{ background: roleGradient[role], color: "white", fontWeight: "800", fontSize: "0.875rem" }}>
           {userName.charAt(0).toUpperCase()}
         </div>
         <div style={{ overflow: "hidden", flex: 1 }}>
@@ -188,15 +170,15 @@ export default function Sidebar({ role, userName }: SidebarProps) {
           </div>
         </div>
       </div>
-      <button onClick={handleLogout} style={{
+      <button onClick={handleLogout} title={t("nav.signOut")} style={{
         width: "100%", padding: "0.5rem",
-        background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.65)",
+        background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.74)",
         border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.5rem",
         fontSize: "0.8rem", cursor: "pointer",
         display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem",
         transition: "background 0.15s",
       }}>
-        🚪 {t("nav.signOut")}
+        <span aria-hidden="true">↪</span> {t("nav.signOut")}
       </button>
     </div>
   );
@@ -205,20 +187,20 @@ export default function Sidebar({ role, userName }: SidebarProps) {
     <>
       {/* ══ DESKTOP SIDEBAR ════════════════════════════════ */}
       <aside className="eta-sidebar-desktop" style={{
-        width: "240px", minHeight: "100vh", background: "var(--sidebar-bg)",
+        width: "252px", minHeight: "100vh",
         display: "flex", flexDirection: "column", flexShrink: 0,
-        borderRight: "1px solid rgba(255,255,255,0.06)",
+        borderRight: "1px solid rgba(15,23,42,0.08)",
       }}>
         <div style={{ padding: "1.25rem 1.5rem", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
-          <Logo />
+          {renderLogo()}
         </div>
         <div style={{ padding: "0.5rem 0.75rem", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
           <LanguageSwitcher />
         </div>
         <nav style={{ flex: 1, padding: "0.75rem 0.625rem", overflowY: "auto" }}>
-          <NavLinks />
+          {renderNavLinks()}
         </nav>
-        <UserFooter />
+        {renderUserFooter()}
       </aside>
 
       {/* ══ MOBILE TOP BAR ═════════════════════════════════
@@ -229,16 +211,12 @@ export default function Sidebar({ role, userName }: SidebarProps) {
       <div className="eta-mobile-topbar" style={{
         display: "none",
         position: "fixed", top: 0, left: 0, right: 0, zIndex: 100,
-        background: "var(--sidebar-bg)",
-        /* Total height covers notch + 56px usable bar */
         height: "calc(var(--topbar-h) + env(safe-area-inset-top, 0px))",
-        /* Flex column so we can push the row below the notch */
         flexDirection: "column",
         justifyContent: "flex-end",
-        boxShadow: "0 2px 16px rgba(0,0,0,0.4)",
+        boxShadow: "0 2px 16px rgba(15,23,42,0.2)",
         borderBottom: "1px solid rgba(255,255,255,0.07)",
       }}>
-        {/* Actual 56px content row — sits below notch */}
         <div style={{
           height: "var(--topbar-h)",
           display: "flex", alignItems: "center", justifyContent: "space-between",
@@ -261,9 +239,9 @@ export default function Sidebar({ role, userName }: SidebarProps) {
             {branding.logoUrl ? (
               <img src={branding.logoUrl} alt={branding.name} style={{ width:28, height:28, objectFit:"contain", borderRadius:"6px", mixBlendMode:"screen" }} />
             ) : (
-              <span style={{ fontSize: "1.15rem" }}>🎓</span>
+              <span style={{ fontSize: "0.8rem", fontWeight: 900 }}>ETA</span>
             )}
-            <span style={{ color: "white", fontWeight: "800", fontSize: "1rem", letterSpacing: "-0.02em" }}>{branding.name}</span>
+            <span style={{ color: "white", fontWeight: "800", fontSize: "1rem", letterSpacing: 0 }}>{branding.name}</span>
           </div>
 
           {/* Avatar */}
@@ -290,16 +268,15 @@ export default function Sidebar({ role, userName }: SidebarProps) {
       {/* ══ MOBILE DRAWER ══════════════════════════════════ */}
       <div style={{
         position: "fixed", top: 0, left: 0, bottom: 0, zIndex: 201,
-        width: "280px", background: "var(--sidebar-bg)",
+        width: "280px",
         display: "flex", flexDirection: "column",
         transform: open ? "translateX(0)" : "translateX(-100%)",
         transition: "transform 0.28s cubic-bezier(0.4,0,0.2,1)",
         boxShadow: open ? "4px 0 24px rgba(0,0,0,0.4)" : "none",
-        /* Drawer header accounts for notch too */
         paddingTop: "env(safe-area-inset-top, 0px)",
-      }}>
+      }} className="eta-mobile-drawer">
         <div style={{ padding: "1rem 1.25rem", borderBottom: "1px solid rgba(255,255,255,0.08)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <Logo />
+          {renderLogo()}
           <button onClick={() => setOpen(false)} style={{
             background: "rgba(255,255,255,0.08)", border: "none", color: "rgba(255,255,255,0.7)",
             fontSize: "1.1rem", cursor: "pointer", borderRadius: "0.5rem",
@@ -310,16 +287,15 @@ export default function Sidebar({ role, userName }: SidebarProps) {
           <LanguageSwitcher />
         </div>
         <nav style={{ flex: 1, padding: "0.75rem 0.625rem", overflowY: "auto" }}>
-          <NavLinks onClick={() => setOpen(false)} />
+          {renderNavLinks(() => setOpen(false))}
         </nav>
-        <UserFooter compact />
+        {renderUserFooter(true)}
       </div>
 
       {/* ══ MOBILE BOTTOM NAV ══════════════════════════════ */}
       <div className="eta-mobile-bottomnav" style={{
         display: "none",
         position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 100,
-        background: "var(--sidebar-bg)",
         borderTop: "1px solid rgba(255,255,255,0.08)",
         height: "var(--bottomnav-h)",
         alignItems: "stretch", justifyContent: "space-around",
@@ -338,7 +314,6 @@ export default function Sidebar({ role, userName }: SidebarProps) {
               position: "relative",
               minWidth: 0,
             }}>
-              {/* Active indicator bar */}
               {active && (
                 <span style={{
                   position: "absolute", top: 0, left: "25%", right: "25%",
@@ -346,9 +321,8 @@ export default function Sidebar({ role, userName }: SidebarProps) {
                   borderRadius: "0 0 3px 3px",
                 }} />
               )}
-              {/* Icon pill */}
               <span style={{
-                fontSize: "1.45rem", lineHeight: 1,
+                fontSize: "0.76rem", lineHeight: 1, fontWeight: 900,
                 background: active ? `${roleColor[role]}22` : "transparent",
                 padding: "4px 10px", borderRadius: "0.5rem",
                 transition: "background 0.15s",
@@ -373,7 +347,7 @@ export default function Sidebar({ role, userName }: SidebarProps) {
           background: "none", border: "none", cursor: "pointer", flex: 1,
           color: "rgba(255,255,255,0.4)", minWidth: 0,
         }}>
-          <span style={{ fontSize: "1.45rem", lineHeight: 1, padding: "4px 10px", borderRadius: "0.5rem" }}>☰</span>
+          <span style={{ fontSize: "1rem", lineHeight: 1, padding: "4px 10px", borderRadius: "0.5rem" }}>☰</span>
           <span style={{ fontSize: "0.65rem", fontWeight: "500", color: "rgba(255,255,255,0.45)" }}>More</span>
         </button>
       </div>

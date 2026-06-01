@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -38,79 +37,104 @@ export default function LoginPage() {
   }
 
   return (
-    <div style={{
-      minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center",
-      background: "linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)", padding: "1rem",
-    }}>
-      {/* Language switcher top-right */}
-      <div style={{ position: "fixed", top: "1rem", right: "1rem" }}>
-        <div style={{
-          background: "rgba(255,255,255,0.15)", borderRadius: "10px", padding: "4px",
-          display: "flex", gap: "2px",
-        }}>
-          {(["uz","en","ru"] as const).map((code) => {
-            const labels = { uz: "O'z", en: "EN", ru: "RU" };
-            return (
-              <button
-                key={code}
-                onClick={async () => {
-                  await fetch("/api/locale", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ locale: code }) });
-                  router.refresh();
-                }}
-                style={{
-                  padding: "5px 10px", border: "none", borderRadius: "7px", cursor: "pointer",
-                  fontSize: "0.75rem", fontWeight: "700",
-                  background: "transparent", color: "rgba(255,255,255,0.85)",
-                }}
-              >
-                {labels[code]}
-              </button>
-            );
-          })}
+    <div className="login-shell">
+      <section className="login-story">
+        <div style={{ display: "flex", alignItems: "center", gap: "0.875rem" }}>
+          <div className="eta-brand-mark" style={{ background: "var(--primary)", borderColor: "var(--primary)", color: "white" }}>ETA</div>
+          <div>
+            <div style={{ fontWeight: 900, color: "var(--text)", fontSize: "1.05rem" }}>ETA Academy</div>
+            <div style={{ color: "var(--text-muted)", fontSize: "0.78rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em" }}>Learning portal</div>
+          </div>
         </div>
-      </div>
 
-      <div style={{
-        background: "white", borderRadius: "1rem", padding: "2.5rem",
-        width: "100%", maxWidth: "400px", boxShadow: "0 25px 50px rgba(0,0,0,0.15)",
-      }}>
-        <div style={{ textAlign: "center", marginBottom: "2rem" }}>
-          <div style={{
-            width: "56px", height: "56px",
-            background: "var(--primary-gradient, linear-gradient(135deg,#6366f1,#8b5cf6))",
-            borderRadius: "14px", display: "flex", alignItems: "center", justifyContent: "center",
-            margin: "0 auto 1rem", fontSize: "1.5rem",
-          }}>🎓</div>
-          <h1 style={{ fontSize: "1.5rem", fontWeight: "700", color: "#1e293b", margin: "0 0 0.25rem" }}>
-            {t("title")}
+        <div style={{ maxWidth: "760px" }}>
+          <p style={{ color: "var(--primary)", fontWeight: 800, margin: "0 0 0.75rem", textTransform: "uppercase", fontSize: "0.78rem", letterSpacing: "0.08em" }}>
+            English Teaching Academy
+          </p>
+          <h1 style={{ fontSize: "clamp(2.4rem, 5vw, 4.5rem)", lineHeight: 1.02, margin: 0, maxWidth: "760px", fontWeight: 900 }}>
+            One calm workspace for classes, progress, and payments.
           </h1>
-          <p style={{ color: "#64748b", fontSize: "0.875rem", margin: 0 }}>{t("subtitle")}</p>
+          <p style={{ color: "var(--text-muted)", fontSize: "1.05rem", maxWidth: "560px", margin: "1.25rem 0 0" }}>
+            Admins, teachers, students, and parents get a focused view of the day without digging through messages or spreadsheets.
+          </p>
         </div>
 
-        <form onSubmit={handleSubmit}>
-          <div style={{ marginBottom: "1rem" }}>
-            <label className="label">{t("email")}</label>
-            <input type="email" className="input" value={email} onChange={(e) => setEmail(e.target.value)} placeholder={t("emailPlaceholder")} required />
-          </div>
-          <div style={{ marginBottom: "1.5rem" }}>
-            <label className="label">{t("password")}</label>
-            <input type="password" className="input" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" required />
-          </div>
-          {error && (
-            <div style={{ background: "#fee2e2", color: "#991b1b", padding: "0.75rem", borderRadius: "0.5rem", fontSize: "0.875rem", marginBottom: "1rem" }}>
-              {error}
+        <div className="login-feature-grid">
+          {[
+            ["Live groups", "Schedules, attendance, and class ownership in one place."],
+            ["Student progress", "Grades, homework, coins, and streaks stay visible."],
+            ["Clear finance", "Payments and debtors are easy to scan and act on."],
+          ].map(([title, body]) => (
+            <div key={title} style={{ background: "rgba(255,255,255,0.72)", border: "1px solid var(--border)", borderRadius: "0.75rem", padding: "1rem", boxShadow: "var(--shadow-sm)" }}>
+              <div style={{ fontWeight: 800, color: "var(--text)", marginBottom: "0.25rem" }}>{title}</div>
+              <div style={{ color: "var(--text-muted)", fontSize: "0.84rem", lineHeight: 1.5 }}>{body}</div>
             </div>
-          )}
-          <button type="submit" disabled={loading} style={{
-            width: "100%", padding: "0.75rem",
-            background: loading ? "#a5b4fc" : "var(--primary-gradient, linear-gradient(135deg,#6366f1,#8b5cf6))",
-            color: "white", border: "none", borderRadius: "0.5rem",
-            fontSize: "1rem", fontWeight: "600", cursor: loading ? "not-allowed" : "pointer",
+          ))}
+        </div>
+      </section>
+
+      <section className="login-panel">
+        <div style={{ position: "fixed", top: "1rem", right: "1rem" }}>
+          <div style={{
+            background: "white", borderRadius: "0.5rem", padding: "4px",
+            display: "flex", gap: "2px", border: "1px solid var(--border)", boxShadow: "var(--shadow-sm)",
           }}>
-            {loading ? "..." : t("signIn")}
-          </button>
-        </form>
-      </div>
+            {(["uz","en","ru"] as const).map((code) => {
+              const labels = { uz: "O'z", en: "EN", ru: "RU" };
+              return (
+                <button
+                  key={code}
+                  onClick={async () => {
+                    await fetch("/api/locale", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ locale: code }) });
+                    router.refresh();
+                  }}
+                  style={{
+                    padding: "5px 10px", border: "none", borderRadius: "0.375rem", cursor: "pointer",
+                    fontSize: "0.75rem", fontWeight: "800",
+                    background: "transparent", color: "var(--text-muted)",
+                  }}
+                >
+                  {labels[code]}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className="login-card">
+          <div style={{ marginBottom: "2rem" }}>
+            <div className="eta-brand-mark" style={{
+              background: "var(--primary-light)",
+              color: "var(--primary-dark)",
+              borderColor: "var(--border)",
+              marginBottom: "1rem",
+            }}>ETA</div>
+            <h1 style={{ fontSize: "1.65rem", fontWeight: "900", color: "var(--text)", margin: "0 0 0.35rem" }}>
+              {t("title")}
+            </h1>
+            <p style={{ color: "var(--text-muted)", fontSize: "0.925rem", margin: 0 }}>{t("subtitle")}</p>
+          </div>
+
+          <form onSubmit={handleSubmit}>
+            <div style={{ marginBottom: "1rem" }}>
+              <label className="label">{t("email")}</label>
+              <input type="email" className="input" value={email} onChange={(e) => setEmail(e.target.value)} placeholder={t("emailPlaceholder")} required />
+            </div>
+            <div style={{ marginBottom: "1.5rem" }}>
+              <label className="label">{t("password")}</label>
+              <input type="password" className="input" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" required />
+            </div>
+            {error && (
+              <div style={{ background: "#fee2e2", color: "#991b1b", padding: "0.75rem", borderRadius: "0.5rem", fontSize: "0.875rem", marginBottom: "1rem", border: "1px solid #fecaca" }}>
+                {error}
+              </div>
+            )}
+            <button type="submit" disabled={loading} className="btn btn-primary" style={{ width: "100%", minHeight: "46px", cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.72 : 1 }}>
+              {loading ? "..." : t("signIn")}
+            </button>
+          </form>
+        </div>
+      </section>
     </div>
   );
 }
