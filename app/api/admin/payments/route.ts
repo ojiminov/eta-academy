@@ -37,17 +37,27 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Required fields missing" }, { status: 400 });
     }
 
-    const payment = await prisma.payment.create({
-      data: {
-        studentId,
-        amount: parseFloat(amount),
-        method: method || "cash",
-        notes: notes || null,
-        status: status || "PAID",
-        paidAt: status === "PAID" || !status ? new Date() : null,
-      },
-      include: { student: { include: { user: true } } },
-    });
+    const parsedAmount = parseFloat(amount);
+    const isPaid = status === "PAID" || !status;
+
+    const [payment] = await prisma.$transaction([
+      prisma.payment.create({
+        data: {
+          studentId,
+          amount: parsedAmount,
+          method: method || "cash",
+          notes: notes || null,
+          status: isPaid ? "PAID" : (status || "PENDING"),
+          paidAt: isPaid ? new Date() : null,
+        },
+        include: { student: { include: { user: true } } },
+      }),
+      // Deduct from student balance when payment is recorded as PAID
+      ...(isPaid ? [prisma.student.update({
+        where: { id: studentId },
+        data: { balance: { decrement: parsedAmount } },
+      })] : []),
+    ]);
 
     return NextResponse.json(payment, { status: 201 });
   } catch (err) {
@@ -66,6 +76,11 @@ export async function PATCH(req: NextRequest) {
     const { id, status, method, notes } = await req.json();
     if (!id) return NextResponse.json({ error: "Payment ID required" }, { status: 400 });
 
+    const existing = await prisma.payment.findUnique({ where: { id } });
+    if (!existing) return NextResponse.json({ error: "Payment not found" }, { status: 404 });
+
+    const becomingPaid = status === "PAID" && existing.status !== "PAID";
+
     const payment = await prisma.payment.update({
       where: { id },
       data: {
@@ -75,6 +90,14 @@ export async function PATCH(req: NextRequest) {
         paidAt: status === "PAID" ? new Date() : undefined,
       },
     });
+
+    // Deduct balance if payment just became PAID
+    if (becomingPaid) {
+      await prisma.student.update({
+        where: { id: existing.studentId },
+        data: { balance: { decrement: existing.amount } },
+      });
+    }
 
     return NextResponse.json(payment);
   } catch (err) {

@@ -57,13 +57,14 @@ export async function PATCH(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   try {
-    const { id, ...data } = await req.json();
+    const { id, firstName, lastName, phone, email, source, status, interestedLevel, trialDate, notes } = await req.json();
+    const data = { firstName, lastName, phone, email, source, status, interestedLevel, trialDate, notes };
     if (!id) return NextResponse.json({ error: "ID required" }, { status: 400 });
     const lead = await prisma.lead.update({
       where: { id },
       data: {
-        ...data,
-        trialDate: data.trialDate ? new Date(data.trialDate) : undefined,
+        ...Object.fromEntries(Object.entries(data).filter(([,v]) => v !== undefined)),
+        trialDate: trialDate ? new Date(trialDate) : undefined,
         updatedAt: new Date(),
       }
     });

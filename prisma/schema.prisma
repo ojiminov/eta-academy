@@ -256,6 +256,8 @@ model GroupStudent {
   isActive  Boolean  @default(true)
 
   @@unique([groupId, studentId])
+    @@index([groupId])
+  @@index([studentId])
   @@map("group_students")
 }
 
@@ -294,6 +296,8 @@ model Attendance {
   updatedAt      DateTime         @updatedAt
 
   @@unique([classSessionId, studentId])
+    @@index([classSessionId])
+  @@index([studentId])
   @@map("attendances")
 }
 
@@ -357,6 +361,8 @@ model HomeworkGrade {
   updatedAt      DateTime  @updatedAt
 
   @@unique([homeworkId, studentId])
+    @@index([homeworkId])
+  @@index([studentId])
   @@map("homework_grades")
 }
 
@@ -394,6 +400,8 @@ model ExamResult {
   updatedAt DateTime  @updatedAt
 
   @@unique([examId, studentId])
+    @@index([examId])
+  @@index([studentId])
   @@map("exam_results")
 }
 
@@ -477,6 +485,7 @@ model Notification {
   link      String?
   createdAt DateTime         @default(now())
 
+    @@index([userId])
   @@map("notifications")
 }
 

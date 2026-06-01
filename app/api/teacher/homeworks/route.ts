@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
 
     // Find teacher record
     const teacher = await prisma.teacher.findFirst({ where: { userId: session.userId } });
-    if (!teacher && session.role === "TEACHER") {
+    if (!teacher) {
       return NextResponse.json({ error: "Teacher record not found" }, { status: 404 });
     }
 

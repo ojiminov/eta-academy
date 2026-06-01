@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Required fields missing" }, { status: 400 });
     }
     const teacher = await prisma.teacher.findFirst({ where: { userId: session.userId } });
-    if (!teacher && session.role === "TEACHER") return NextResponse.json({ error: "Teacher not found" }, { status: 404 });
+    if (!teacher) return NextResponse.json({ error: "Teacher record not found for this user" }, { status: 404 });
 
     const groupStudents = await prisma.groupStudent.findMany({ where: { groupId, isActive: true } });
     const exam = await prisma.exam.create({

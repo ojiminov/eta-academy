@@ -6,10 +6,19 @@ import { randomUUID } from "crypto";
 
 export const dynamic = "force-dynamic";
 
-export async function POST() {
+export async function POST(req: import("next/server").NextRequest) {
   const session = await getSession();
   if (!session || session.role !== "ADMIN") {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  // Require explicit confirmation to prevent accidental/malicious wipes
+  const body = await req.json().catch(() => ({}));
+  if (body.confirm !== "RESET_ALL_DATA") {
+    return NextResponse.json(
+      { error: "Must send { confirm: 'RESET_ALL_DATA' } to proceed" },
+      { status: 400 }
+    );
   }
 
   const pool = new Pool({ connectionString: process.env.DIRECT_URL });
@@ -101,9 +110,9 @@ export async function POST() {
       success: true,
       message: "Database wiped and re-seeded successfully.",
       accounts: {
-        admin:   { email: "admin@eta.uz",   password: "admin123"   },
-        teacher: { email: "teacher@eta.uz", password: "teacher123" },
-        student: { email: "student@eta.uz", password: "student123" },
+        admin:   { email: "admin@eta.uz" },
+        teacher: { email: "teacher@eta.uz" },
+        student: { email: "student@eta.uz" },
       },
     });
   } catch (err: unknown) {
