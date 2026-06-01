@@ -24,7 +24,8 @@
     "prisma": "^5.22.0",
     "react": "19.2.4",
     "react-dom": "19.2.4",
-    "zod": "^4.4.3"
+    "zod": "^4.4.3",
+    "@tabler/icons-webfont": "^3.33.0"
   },
   "prisma": {
     "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
