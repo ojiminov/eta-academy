@@ -79,8 +79,10 @@ function shiftLightness(hex: string, delta: number, newS?: number): string {
   return hslToHex(h, newS ?? s, Math.max(5, Math.min(95, l + delta)));
 }
 
-/** Dark sidebar: same hue as primary, desaturated, very dark */
+/** Dark sidebar: same hue as primary, desaturated, very dark (always ≤ L:15) */
 function toSidebarBg(hex: string): string {
-  const [h] = hexToHsl(hex);
-  return hslToHex(h, 30, 11);
+  const [h, s] = hexToHsl(hex);
+  // Keep the hue of the chosen color but force it very dark
+  // Clamp saturation so it looks intentional, not washed out
+  return hslToHex(h, Math.min(s, 40), 12);
 }
