@@ -145,12 +145,11 @@ export default function Sidebar({ role, userName }: SidebarProps) {
     <>
       {nav.map((item) => {
         const active = isActive(item.href);
-        const iconText = item.label.slice(0, 2).toUpperCase();
+        const iconName = item.icon.split(" ")[0]; // e.g. "ti-users" from "ti-users" or "ti-trophy amber"
+        const extraClass = item.icon.includes("red") ? "red" : item.icon.includes("amber") ? "amber" : "";
         return (
           <Link key={item.href} href={item.href} onClick={onClick} className={`eta-nav-link${active ? " is-active" : ""}`}>
-            <span className={`nav-icon ${item.icon.includes("red") ? "red" : ""} ${item.icon.includes("amber") ? "amber" : ""}`} aria-hidden="true">
-              {iconText}
-            </span>
+            <i className={`ti ${iconName} nav-icon${extraClass ? ` ${extraClass}` : ""}`} aria-hidden="true" />
             <span>{item.label}</span>
           </Link>
         );
@@ -324,14 +323,13 @@ export default function Sidebar({ role, userName }: SidebarProps) {
                   borderRadius: "0 0 3px 3px",
                 }} />
               )}
-              <span style={{
-                fontSize: "0.76rem", lineHeight: 1, fontWeight: 900,
+              <i className={`ti ti-${item.icon.split(" ")[0].replace("ti-","")}`} style={{
+                fontSize: "1.35rem", lineHeight: 1,
                 background: active ? `${roleColor[role]}22` : "transparent",
                 padding: "4px 10px", borderRadius: "0.5rem",
                 transition: "background 0.15s",
-              }}>
-                {item.icon}
-              </span>
+                color: active ? "white" : "rgba(255,255,255,0.5)",
+              }} aria-hidden="true" />
               <span style={{
                 fontSize: "0.65rem", fontWeight: active ? "700" : "500",
                 color: active ? roleColor[role] : "rgba(255,255,255,0.45)",
