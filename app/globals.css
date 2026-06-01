@@ -298,3 +298,83 @@ tbody tr:last-child td { border-bottom: none; }
   .eta-page { padding: 0.75rem !important; }
   .stat-grid-4, .stat-grid-3, .stat-grid-2 { grid-template-columns: repeat(2,1fr) !important; gap: 0.625rem !important; }
 }
+
+/* ── Login page ─────────────────────────────────────── */
+.login-shell {
+  display: grid;
+  grid-template-columns: 1fr 420px;
+  min-height: 100vh;
+  background: var(--background);
+}
+
+.login-story {
+  padding: 3rem 3.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+  justify-content: center;
+  background: var(--background);
+  border-right: 1px solid var(--border-soft);
+}
+
+.login-panel {
+  background: var(--surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 2.5rem;
+  border-left: 1px solid var(--border-soft);
+}
+
+.login-card {
+  width: 100%;
+  max-width: 360px;
+}
+
+.login-feature-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.eta-brand-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  font-weight: 900;
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  border: 1.5px solid var(--border);
+  background: var(--primary-light);
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+/* Login button override — always full forest green */
+.login-card .btn-primary {
+  background: var(--primary) !important;
+  border-color: var(--primary) !important;
+  color: white !important;
+}
+.login-card .btn-primary:hover {
+  background: var(--primary-dark) !important;
+  border-color: var(--primary-dark) !important;
+}
+
+@media (max-width: 768px) {
+  .login-shell {
+    grid-template-columns: 1fr;
+  }
+  .login-story {
+    display: none;
+  }
+  .login-panel {
+    border-left: none;
+    padding: 2rem 1.25rem;
+    align-items: flex-start;
+    padding-top: 4rem;
+  }
+}
