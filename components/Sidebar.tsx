@@ -147,7 +147,7 @@ export default function Sidebar({ role, userName }: SidebarProps) {
         const active = isActive(item.href);
         return (
           <Link key={item.href} href={item.href} onClick={onClick} className={`eta-nav-link${active ? " is-active" : ""}`}>
-            <i className={`ti ${item.icon} ti nav-icon accent`} aria-hidden="true" />
+            <i className={`ti ${item.icon} nav-icon accent`} aria-hidden="true" />
             <span>{item.label}</span>
           </Link>
         );

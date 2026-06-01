@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import url("https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.x/dist/tabler-icons.min.css");
 
 /* ── Design System: Forest Green · Playfair Display + Inter
    Style: Warm editorial, organic, premium
@@ -377,4 +378,55 @@ tbody tr:last-child td { border-bottom: none; }
     align-items: flex-start;
     padding-top: 4rem;
   }
+}
+
+/* ── Sidebar nav link ────────────────────────────────── */
+.eta-nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius-sm);
+  color: rgba(255,255,255,0.5);
+  font-size: 0.835rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.15s;
+  margin-bottom: 1px;
+  border-left: 2px solid transparent;
+}
+.eta-nav-link:hover {
+  background: rgba(255,255,255,0.07);
+  color: rgba(255,255,255,0.85);
+  transform: translateX(2px);
+}
+.eta-nav-link.is-active {
+  background: rgba(255,255,255,0.12);
+  color: white;
+  font-weight: 600;
+  border-left-color: #6ee7b7;
+}
+.eta-nav-link.is-active .nav-icon { color: #6ee7b7 !important; }
+
+/* ── Sidebar avatar ──────────────────────────────────── */
+.eta-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.875rem;
+  flex-shrink: 0;
+}
+
+/* ── Nav section label ───────────────────────────────── */
+.eta-nav-section {
+  font-size: 0.6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: rgba(255,255,255,0.25);
+  padding: 0.875rem 0.75rem 0.3rem;
 }

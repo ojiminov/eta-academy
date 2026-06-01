@@ -68,9 +68,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
   return (
     <html lang={locale} className={`h-full ${jakartaSans.variable} ${playfair.variable}`} style={cssVars}>
-      <head>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.x/dist/tabler-icons.min.css" />
-      </head>
       <body className="min-h-full">
         <NextIntlClientProvider locale={locale} messages={messages}>
           <BrandingProvider value={{
