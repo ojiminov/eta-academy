@@ -388,7 +388,7 @@ tbody tr:last-child td { border-bottom: none; }
   gap: 0.625rem;
   padding: 0.5rem 0.75rem;
   border-radius: var(--radius-sm);
-  color: rgba(255,255,255,0.82);
+  color: #ffffff;
   font-size: 0.835rem;
   font-weight: 500;
   text-decoration: none;
@@ -398,17 +398,17 @@ tbody tr:last-child td { border-bottom: none; }
 }
 .eta-nav-link:hover {
   background: rgba(255,255,255,0.1);
-  color: white;
+  color: #ffffff;
   transform: translateX(2px);
 }
 .eta-nav-link.is-active {
   background: rgba(255,255,255,0.15);
-  color: white;
+  color: #ffffff;
   font-weight: 700;
   border-left-color: #6ee7b7;
 }
 .eta-nav-link.is-active .nav-icon { color: #6ee7b7 !important; }
-.eta-nav-link .nav-icon { color: rgba(255,255,255,0.65); font-size: 1.05rem; width: 20px; text-align: center; flex-shrink: 0; }
+.eta-nav-link .nav-icon { color: #ffffff; font-size: 1.05rem; width: 20px; text-align: center; flex-shrink: 0; }
 .eta-nav-link .nav-icon.red   { color: #fca5a5 !important; }
 .eta-nav-link .nav-icon.amber { color: #fcd34d !important; }
 
@@ -431,7 +431,7 @@ tbody tr:last-child td { border-bottom: none; }
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.09em;
-  color: rgba(255,255,255,0.25);
+  color: rgba(255,255,255,0.5);
   padding: 0.875rem 0.75rem 0.3rem;
 }
 
