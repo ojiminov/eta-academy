@@ -11,7 +11,7 @@ type Settings = {
 };
 
 const PRESETS = [
-  { label: "Indigo",    color: "var(--primary, #6366f1)" },
+  { label: "Forest Green", color: "#2a5c45" },
   { label: "Blue",      color: "#3b82f6" },
   { label: "Emerald",   color: "#10b981" },
   { label: "Rose",      color: "#f43f5e" },
@@ -28,19 +28,34 @@ export default function AdminSettingsPage() {
     name: "ETA Academy",
     logoUrl: null,
     logoName: null,
-    primaryColor: "var(--primary, #6366f1)",
+    primaryColor: "#2a5c45",
   });
   const [newLogo, setNewLogo] = useState<{ url: string; name: string } | null>(null);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [resetting, setResetting] = useState(false);
 
   useEffect(() => {
     fetch("/api/admin/settings")
       .then(r => r.json())
-      .then(d => setSettings({ name: d.name ?? "ETA Academy", logoUrl: d.logoUrl, logoName: d.logoName, primaryColor: d.primaryColor ?? "var(--primary, #6366f1)" }))
+      .then(d => setSettings({ name: d.name ?? "ETA Academy", logoUrl: d.logoUrl, logoName: d.logoName, primaryColor: d.primaryColor ?? "#2a5c45" }))
       .finally(() => setLoading(false));
   }, []);
+
+  async function handleReset() {
+    if (!confirm("Reset all branding to default ETA Academy settings?")) return;
+    setResetting(true);
+    await fetch("/api/admin/settings", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: "ETA Academy", primaryColor: "#2a5c45", logoUrl: null, logoName: null }),
+    });
+    setSettings({ name: "ETA Academy", logoUrl: null, logoName: null, primaryColor: "#2a5c45" });
+    setNewLogo(null);
+    setResetting(false);
+    setTimeout(() => window.location.reload(), 400);
+  }
 
   async function handleSave() {
     setSaving(true);
@@ -178,8 +193,8 @@ export default function AdminSettingsPage() {
         </div>
       </div>
 
-      {/* Save button */}
-      <div style={{ display:"flex", alignItems:"center", gap:"1rem" }}>
+      {/* Save + Reset buttons */}
+      <div style={{ display:"flex", alignItems:"center", gap:"1rem", flexWrap:"wrap" }}>
         <button
           onClick={handleSave}
           disabled={saving}
@@ -193,6 +208,19 @@ export default function AdminSettingsPage() {
           }}
         >
           {saving ? "Saving..." : "💾 Save Branding"}
+        </button>
+        <button
+          onClick={handleReset}
+          disabled={resetting}
+          style={{
+            padding:"0.75rem 1.5rem",
+            background: "white", color:"#dc2626",
+            border:"1.5px solid #fca5a5", borderRadius:"0.625rem",
+            fontWeight:"600", fontSize:"0.875rem",
+            cursor: resetting ? "not-allowed" : "pointer",
+          }}
+        >
+          {resetting ? "Resetting..." : "↺ Reset to Default"}
         </button>
         {saved && (
           <div style={{ color:"#10b981", fontWeight:"600", fontSize:"0.875rem", display:"flex", alignItems:"center", gap:"0.5rem" }}>

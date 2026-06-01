@@ -191,7 +191,8 @@ export default function Sidebar({ role, userName }: SidebarProps) {
       <aside className="eta-sidebar-desktop" style={{
         width: "252px", minHeight: "100vh",
         display: "flex", flexDirection: "column", flexShrink: 0,
-        borderRight: "1px solid rgba(15,23,42,0.08)",
+        background: "#1e3d2d",
+        borderRight: "1px solid rgba(255,255,255,0.06)",
       }}>
         <div style={{ padding: "1.25rem 1.5rem", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
           {renderLogo()}
