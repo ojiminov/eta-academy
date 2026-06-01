@@ -4,9 +4,10 @@ import { notFound } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
-export default async function TeacherDetailPage({ params }: { params: { id: string } }) {
+export default async function TeacherDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const teacher = await prisma.teacher.findUnique({
-    where: { id: params.id },
+    where: { id },
     include: {
       user: true,
       groups: {

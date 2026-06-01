@@ -6,13 +6,14 @@ import { getTranslations } from "next-intl/server";
 
 export const dynamic = "force-dynamic";
 
-export default async function TeacherGroupDetailPage({ params }: { params: { id: string } }) {
+export default async function TeacherGroupDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const t = await getTranslations();
   const user = await getCurrentUser();
   const teacher = user?.teacher;
 
   const group = await prisma.group.findUnique({
-    where: { id: params.id },
+    where: { id: id },
     include: {
       teacher: true,
       groupStudents: {
