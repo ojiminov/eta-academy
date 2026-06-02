@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
       where: { email: email.toLowerCase() },
     });
 
-    if (!user || !user.isActive) {
+    if (!user || user.isActive === false) {
       return NextResponse.json({ error: "Invalid email or password" }, { status: 401 });
     }
 
