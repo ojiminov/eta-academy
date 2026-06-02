@@ -527,12 +527,116 @@ async function main() {
 
   console.log("✅ Announcements created");
 
+  // ─── DEMO ACCOUNTS ───────────────────────────────────────────────────
+  // Demo Student
+  const demoStudentUser = await prisma.user.create({
+    data: {
+      email: "demo.student@eta.uz",
+      passwordHash: await bcrypt.hash("demo123", 10),
+      role: Role.STUDENT,
+      firstName: "Demo",
+      lastName: "Student",
+    },
+  });
+  const demoStudent = await prisma.student.create({
+    data: {
+      userId: demoStudentUser.id,
+      englishLevel: EnglishLevel.INTERMEDIATE,
+      dateOfBirth: new Date("2003-05-01"),
+      parentName: "Demo Parent",
+      parentPhone: "+998 90 000 00 01",
+    },
+  });
+  // Enroll demo student in Morning Intermediate A (groups[0])
+  await prisma.groupStudent.create({
+    data: { groupId: groups[0].id, studentId: demoStudent.id, joinedAt: groups[0].startDate },
+  });
+  // Add some attendance for demo student
+  const demoCompleted = g0Sessions.filter((s) => s.isCompleted);
+  for (let i = 0; i < demoCompleted.length; i++) {
+    await prisma.attendance.create({
+      data: {
+        classSessionId: demoCompleted[i].id,
+        studentId: demoStudent.id,
+        status: i % 4 === 3 ? AttendanceStatus.LATE : AttendanceStatus.PRESENT,
+      },
+    });
+  }
+  // Add some grades for demo student
+  for (let i = 0; i < Math.min(4, demoCompleted.length); i++) {
+    await prisma.grade.create({
+      data: {
+        studentId: demoStudent.id,
+        classSessionId: demoCompleted[i].id,
+        score: [85, 90, 78, 92][i],
+        maxScore: 100,
+        label: gradeLabels[i % gradeLabels.length],
+      },
+    });
+  }
+  // Add payment for demo student (current month, paid)
+  const demoInvoice = await prisma.invoice.findFirst({ where: { groupId: groups[0].id, month: currentMonth, year: currentYear } });
+  if (demoInvoice) {
+    await prisma.payment.create({
+      data: {
+        studentId: demoStudent.id,
+        invoiceId: demoInvoice.id,
+        amount: groups[0].monthlyFee,
+        currency: "UZS",
+        status: PaymentStatus.PAID,
+        paidAt: new Date(currentYear, currentMonth - 1, 3),
+        method: "cash",
+      },
+    });
+  }
+  console.log("✅ Demo student: demo.student@eta.uz / demo123");
+
+  // Demo Teacher
+  const demoTeacherUser = await prisma.user.create({
+    data: {
+      email: "demo.teacher@eta.uz",
+      passwordHash: await bcrypt.hash("demo123", 10),
+      role: Role.TEACHER,
+      firstName: "Demo",
+      lastName: "Teacher",
+      phone: "+998 90 000 00 02",
+    },
+  });
+  await prisma.teacher.create({
+    data: {
+      userId: demoTeacherUser.id,
+      bio: "Demo teacher account for portal preview",
+      subjects: ["General English"],
+    },
+  });
+  console.log("✅ Demo teacher: demo.teacher@eta.uz / demo123");
+
+  // Demo Parent (linked to demo student)
+  await prisma.user.create({
+    data: {
+      email: "demo.parent@eta.uz",
+      passwordHash: await bcrypt.hash("demo123", 10),
+      role: Role.PARENT,
+      firstName: "Demo",
+      lastName: "Parent",
+      parent: {
+        create: {
+          studentId: demoStudent.id,
+        },
+      },
+    },
+  });
+  console.log("✅ Demo parent: demo.parent@eta.uz / demo123");
+
   // ─── SUMMARY ─────────────────────────────────────────────────────────
   console.log("\n🎓 ETA Academy seed complete!");
   console.log("─────────────────────────────────");
-  console.log("Admin:    admin@eta.uz / admin123");
-  console.log("Teachers: dilnoza@eta.uz, jasur@eta.uz, malika@eta.uz / teacher123");
-  console.log("Students: aziz@student.uz … feruza@student.uz / student123");
+  console.log("Admin:        admin@eta.uz / admin123");
+  console.log("Demo Student: demo.student@eta.uz / demo123");
+  console.log("Demo Teacher: demo.teacher@eta.uz / demo123");
+  console.log("Demo Parent:  demo.parent@eta.uz / demo123");
+  console.log("Teachers:     dilnoza@eta.uz, jasur@eta.uz, malika@eta.uz / teacher123");
+  console.log("Students:     aziz@student.uz … feruza@student.uz / student123");
   console.log("─────────────────────────────────");
 }
 
