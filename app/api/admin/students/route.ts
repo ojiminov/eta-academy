@@ -13,7 +13,17 @@ export async function GET() {
     const students = await prisma.student.findMany({
       include: {
         user: true,
-        groupStudents: { where: { isActive: true }, include: { group: { select: { name: true } } } },
+        groupStudents: {
+          where: { isActive: true },
+          include: {
+            group: {
+              select: {
+                name: true,
+                teacher: { select: { user: { select: { firstName: true, lastName: true } } } },
+              },
+            },
+          },
+        },
       },
       orderBy: { user: { lastName: "asc" } },
     });
