@@ -129,21 +129,66 @@ model User {
 // ─── TEACHER ─────────────────────────────────────────────────────────────────
 
 model Teacher {
-  id        String   @id @default(cuid())
-  userId    String   @unique
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  bio       String?
-  subjects  String[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id           String   @id @default(cuid())
+  userId       String   @unique
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bio          String?
+  subjects     String[]
+  sharePercent Float    @default(50)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   groups          Group[]
   classSessions   ClassSession[]
   homeworks       Homework[]
   exams           Exam[]
   courseMaterials CourseMaterial[]
+  advances        TeacherAdvance[]
+  fines           TeacherFine[]
 
   @@map("teachers")
+}
+
+// ─── TEACHER ADVANCE ──────────────────────────────────────────────────────────
+
+model TeacherAdvance {
+  id        String   @id @default(cuid())
+  teacherId String
+  teacher   Teacher  @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  amount    Float
+  reason    String?
+  date      DateTime @default(now())
+  createdAt DateTime @default(now())
+
+  @@map("teacher_advances")
+}
+
+// ─── TEACHER FINE ─────────────────────────────────────────────────────────────
+
+model TeacherFine {
+  id        String   @id @default(cuid())
+  teacherId String
+  teacher   Teacher  @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  amount    Float
+  reason    String?
+  date      DateTime @default(now())
+  createdAt DateTime @default(now())
+
+  @@map("teacher_fines")
+}
+
+// ─── STAFF ────────────────────────────────────────────────────────────────────
+
+model Staff {
+  id            String   @id @default(cuid())
+  name          String
+  role          String   @default("staff")
+  monthlySalary Float    @default(0)
+  phone         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@map("staff")
 }
 
 // ─── STUDENT ─────────────────────────────────────────────────────────────────
@@ -254,6 +299,7 @@ model GroupStudent {
   student   Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
   joinedAt  DateTime @default(now())
   isActive  Boolean  @default(true)
+  hasBook   Boolean  @default(false)
 
   @@unique([groupId, studentId])
     @@index([groupId])
@@ -413,12 +459,14 @@ model Payment {
   student   Student       @relation(fields: [studentId], references: [id], onDelete: Cascade)
   invoiceId String?
   invoice   Invoice?      @relation(fields: [invoiceId], references: [id])
-  amount    Float
-  currency  String        @default("UZS")
-  status    PaymentStatus @default(PENDING)
-  paidAt    DateTime?
-  method    String?
-  notes     String?
+  amount      Float
+  cashAmount  Float?
+  cardAmount  Float?
+  currency    String        @default("UZS")
+  status      PaymentStatus @default(PENDING)
+  paidAt      DateTime?
+  method      String?
+  notes       String?
   createdAt DateTime      @default(now())
   updatedAt DateTime      @updatedAt
 

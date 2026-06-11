@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const { studentId, amount, method, notes, status } = await req.json();
+    const { studentId, amount, cashAmount, cardAmount, method, notes, status } = await req.json();
 
     if (!studentId || !amount) {
       return NextResponse.json({ error: "Required fields missing" }, { status: 400 });
@@ -45,6 +45,8 @@ export async function POST(req: NextRequest) {
         data: {
           studentId,
           amount: parsedAmount,
+          cashAmount: cashAmount ? parseFloat(cashAmount) : null,
+          cardAmount: cardAmount ? parseFloat(cardAmount) : null,
           method: method || "cash",
           notes: notes || null,
           status: isPaid ? "PAID" : (status || "PENDING"),

@@ -25,7 +25,7 @@ export default function NewPaymentPage() {
   const inputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [form, setForm] = useState({
-    studentId: "", amount: "", method: "cash", notes: "", status: "PAID",
+    studentId: "", amount: "", cashAmount: "", cardAmount: "", method: "cash", notes: "", status: "PAID",
   });
 
   useEffect(() => {
@@ -184,18 +184,19 @@ export default function NewPaymentPage() {
             )}
           </div>
 
+          <div style={{ marginBottom: "1rem" }}>
+            <label className="label">Jami summa (UZS) *</label>
+            <input className="input" type="number" placeholder="750000" value={form.amount} onChange={(e) => set("amount", e.target.value)} required />
+          </div>
+
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", marginBottom: "1rem" }}>
             <div>
-              <label className="label">Amount (UZS) *</label>
-              <input className="input" type="number" placeholder="750000" value={form.amount} onChange={(e) => set("amount", e.target.value)} required />
+              <label className="label">Naqd (UZS)</label>
+              <input className="input" type="number" placeholder="0" value={form.cashAmount} onChange={(e) => set("cashAmount", e.target.value)} />
             </div>
             <div>
-              <label className="label">Payment Method</label>
-              <select className="input" value={form.method} onChange={(e) => set("method", e.target.value)}>
-                <option value="cash">💵 Cash</option>
-                <option value="card">💳 Card</option>
-                <option value="transfer">🏦 Bank Transfer</option>
-              </select>
+              <label className="label">Plastik (UZS)</label>
+              <input className="input" type="number" placeholder="0" value={form.cardAmount} onChange={(e) => set("cardAmount", e.target.value)} />
             </div>
           </div>
 

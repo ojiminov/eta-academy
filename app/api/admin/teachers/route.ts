@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const { firstName, lastName, email, password, phone, bio } = await req.json();
+    const { firstName, lastName, email, password, phone, bio, sharePercent } = await req.json();
 
     if (!firstName || !lastName || !email || !password) {
       return NextResponse.json({ error: "Required fields missing" }, { status: 400 });
@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
         lastName,
         phone: phone || null,
         teacher: {
-          create: { bio: bio || null },
+          create: { bio: bio || null, sharePercent: sharePercent ? Number(sharePercent) : 50 },
         },
       },
       include: { teacher: true },

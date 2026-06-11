@@ -10,7 +10,7 @@ export default function NewTeacherPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [form, setForm] = useState({
-    firstName: "", lastName: "", email: "", password: "", phone: "", bio: "",
+    firstName: "", lastName: "", email: "", password: "", phone: "", bio: "", sharePercent: "50",
   });
 
   const set = (k: string, v: string) => setForm((f) => ({ ...f, [k]: v }));
@@ -80,9 +80,15 @@ export default function NewTeacherPage() {
             <input className="input" placeholder="+998..." value={form.phone} onChange={(e) => set("phone", e.target.value)} />
           </div>
 
-          <div style={{ marginBottom: "1.5rem" }}>
+          <div style={{ marginBottom: "1rem" }}>
             <label className="label">{t("teachers.bio")}</label>
             <textarea className="input" rows={3} value={form.bio} onChange={(e) => set("bio", e.target.value)} style={{ resize: "vertical" }} />
+          </div>
+
+          <div style={{ marginBottom: "1.5rem" }}>
+            <label className="label">Daromad ulushi (%)</label>
+            <input className="input" type="number" min="0" max="100" placeholder="50" value={form.sharePercent} onChange={(e) => set("sharePercent", e.target.value)} />
+            <p style={{ fontSize: "0.75rem", color: "#64748b", margin: "0.25rem 0 0" }}>O'qituvchi yig'ilgan to'lovdan oladigan foiz (masalan: 50, 70, 73)</p>
           </div>
 
           <div style={{ display: "flex", gap: "0.75rem" }}>

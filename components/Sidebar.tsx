@@ -34,6 +34,8 @@ export default function Sidebar({ role, userName }: SidebarProps) {
     { href: "/admin/payments",      icon: "ti-credit-card", label: t("nav.payments") },
     { href: "/admin/debtors",       icon: "ti-alert-triangle red", label: t("nav.debtors") },
     { href: "/admin/expenses",      icon: "ti-report-money", label: t("nav.expenses") },
+    { href: "/admin/payroll",       icon: "ti-cash", label: t("nav.payroll") },
+    { href: "/admin/staff",         icon: "ti-id-badge", label: t("nav.staff") },
     { href: "/admin/exams",         icon: "ti-pencil", label: t("nav.exams") },
     { href: "/admin/announcements", icon: "ti-speakerphone", label: t("nav.announcements") },
     { href: "/admin/attendance",    icon: "ti-calendar-check", label: t("nav.attendanceReport") },
