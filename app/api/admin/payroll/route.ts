@@ -22,10 +22,12 @@ export async function GET(req: NextRequest) {
       user: true,
       groups: {
         include: {
-          payments: {
-            where: {
-              status: "PAID",
-              paidAt: { gte: startDate, lt: endDate },
+          invoices: {
+            where: { month, year },
+            include: {
+              payments: {
+                where: { status: "PAID" },
+              },
             },
           },
         },
@@ -41,7 +43,9 @@ export async function GET(req: NextRequest) {
 
   const payroll = teachers.map((teacher) => {
     const collectedRevenue = teacher.groups.reduce((sum, group) => {
-      return sum + group.payments.reduce((s, p) => s + p.amount, 0);
+      return sum + group.invoices.reduce((s1, inv) => {
+        return s1 + inv.payments.reduce((s2, p) => s2 + p.amount, 0);
+      }, 0);
     }, 0);
 
     const earned = collectedRevenue * (teacher.sharePercent / 100);
