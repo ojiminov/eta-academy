@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 
 async function getStats() {
   const [students, teachers, groups, payments] = await Promise.all([
-    prisma.student.count(),
+    prisma.student.count({ where: { status: "ACTIVE" } }),
     prisma.teacher.count(),
     prisma.group.count({ where: { isActive: true } }),
     prisma.payment.aggregate({ _sum: { amount: true }, where: { status: "PAID" } }),
@@ -17,7 +17,7 @@ async function getStats() {
   });
   const pendingPayments = await prisma.payment.count({ where: { status: "PENDING" } });
   const overduePayments = await prisma.payment.count({ where: { status: "OVERDUE" } });
-  const activeStudents = await prisma.student.count({ where: { user: { isActive: true } } });
+  const activeStudents = await prisma.student.count({ where: { status: "ACTIVE" } });
   return { students, teachers, groups, totalRevenue: payments._sum.amount || 0, recentPayments, pendingPayments, overduePayments, activeStudents };
 }
 
