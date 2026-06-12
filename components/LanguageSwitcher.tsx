@@ -11,7 +11,6 @@ const LANGUAGES = [
 
 export default function LanguageSwitcher() {
   const locale = useLocale();
-  const router = useRouter();
   const [loading, setLoading] = useState(false);
 
   async function switchLocale(code: string) {
