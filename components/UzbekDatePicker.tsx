@@ -20,7 +20,6 @@ export function toPickerString(d: Date) {
   return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
 
-/** Parse value string; dateOnly=true uses local-time constructor to avoid UTC shift */
 function parseV(v: string, dOnly: boolean): Date | null {
   if (!v) return null;
   if (dOnly) {
@@ -37,7 +36,6 @@ type Props = {
   onChange: (v: string) => void;
   placeholder?: string;
   includeTime?: boolean;
-  /** When true: accepts & returns YYYY-MM-DD (no time) — use for date-only form fields */
   dateOnly?: boolean;
   readOnly?: boolean;
   style?: React.CSSProperties;
@@ -56,10 +54,12 @@ export default function UzbekDatePicker({
   const [open, setOpen] = useState(false);
   const [viewYear, setViewYear] = useState(() => parseV(value, dateOnly)?.getFullYear() ?? new Date().getFullYear());
   const [viewMonth, setViewMonth] = useState(() => parseV(value, dateOnly)?.getMonth() ?? new Date().getMonth());
-  const ref = useRef<HTMLDivElement>(null);
+  const [dropPos, setDropPos] = useState<{ top: number; left: number } | null>(null);
+
+  const triggerWrapRef = useRef<HTMLDivElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const selected = parseV(value, dateOnly);
-  // when dateOnly=true, time is never shown
   const showTime = includeTime && !dateOnly;
 
   useEffect(() => {
@@ -72,12 +72,29 @@ export default function UzbekDatePicker({
   }, [value]);
 
   useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    if (!open) return;
+    function onDown(e: MouseEvent) {
+      const t = e.target as Node;
+      if (!triggerWrapRef.current?.contains(t) && !dropdownRef.current?.contains(t)) {
+        setOpen(false);
+      }
+    }
+    function onScroll() { setOpen(false); }
+    document.addEventListener("mousedown", onDown);
+    window.addEventListener("scroll", onScroll, true);
+    return () => {
+      document.removeEventListener("mousedown", onDown);
+      window.removeEventListener("scroll", onScroll, true);
     };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
-  }, []);
+  }, [open]);
+
+  function handleToggle() {
+    if (!open && triggerWrapRef.current) {
+      const rect = triggerWrapRef.current.getBoundingClientRect();
+      setDropPos({ top: rect.bottom + 6, left: rect.left });
+    }
+    setOpen(o => !o);
+  }
 
   function fmt(d: Date) {
     const pad = (n: number) => String(n).padStart(2, "0");
@@ -108,7 +125,7 @@ export default function UzbekDatePicker({
 
   const startPad = dayIndex(new Date(viewYear, viewMonth, 1));
   const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
-  const today = new Date();
+  const todayDate = new Date();
 
   const displayStr = selected
     ? `${selected.getDate()} ${UZ_MONTHS[selected.getMonth()]} ${selected.getFullYear()}${showTime ? ` · ${String(selected.getHours()).padStart(2,"0")}:${String(selected.getMinutes()).padStart(2,"0")}` : ""}`
@@ -129,19 +146,29 @@ export default function UzbekDatePicker({
   };
 
   return (
-    <div ref={ref} style={{ position: "relative", ...style }}>
-      <div onClick={() => setOpen(o => !o)} style={{ ...defaultTrigger, ...triggerStyle }}>
-        <span>📅</span>
-        <span style={{ flex: 1 }}>{displayStr || placeholder}</span>
-        {!readOnly && <span style={{ color: "inherit", opacity: 0.6, fontSize: "0.7rem" }}>▼</span>}
+    <>
+      {/* Trigger */}
+      <div ref={triggerWrapRef} style={{ position: "relative", display: "inline-block", ...style }}>
+        <div onClick={handleToggle} style={{ ...defaultTrigger, ...triggerStyle }}>
+          <span>📅</span>
+          <span style={{ flex: 1 }}>{displayStr || placeholder}</span>
+          {!readOnly && <span style={{ color: "inherit", opacity: 0.6, fontSize: "0.7rem" }}>▼</span>}
+        </div>
       </div>
 
-      {open && (
-        <div style={{
-          position: "absolute", top: "calc(100% + 6px)", left: 0, zIndex: 9999,
-          background: "white", border: "1px solid #e2e8f0",
-          borderRadius: "1rem", boxShadow: "0 10px 40px rgba(0,0,0,0.18)",
-          padding: "1rem", minWidth: "296px",
+      {/* Dropdown — rendered at fixed position to escape overflow:hidden parents */}
+      {open && dropPos && (
+        <div ref={dropdownRef} style={{
+          position: "fixed",
+          top: dropPos.top,
+          left: dropPos.left,
+          zIndex: 99999,
+          background: "white",
+          border: "1px solid #e2e8f0",
+          borderRadius: "1rem",
+          boxShadow: "0 10px 40px rgba(0,0,0,0.18)",
+          padding: "1rem",
+          minWidth: "296px",
         }}>
           {/* Month nav */}
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1rem" }}>
@@ -167,7 +194,7 @@ export default function UzbekDatePicker({
           <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: 2 }}>
             {Array(startPad).fill(null).map((_,i) => <div key={`p${i}`} />)}
             {Array.from({ length: daysInMonth }, (_,i) => i+1).map(day => {
-              const isToday = today.getDate()===day && today.getMonth()===viewMonth && today.getFullYear()===viewYear;
+              const isToday = todayDate.getDate()===day && todayDate.getMonth()===viewMonth && todayDate.getFullYear()===viewYear;
               const isSel = selected && selected.getDate()===day && selected.getMonth()===viewMonth && selected.getFullYear()===viewYear;
               return (
                 <button key={day} onClick={() => selectDay(day)} style={{
@@ -206,6 +233,6 @@ export default function UzbekDatePicker({
           )}
         </div>
       )}
-    </div>
+    </>
   );
 }
