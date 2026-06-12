@@ -17,7 +17,9 @@ export default function ParentPaymentsPage() {
 
   useEffect(() => {
     fetch("/api/parent/child").then(r=>r.json()).then(d => {
-      if (d.parent?.student?.payments) setPayments(d.parent.student.payments);
+      // Aggregate payments from all children
+      const allPayments = (d.children ?? []).flatMap((c: { payments?: Payment[] }) => c.payments ?? []);
+      if (allPayments.length) setPayments(allPayments);
     }).finally(()=>setLoading(false));
   }, []);
 

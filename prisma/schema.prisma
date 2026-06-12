@@ -216,14 +216,14 @@ model Student {
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
 
-  groupStudents   GroupStudent[]
-  payments        Payment[]
-  grades          Grade[]
-  attendances     Attendance[]
-  homeworkGrades  HomeworkGrade[]
-  examResults     ExamResult[]
-  documents       StudentDocument[]
-  parent          Parent?
+  groupStudents    GroupStudent[]
+  payments         Payment[]
+  grades           Grade[]
+  attendances      Attendance[]
+  homeworkGrades   HomeworkGrade[]
+  examResults      ExamResult[]
+  documents        StudentDocument[]
+  parents          ParentStudent[]
   coinTransactions CoinTransaction[]
 
   @@map("students")
@@ -235,12 +235,26 @@ model Parent {
   id        String   @id @default(cuid())
   userId    String   @unique
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  studentId String   @unique
-  student   Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  children  ParentStudent[]
+
   @@map("parents")
+}
+
+model ParentStudent {
+  id        String   @id @default(cuid())
+  parentId  String
+  studentId String
+  parent    Parent   @relation(fields: [parentId], references: [id], onDelete: Cascade)
+  student   Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([parentId, studentId])
+  @@index([parentId])
+  @@index([studentId])
+  @@map("parent_students")
 }
 
 // ─── LEAD (SALES FUNNEL) ─────────────────────────────────────────────────────

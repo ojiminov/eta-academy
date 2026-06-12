@@ -19,10 +19,14 @@ export async function GET() {
         include: { teacher: { include: { user: true } } },
       });
     } else if (session.role === "PARENT") {
-      const parent = await prisma.parent.findFirst({ where: { userId: session.userId }, include: { student: true } });
-      if (!parent) return NextResponse.json([]);
+      const parent = await prisma.parent.findFirst({
+        where: { userId: session.userId },
+        include: { children: { select: { studentId: true } } },
+      });
+      if (!parent || !parent.children.length) return NextResponse.json([]);
+      const studentIds = parent.children.map(c => c.studentId);
       groups = await prisma.group.findMany({
-        where: { groupStudents: { some: { studentId: parent.studentId, isActive: true } }, isActive: true },
+        where: { groupStudents: { some: { studentId: { in: studentIds }, isActive: true } }, isActive: true },
         include: { teacher: { include: { user: true } } },
       });
     } else {

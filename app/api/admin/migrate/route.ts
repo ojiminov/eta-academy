@@ -182,6 +182,31 @@ CREATE INDEX IF NOT EXISTS idx_payments_group_month_year ON payments ("groupId",
 
 -- Add leftAt to group_students to track enrollment end dates
 ALTER TABLE group_students ADD COLUMN IF NOT EXISTS "leftAt" TIMESTAMP(3);
+
+-- ── Task 3: Parent many-to-many ───────────────────────────────────────────────
+-- Create parent_students join table (one parent → many children)
+CREATE TABLE IF NOT EXISTS parent_students (
+  id TEXT NOT NULL PRIMARY KEY,
+  "parentId" TEXT NOT NULL,
+  "studentId" TEXT NOT NULL,
+  "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY ("parentId") REFERENCES parents(id) ON DELETE CASCADE,
+  FOREIGN KEY ("studentId") REFERENCES students(id) ON DELETE CASCADE,
+  UNIQUE ("parentId", "studentId")
+);
+
+CREATE INDEX IF NOT EXISTS idx_parent_students_parent ON parent_students ("parentId");
+CREATE INDEX IF NOT EXISTS idx_parent_students_student ON parent_students ("studentId");
+
+-- Migrate any existing parent→student links into the new join table
+INSERT INTO parent_students (id, "parentId", "studentId", "createdAt")
+SELECT gen_random_uuid()::text, id, "studentId", "createdAt"
+FROM parents
+WHERE "studentId" IS NOT NULL
+ON CONFLICT ("parentId", "studentId") DO NOTHING;
+
+-- Drop the old one-to-one studentId column from parents
+ALTER TABLE parents DROP COLUMN IF EXISTS "studentId";
 `;
 
 export async function POST() {

@@ -13,7 +13,7 @@ export async function GET() {
     include: {
       student: true,
       teacher: true,
-      parent: { include: { student: true } },
+      parent: { include: { children: { select: { studentId: true } } } },
     },
   });
 
@@ -25,7 +25,7 @@ export async function GET() {
     lastName: user.lastName,
     email: user.email,
     role: user.role,
-    studentId: user.student?.id || user.parent?.studentId || null,
+    studentId: user.student?.id || user.parent?.children?.[0]?.studentId || null,
     teacherId: user.teacher?.id || null,
   });
 }

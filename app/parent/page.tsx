@@ -3,22 +3,20 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
-type ChildData = {
-  parent: {
-    student: {
-      user: { firstName: string; lastName: string; email: string };
-      englishLevel: string;
-      balance: number;
-      status: string;
-      groupStudents: { group: { name: string; schedule: string; teacher: { user: { firstName: string; lastName: string } } } }[];
-      payments: { amount: number; status: string; createdAt: string }[];
-      grades: { score: number; maxScore: number; label?: string; createdAt: string }[];
-      homeworkGrades: { status: string; score?: number; homework: { title: string; dueDate: string } }[];
-      examResults: { score?: number; exam: { title: string; maxScore: number; scheduledAt: string } }[];
-    };
-  };
+type Child = {
+  id: string;
+  user: { firstName: string; lastName: string; email: string };
+  englishLevel: string;
+  balance: number;
+  status: string;
+  groupStudents: { group: { name: string; schedule: string; teacher: { user: { firstName: string; lastName: string } } } }[];
+  payments: { amount: number; status: string; createdAt: string }[];
+  grades: { score: number; maxScore: number; label?: string; createdAt: string }[];
+  homeworkGrades: { status: string; score?: number; homework: { title: string; dueDate: string } }[];
+  examResults: { score?: number; exam: { title: string; maxScore: number; scheduledAt: string } }[];
   attendances: { status: string; classSession: { scheduledAt: string; group: { name: string } } }[];
 };
+type ChildData = { parent: { id: string }; children: Child[] };
 
 const LEVEL_LABELS: Record<string, string> = {
   BEGINNER:"Beginner", ELEMENTARY:"Elementary", PRE_INTERMEDIATE:"Pre-Intermediate",
@@ -34,27 +32,28 @@ function avatarColor(name: string) {
 export default function ParentDashboard() {
   const [data, setData] = useState<ChildData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [activeChildIdx, setActiveChildIdx] = useState(0);
 
   useEffect(() => {
     fetch("/api/parent/child").then(r => r.json()).then(setData).finally(() => setLoading(false));
   }, []);
 
   if (loading) return <div style={{ padding: "3rem", textAlign: "center", color: "#94a3b8" }}>Loading...</div>;
-  if (!data?.parent) return (
+  if (!data?.children?.length) return (
     <div style={{ padding: "3rem", textAlign: "center", color: "#ef4444" }}>
       Parent profile not found. Contact admin.
     </div>
   );
 
-  const child = data.parent.student;
+  const child = data.children[activeChildIdx] ?? data.children[0];
   const name = `${child.user.firstName} ${child.user.lastName}`;
   const initials = `${child.user.firstName.charAt(0)}${child.user.lastName.charAt(0)}`.toUpperCase();
   const aColor = avatarColor(name);
 
-  const attPresent = data.attendances.filter(a => a.status === "PRESENT").length;
-  const attTotal = data.attendances.length;
+  const attPresent = child.attendances.filter(a => a.status === "PRESENT").length;
+  const attTotal = child.attendances.length;
   const attRate = attTotal > 0 ? Math.round((attPresent / attTotal) * 100) : 0;
-  const avgGrade = child.grades.length > 0 ? Math.round(child.grades.reduce((s, g) => s + (g.score / g.maxScore) * 100, 0) / child.grades.length) : null;
+  const avgGrade = child.grades?.length > 0 ? Math.round(child.grades.reduce((s, g) => s + (g.score / g.maxScore) * 100, 0) / child.grades.length) : null;
   const pendingPayments = child.payments.filter(p => p.status === "PENDING" || p.status === "OVERDUE").length;
   const pendingHomework = child.homeworkGrades.filter(h => h.status === "ASSIGNED" || h.status === "LATE").length;
 
@@ -62,6 +61,23 @@ export default function ParentDashboard() {
 
   return (
     <div style={{ padding: "0", maxWidth: "100%" }}>
+
+      {/* Child selector — shown only when there are multiple children */}
+      {data.children.length > 1 && (
+        <div style={{ display: "flex", gap: "0.5rem", padding: "1rem 2rem 0", flexWrap: "wrap" }}>
+          {data.children.map((c, i) => (
+            <button key={c.id} onClick={() => setActiveChildIdx(i)} style={{
+              padding: "0.4rem 1rem", borderRadius: "9999px", border: "2px solid",
+              borderColor: activeChildIdx === i ? "#ec4899" : "#e2e8f0",
+              background: activeChildIdx === i ? "#ec4899" : "white",
+              color: activeChildIdx === i ? "white" : "#475569",
+              fontSize: "0.85rem", fontWeight: "600", cursor: "pointer",
+            }}>
+              {c.user.firstName} {c.user.lastName}
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* Hero banner */}
       <div style={{
@@ -77,7 +93,9 @@ export default function ParentDashboard() {
           <h1 style={{ color: "white", fontSize: "1.875rem", fontWeight: "800", margin: "0 0 0.375rem", letterSpacing: "-0.025em" }}>
             Parent Dashboard 👨‍👩‍👧
           </h1>
-          <p style={{ color: "rgba(255,255,255,0.8)", margin: 0, fontSize: "0.9rem" }}>Monitoring {name}&apos;s progress</p>
+          <p style={{ color: "rgba(255,255,255,0.8)", margin: 0, fontSize: "0.9rem" }}>
+            Monitoring {name}&apos;s progress{data.children.length > 1 ? ` · ${data.children.length} children` : ""}
+          </p>
 
           {(pendingPayments > 0 || pendingHomework > 0) && (
             <div style={{ display: "flex", gap: "0.75rem", marginTop: "1.25rem", flexWrap: "wrap" }}>

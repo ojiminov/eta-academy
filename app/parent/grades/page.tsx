@@ -3,13 +3,11 @@
 import { useEffect, useState } from "react";
 
 type ChildData = {
-  parent: {
-    student: {
-      grades: { score: number; maxScore: number; label?: string; createdAt: string }[];
-      homeworkGrades: { status: string; score?: number; feedback?: string; homework: { title: string; dueDate: string; group: { name: string } } }[];
-      examResults: { score?: number; feedback?: string; exam: { title: string; maxScore: number; scheduledAt: string; group: { name: string } } }[];
-    };
-  };
+  children: {
+    grades: { score: number; maxScore: number; label?: string; createdAt: string }[];
+    homeworkGrades: { status: string; score?: number; feedback?: string; homework: { title: string; dueDate: string; group: { name: string } } }[];
+    examResults: { score?: number; feedback?: string; exam: { title: string; maxScore: number; scheduledAt: string; group: { name: string } } }[];
+  }[];
 };
 
 export default function ParentGradesPage() {
@@ -22,11 +20,11 @@ export default function ParentGradesPage() {
   }, []);
 
   if (loading) return <div style={{ padding:"3rem", textAlign:"center", color:"#94a3b8" }}>Loading...</div>;
-  if (!data) return null;
-  const child = data.parent.student;
-  const grades = child.grades;
-  const hwGrades = child.homeworkGrades;
-  const exams = child.examResults;
+  if (!data?.children?.length) return null;
+  // Aggregate grades across all children
+  const grades = data.children.flatMap(c => c.grades ?? []);
+  const hwGrades = data.children.flatMap(c => c.homeworkGrades ?? []);
+  const exams = data.children.flatMap(c => c.examResults ?? []);
   const avgGrade = grades.length > 0 ? Math.round(grades.reduce((s,g)=>s+(g.score/g.maxScore)*100,0)/grades.length) : null;
 
   return (
