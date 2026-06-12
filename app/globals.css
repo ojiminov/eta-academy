@@ -207,7 +207,7 @@ tbody tr:last-child td { border-bottom: none; }
   transition: color 0.15s, background 0.15s;
 }
 .eta-nav-link:hover .nav-icon { color: rgba(255,255,255,0.95); background: rgba(255,255,255,0.12); }
-.eta-nav-link.is-active .nav-icon { color: #1e3d2d !important; background: #6ee7b7; }
+.eta-nav-link.is-active .nav-icon { color: #1e3d2d !important; background: var(--role-accent, #6ee7b7); }
 .nav-icon.red { color: #fca5a5 !important; }
 .nav-icon.amber { color: #fcd34d !important; }
 
@@ -405,9 +405,9 @@ tbody tr:last-child td { border-bottom: none; }
   background: rgba(255,255,255,0.15);
   color: #ffffff;
   font-weight: 700;
-  border-left-color: #6ee7b7;
+  border-left-color: var(--role-accent, #6ee7b7);
 }
-.eta-nav-link.is-active .nav-icon { color: #6ee7b7 !important; }
+.eta-nav-link.is-active .nav-icon { color: var(--role-accent, #6ee7b7) !important; }
 .eta-nav-link .nav-icon { color: #ffffff; font-size: 1.05rem; width: 20px; text-align: center; flex-shrink: 0; }
 .eta-nav-link .nav-icon.red   { color: #fca5a5 !important; }
 .eta-nav-link .nav-icon.amber { color: #fcd34d !important; }

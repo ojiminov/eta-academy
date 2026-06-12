@@ -11,7 +11,7 @@ export default async function StudentDetailPage({ params }: { params: Promise<{ 
     where: { id },
     include: {
       user: true,
-      parent: { include: { user: true } },
+      parents: { include: { parent: { include: { user: true } } } },
       groupStudents: {
         where: { isActive: true },
         include: { group: { include: { teacher: { include: { user: true } } } } },
@@ -130,13 +130,17 @@ export default async function StudentDetailPage({ params }: { params: Promise<{ 
       {/* Parent Portal section */}
       <div className="card" style={{ marginTop:"1.5rem" }}>
         <h2 style={{ fontSize:"1rem", fontWeight:"600", color:"#1e293b", marginBottom:"1rem" }}>👨‍👩‍👧 Parent Portal</h2>
-        {student.parent ? (
-          <div style={{ display:"flex", alignItems:"center", gap:"1rem", padding:"0.75rem 1rem", background:"#d1fae5", borderRadius:"0.75rem" }}>
-            <span style={{ fontSize:"1.5rem" }}>✅</span>
-            <div>
-              <div style={{ fontWeight:"600", color:"#065f46" }}>Parent account active</div>
-              <div style={{ fontSize:"0.8rem", color:"#047857" }}>{student.parent.user.firstName} {student.parent.user.lastName} — {student.parent.user.email}</div>
-            </div>
+        {student.parents.length > 0 ? (
+          <div style={{ display:"flex", flexDirection:"column", gap:"0.5rem" }}>
+            {student.parents.map((ps) => (
+              <div key={ps.parentId} style={{ display:"flex", alignItems:"center", gap:"1rem", padding:"0.75rem 1rem", background:"#d1fae5", borderRadius:"0.75rem" }}>
+                <span style={{ fontSize:"1.5rem" }}>✅</span>
+                <div>
+                  <div style={{ fontWeight:"600", color:"#065f46" }}>Parent account active</div>
+                  <div style={{ fontSize:"0.8rem", color:"#047857" }}>{ps.parent.user.firstName} {ps.parent.user.lastName} — {ps.parent.user.email}</div>
+                </div>
+              </div>
+            ))}
           </div>
         ) : (
           <CreateParentAccountButton studentId={id} studentName={`${student.user.firstName} ${student.user.lastName}`} />

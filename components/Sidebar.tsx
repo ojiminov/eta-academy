@@ -9,12 +9,29 @@ import { useBranding } from "./BrandingProvider";
 
 interface SidebarProps { role: "ADMIN" | "TEACHER" | "STUDENT" | "PARENT"; userName: string; }
 
-const roleColor   = { ADMIN: "#6ee7b7", TEACHER: "#6ee7b7", STUDENT: "#6ee7b7", PARENT: "#6ee7b7" };
+// Distinct accent per role — used for badge, avatar, active-item highlight
+const roleAccent: Record<string, string> = {
+  ADMIN:   "#a78bfa",   // violet
+  TEACHER: "#60a5fa",   // blue
+  STUDENT: "#34d399",   // emerald
+  PARENT:  "#f472b6",   // pink
+};
+const roleBadgeBg: Record<string, string> = {
+  ADMIN:   "rgba(167,139,250,0.18)",
+  TEACHER: "rgba(96,165,250,0.18)",
+  STUDENT: "rgba(52,211,153,0.18)",
+  PARENT:  "rgba(244,114,182,0.18)",
+};
+const roleLabel: Record<string, string> = {
+  ADMIN: "Admin", TEACHER: "Teacher", STUDENT: "Student", PARENT: "Parent",
+};
+// Keep for legacy references
+const roleColor   = roleAccent;
 const roleGradient = {
-  ADMIN:   "linear-gradient(135deg,#2a5c45,#3a7a5c)",
-  TEACHER: "linear-gradient(135deg,#2a5c45,#3a7a5c)",
-  STUDENT: "linear-gradient(135deg,#2a5c45,#3a7a5c)",
-  PARENT:  "linear-gradient(135deg,#2a5c45,#3a7a5c)",
+  ADMIN:   "linear-gradient(135deg,#7c3aed,#5b21b6)",
+  TEACHER: "linear-gradient(135deg,#2563eb,#1e40af)",
+  STUDENT: "linear-gradient(135deg,#059669,#047857)",
+  PARENT:  "linear-gradient(135deg,#db2777,#9d174d)",
 };
 
 export default function Sidebar({ role, userName }: SidebarProps) {
@@ -135,9 +152,22 @@ export default function Sidebar({ role, userName }: SidebarProps) {
       )}
       <div>
         <div style={{ color: "white", fontWeight: "800", fontSize: "0.95rem", letterSpacing: 0 }}>{branding.name}</div>
-        <div style={{ fontSize: "0.68rem", color: "#cbd5e1", fontWeight: "800", textTransform: "uppercase", letterSpacing: "0.06em" }}>
-          {t(`roles.${role}`)}
-        </div>
+        {/* Role badge pill */}
+        <span style={{
+          display: "inline-block",
+          marginTop: "0.2rem",
+          padding: "0.1rem 0.5rem",
+          borderRadius: "9999px",
+          fontSize: "0.6rem",
+          fontWeight: "800",
+          letterSpacing: "0.07em",
+          textTransform: "uppercase",
+          background: roleBadgeBg[role],
+          color: roleAccent[role],
+          border: `1px solid ${roleAccent[role]}44`,
+        }}>
+          {roleLabel[role]}
+        </span>
       </div>
     </div>
   );
@@ -149,7 +179,12 @@ export default function Sidebar({ role, userName }: SidebarProps) {
         const iconName = item.icon.split(" ")[0]; // e.g. "ti-users" from "ti-users" or "ti-trophy amber"
         const extraClass = item.icon.includes("red") ? "red" : item.icon.includes("amber") ? "amber" : "";
         return (
-          <Link key={item.href} href={item.href} onClick={onClick} className={`eta-nav-link${active ? " is-active" : ""}`}>
+          <Link
+            key={item.href}
+            href={item.href}
+            onClick={onClick}
+            className={`eta-nav-link${active ? " is-active" : ""}`}
+          >
             <i className={`ti ${iconName} nav-icon${extraClass ? ` ${extraClass}` : ""}`} aria-hidden="true" />
             <span>{item.label}</span>
           </Link>
@@ -201,7 +236,7 @@ export default function Sidebar({ role, userName }: SidebarProps) {
         <div style={{ padding: "0.5rem 0.75rem", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
           <LanguageSwitcher />
         </div>
-        <nav style={{ flex: 1, padding: "0.75rem 0.625rem", overflowY: "auto" }}>
+        <nav style={{ flex: 1, padding: "0.75rem 0.625rem", overflowY: "auto", ["--role-accent" as string]: roleAccent[role] }}>
           {renderNavLinks()}
         </nav>
         {renderUserFooter()}
@@ -290,7 +325,7 @@ export default function Sidebar({ role, userName }: SidebarProps) {
         <div style={{ padding: "0.5rem 0.75rem", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
           <LanguageSwitcher />
         </div>
-        <nav style={{ flex: 1, padding: "0.75rem 0.625rem", overflowY: "auto" }}>
+        <nav style={{ flex: 1, padding: "0.75rem 0.625rem", overflowY: "auto", ["--role-accent" as string]: roleAccent[role] }}>
           {renderNavLinks(() => setOpen(false))}
         </nav>
         {renderUserFooter(true)}
