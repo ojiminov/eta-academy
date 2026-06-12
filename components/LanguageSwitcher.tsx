@@ -50,7 +50,7 @@ export default function LanguageSwitcher() {
             fontWeight: "700",
             letterSpacing: "0.03em",
             transition: "all 0.15s",
-            background: locale === lang.code ? "rgba(99,102,241,0.8)" : "transparent",
+            background: locale === lang.code ? "var(--primary, rgba(99,102,241,0.8))" : "transparent",
             color: locale === lang.code ? "white" : "rgba(255,255,255,0.5)",
           }}
         >

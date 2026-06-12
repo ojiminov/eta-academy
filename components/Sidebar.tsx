@@ -196,7 +196,7 @@ export default function Sidebar({ role, userName }: SidebarProps) {
   const renderUserFooter = (compact?: boolean) => (
     <div style={{ padding: compact ? "0.875rem" : "1rem 1.25rem", borderTop: "1px solid rgba(255,255,255,0.08)" }}>
       <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "0.625rem" }}>
-        <div className="eta-avatar" style={{ background: roleGradient[role], color: "white", fontWeight: "800", fontSize: "0.875rem" }}>
+        <div className="eta-avatar" style={{ background: "var(--primary-gradient, linear-gradient(135deg,#2a5c45,#1e3d2d))", color: "white", fontWeight: "800", fontSize: "0.875rem" }}>
           {userName.charAt(0).toUpperCase()}
         </div>
         <div style={{ overflow: "hidden", flex: 1 }}>
@@ -286,7 +286,7 @@ export default function Sidebar({ role, userName }: SidebarProps) {
           {/* Avatar */}
           <div style={{
             width: "36px", height: "36px", borderRadius: "50%",
-            background: roleGradient[role],
+            background: "var(--primary-gradient, linear-gradient(135deg,#2a5c45,#1e3d2d))",
             display: "flex", alignItems: "center", justifyContent: "center",
             color: "white", fontWeight: "700", fontSize: "0.85rem",
             boxShadow: "0 2px 6px rgba(0,0,0,0.3)",
