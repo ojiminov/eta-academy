@@ -128,7 +128,7 @@ export default function Sidebar({ role, userName }: SidebarProps) {
 
   async function handleLogout() {
     await fetch("/api/auth/logout", { method: "POST" });
-    router.push("/login");
+    router.push("/");
   }
 
   function isActive(href: string) {

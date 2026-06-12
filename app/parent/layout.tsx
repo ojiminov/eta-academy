@@ -7,8 +7,8 @@ export const dynamic = "force-dynamic";
 
 export default async function ParentLayout({ children }: { children: React.ReactNode }) {
   const user = await getCurrentUser();
-  if (!user) redirect("/login");
-  if (user.role !== "PARENT") redirect("/login");
+  if (!user) redirect("/");
+  if (user.role !== "PARENT") redirect("/");
 
   return (
     <div className="app-shell">

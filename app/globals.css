@@ -307,7 +307,7 @@ tbody tr:last-child td { border-bottom: none; }
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  background: #0b1d3a;
+  background: linear-gradient(160deg, #1e3d2d 0%, #2a5c45 60%, #1a3326 100%);
   padding: 1.5rem;
 }
 
