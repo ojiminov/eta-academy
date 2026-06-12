@@ -21,7 +21,8 @@ export default function LanguageSwitcher() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ locale: code }),
     });
-    window.location.reload();
+    // Use href assignment (not reload) to bypass Next.js router cache
+    window.location.href = window.location.pathname;
   }
 
   return (
