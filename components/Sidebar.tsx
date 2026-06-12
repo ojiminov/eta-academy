@@ -141,12 +141,13 @@ export default function Sidebar({ role, userName }: SidebarProps) {
   const renderLogo = () => (
     <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
       {branding.logoUrl ? (
-        <img
-          src={branding.logoUrl}
-          alt={branding.name}
-          className="eta-brand-mark"
-          style={{ objectFit: "contain", mixBlendMode: "screen" }}
-        />
+        <div className="eta-brand-mark" style={{ background: "rgba(255,255,255,0.95)", padding: 0, overflow: "hidden", border: "none" }}>
+          <img
+            src={branding.logoUrl}
+            alt={branding.name}
+            style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+          />
+        </div>
       ) : (
         <div className="eta-brand-mark">ETA</div>
       )}
