@@ -1,12 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 
 type Group = { id: string; name: string; schedule: string; room?: string; level: string; monthlyFee: number; teacher: { user: { firstName: string; lastName: string } }; };
 
 const LEVEL_COLORS: Record<string, string> = { BEGINNER:"var(--primary, #6366f1)",ELEMENTARY:"#8b5cf6",PRE_INTERMEDIATE:"#06b6d4",INTERMEDIATE:"#10b981",UPPER_INTERMEDIATE:"#f59e0b",ADVANCED:"#ef4444" };
 
 export default function ParentSchedulePage() {
+  const t = useTranslations();
   const [groups, setGroups] = useState<Group[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -17,15 +19,15 @@ export default function ParentSchedulePage() {
   return (
     <div style={{ padding:"2rem" }}>
       <div style={{ marginBottom:"2rem" }}>
-        <h1 style={{ fontSize:"1.75rem", fontWeight:"700", color:"#1e293b", margin:"0 0 0.25rem" }}>🗓️ Class Schedule</h1>
-        <p style={{ color:"#64748b", margin:0 }}>Your child&apos;s weekly class schedule</p>
+        <h1 style={{ fontSize:"1.75rem", fontWeight:"700", color:"#1e293b", margin:"0 0 0.25rem" }}>🗓️ {t("parent.classSchedule")}</h1>
+        <p style={{ color:"#64748b", margin:0 }}>{t("parent.childScheduleDesc")}</p>
       </div>
 
-      {loading ? <div style={{ textAlign:"center", padding:"3rem", color:"#94a3b8" }}>Loading...</div>
+      {loading ? <div style={{ textAlign:"center", padding:"3rem", color:"#94a3b8" }}>{t("common.loading")}</div>
         : groups.length===0 ? (
         <div className="card" style={{ textAlign:"center", padding:"3rem" }}>
           <div style={{ fontSize:"3rem", marginBottom:"0.75rem" }}>🗓️</div>
-          <div style={{ fontWeight:"600", color:"#1e293b" }}>No classes scheduled yet</div>
+          <div style={{ fontWeight:"600", color:"#1e293b" }}>{t("parent.noClassesScheduled")}</div>
         </div>
       ) : (
         <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(320px,1fr))", gap:"1.25rem" }}>

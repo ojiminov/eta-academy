@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 
 type ExamResult = {
   id: string; score?: number; feedback?: string;
@@ -8,6 +9,7 @@ type ExamResult = {
 };
 
 export default function StudentExamsPage() {
+  const t = useTranslations();
   const [results, setResults] = useState<ExamResult[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -18,21 +20,18 @@ export default function StudentExamsPage() {
   const graded = results.filter(r => r.score != null);
   const avg = graded.length > 0 ? graded.reduce((s,r) => s+(r.score||0), 0) / graded.length : 0;
 
-  // Sort by score for leaderboard-like display
-  const sorted = [...graded].sort((a,b) => (b.score||0)-(a.score||0));
-
   return (
     <div style={{ padding:"2rem" }}>
       <div style={{ marginBottom:"2rem" }}>
-        <h1 style={{ fontSize:"1.75rem", fontWeight:"700", color:"#1e293b", margin:"0 0 0.25rem" }}>🧪 My Exams</h1>
-        <p style={{ color:"#64748b", margin:0 }}>Your exam schedule and results</p>
+        <h1 style={{ fontSize:"1.75rem", fontWeight:"700", color:"#1e293b", margin:"0 0 0.25rem" }}>🧪 {t("exams.myExams")}</h1>
+        <p style={{ color:"#64748b", margin:0 }}>{t("exams.examSubtitle")}</p>
       </div>
 
       <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:"1rem", marginBottom:"1.5rem" }}>
         {[
-          { label:"Total Exams", value:results.length, icon:"📋", color:"var(--primary, #6366f1)", bg:"var(--primary-light, #ede9fe)" },
-          { label:"Graded", value:graded.length, icon:"✅", color:"#10b981", bg:"#d1fae5" },
-          { label:"Average Score", value: graded.length > 0 ? `${avg.toFixed(1)}%` : "—", icon:"⭐", color:"#f59e0b", bg:"#fef3c7" },
+          { label: t("exams.totalExams"), value:results.length, icon:"📋", color:"var(--primary, #6366f1)", bg:"var(--primary-light, #ede9fe)" },
+          { label: t("exams.gradedCount"), value:graded.length, icon:"✅", color:"#10b981", bg:"#d1fae5" },
+          { label: t("exams.averageScore"), value: graded.length > 0 ? `${avg.toFixed(1)}%` : "—", icon:"⭐", color:"#f59e0b", bg:"#fef3c7" },
         ].map(s => (
           <div key={s.label} className="card" style={{ display:"flex", alignItems:"center", gap:"0.75rem" }}>
             <div style={{ width:44,height:44,borderRadius:10,background:s.bg,display:"flex",alignItems:"center",justifyContent:"center",fontSize:"1.25rem",flexShrink:0 }}>{s.icon}</div>
@@ -44,11 +43,11 @@ export default function StudentExamsPage() {
         ))}
       </div>
 
-      {loading ? <div style={{ textAlign:"center", padding:"3rem", color:"#94a3b8" }}>Loading...</div>
+      {loading ? <div style={{ textAlign:"center", padding:"3rem", color:"#94a3b8" }}>{t("common.loading")}</div>
         : results.length === 0 ? (
         <div className="card" style={{ textAlign:"center", padding:"3rem" }}>
           <div style={{ fontSize:"3rem", marginBottom:"0.75rem" }}>🧪</div>
-          <div style={{ fontWeight:"600", color:"#1e293b" }}>No exams yet</div>
+          <div style={{ fontWeight:"600", color:"#1e293b" }}>{t("exams.noExamsYet")}</div>
         </div>
       ) : (
         <div style={{ display:"flex", flexDirection:"column", gap:"1rem" }}>
@@ -74,9 +73,9 @@ export default function StudentExamsPage() {
                         <div style={{ fontSize:"0.75rem", color:"#64748b" }}>{pct?.toFixed(0)}%</div>
                       </>
                     ) : isPast ? (
-                      <span style={{ padding:"0.25rem 0.75rem", borderRadius:"9999px", background:"#fef3c7", color:"#92400e", fontSize:"0.75rem", fontWeight:"600" }}>Pending result</span>
+                      <span style={{ padding:"0.25rem 0.75rem", borderRadius:"9999px", background:"#fef3c7", color:"#92400e", fontSize:"0.75rem", fontWeight:"600" }}>{t("exams.pendingResult")}</span>
                     ) : (
-                      <span style={{ padding:"0.25rem 0.75rem", borderRadius:"9999px", background:"#dbeafe", color:"#1e40af", fontSize:"0.75rem", fontWeight:"600" }}>Upcoming</span>
+                      <span style={{ padding:"0.25rem 0.75rem", borderRadius:"9999px", background:"#dbeafe", color:"#1e40af", fontSize:"0.75rem", fontWeight:"600" }}>{t("exams.upcoming")}</span>
                     )}
                   </div>
                 </div>

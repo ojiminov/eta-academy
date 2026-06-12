@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import { BADGE_ICONS, BADGE_COLORS, BADGE_THRESHOLDS } from "@/lib/coins-shared";
 
 type Transaction = {
@@ -48,6 +49,7 @@ function nextBadgeInfo(badge: string, totalCoins: number) {
 }
 
 export default function CoinsPage() {
+  const t = useTranslations();
   const [profile, setProfile] = useState<StudentProfile | null>(null);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
@@ -59,14 +61,13 @@ export default function CoinsPage() {
       .finally(() => setLoading(false));
   }, []);
 
-  if (loading) return <div style={{ padding: "3rem", textAlign: "center", color: "#94a3b8" }}>Loading...</div>;
-  if (!profile) return <div style={{ padding: "3rem", textAlign: "center", color: "#ef4444" }}>Could not load your profile.</div>;
+  if (loading) return <div style={{ padding: "3rem", textAlign: "center", color: "#94a3b8" }}>{t("common.loading")}</div>;
+  if (!profile) return <div style={{ padding: "3rem", textAlign: "center", color: "#ef4444" }}>{t("coins.loadError")}</div>;
 
   const badgeInfo = BADGE_COLORS[profile.badge] || BADGE_COLORS.BRONZE;
   const badgeIcon = BADGE_ICONS[profile.badge] || "🥉";
   const next = nextBadgeInfo(profile.badge, profile.totalCoins);
 
-  // Compute coins by type for breakdown
   const byType = transactions.reduce<Record<string, number>>((acc, t) => {
     acc[t.type] = (acc[t.type] || 0) + t.amount;
     return acc;
@@ -80,50 +81,46 @@ export default function CoinsPage() {
         borderRadius: "1.25rem", padding: "2rem", marginBottom: "1.5rem",
         color: "white", position: "relative", overflow: "hidden",
       }}>
-        {/* Decorative circles */}
         <div style={{ position: "absolute", top: -30, right: -30, width: 120, height: 120, borderRadius: "50%", background: "rgba(255,255,255,0.07)" }} />
         <div style={{ position: "absolute", bottom: -20, left: -20, width: 80, height: 80, borderRadius: "50%", background: "rgba(255,255,255,0.05)" }} />
 
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", position: "relative" }}>
           <div>
-            <div style={{ fontSize: "0.8rem", opacity: 0.8, marginBottom: "0.25rem" }}>Student Profile</div>
+            <div style={{ fontSize: "0.8rem", opacity: 0.8, marginBottom: "0.25rem" }}>{t("coins.studentProfile")}</div>
             <div style={{ fontSize: "1.6rem", fontWeight: "800" }}>
               {profile.user.firstName} {profile.user.lastName}
             </div>
-            {/* Badge */}
             <div style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", marginTop: "0.5rem", padding: "0.375rem 0.875rem", borderRadius: "9999px", background: "rgba(255,255,255,0.15)", backdropFilter: "blur(4px)" }}>
               <span style={{ fontSize: "1.1rem" }}>{badgeIcon}</span>
-              <span style={{ fontWeight: "700", fontSize: "0.875rem" }}>{profile.badge} MEMBER</span>
+              <span style={{ fontWeight: "700", fontSize: "0.875rem" }}>{profile.badge} {t("coins.member")}</span>
             </div>
           </div>
           <div style={{ textAlign: "right" }}>
             <div style={{ fontSize: "2.5rem", fontWeight: "900", lineHeight: 1 }}>{profile.totalCoins.toLocaleString()}</div>
-            <div style={{ fontSize: "0.75rem", opacity: 0.8 }}>total coins</div>
+            <div style={{ fontSize: "0.75rem", opacity: 0.8 }}>{t("coins.totalCoins")}</div>
           </div>
         </div>
 
-        {/* Streak row */}
         <div style={{ display: "flex", gap: "2rem", marginTop: "1.25rem", position: "relative" }}>
           <div>
             <div style={{ fontSize: "1.3rem", fontWeight: "800" }}>🔥 {profile.currentStreak}</div>
-            <div style={{ fontSize: "0.7rem", opacity: 0.75 }}>Current streak</div>
+            <div style={{ fontSize: "0.7rem", opacity: 0.75 }}>{t("coins.currentStreak")}</div>
           </div>
           <div>
             <div style={{ fontSize: "1.3rem", fontWeight: "800" }}>⚡ {profile.longestStreak}</div>
-            <div style={{ fontSize: "0.7rem", opacity: 0.75 }}>Longest streak</div>
+            <div style={{ fontSize: "0.7rem", opacity: 0.75 }}>{t("coins.longestStreak")}</div>
           </div>
           <div>
             <div style={{ fontSize: "1.3rem", fontWeight: "800" }}>📋 {transactions.length}</div>
-            <div style={{ fontSize: "0.7rem", opacity: 0.75 }}>Transactions</div>
+            <div style={{ fontSize: "0.7rem", opacity: 0.75 }}>{t("coins.transactionsCount")}</div>
           </div>
         </div>
 
-        {/* Progress to next badge */}
         {next && (
           <div style={{ marginTop: "1.25rem", position: "relative" }}>
             <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.75rem", opacity: 0.85, marginBottom: "0.375rem" }}>
-              <span>Progress to {BADGE_ICONS[next.nextBadge]} {next.nextBadge}</span>
-              <span>{profile.totalCoins.toLocaleString()} / {next.needed.toLocaleString()} coins</span>
+              <span>{t("coins.progressTo")} {BADGE_ICONS[next.nextBadge]} {next.nextBadge}</span>
+              <span>{profile.totalCoins.toLocaleString()} / {next.needed.toLocaleString()} {t("coins.totalCoins")}</span>
             </div>
             <div style={{ height: 8, background: "rgba(255,255,255,0.2)", borderRadius: 4, overflow: "hidden" }}>
               <div style={{ height: "100%", width: `${next.progress}%`, background: "white", borderRadius: 4, transition: "width 0.5s ease" }} />
@@ -135,7 +132,7 @@ export default function CoinsPage() {
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.5rem" }}>
         {/* Coin breakdown by type */}
         <div className="card">
-          <h3 style={{ fontWeight: "700", color: "#1e293b", marginBottom: "1rem", fontSize: "0.95rem" }}>📊 Coins by Source</h3>
+          <h3 style={{ fontWeight: "700", color: "#1e293b", marginBottom: "1rem", fontSize: "0.95rem" }}>📊 {t("coins.coinsBySource")}</h3>
           {Object.entries(byType).sort((a, b) => b[1] - a[1]).map(([type, total]) => {
             const max = Math.max(...Object.values(byType));
             return (
@@ -151,13 +148,13 @@ export default function CoinsPage() {
             );
           })}
           {Object.keys(byType).length === 0 && (
-            <div style={{ textAlign: "center", color: "#94a3b8", padding: "1rem 0" }}>No coins yet — attend class to start earning!</div>
+            <div style={{ textAlign: "center", color: "#94a3b8", padding: "1rem 0" }}>{t("coins.noCoinsYet")}</div>
           )}
         </div>
 
         {/* Badge roadmap */}
         <div className="card">
-          <h3 style={{ fontWeight: "700", color: "#1e293b", marginBottom: "1rem", fontSize: "0.95rem" }}>🏅 Badge Roadmap</h3>
+          <h3 style={{ fontWeight: "700", color: "#1e293b", marginBottom: "1rem", fontSize: "0.95rem" }}>🏅 {t("coins.badgeRoadmap")}</h3>
           {BADGE_ORDER.map(b => {
             const bc = BADGE_COLORS[b];
             const bi = BADGE_ICONS[b];
@@ -169,9 +166,9 @@ export default function CoinsPage() {
                 <span style={{ fontSize: "1.25rem" }}>{bi}</span>
                 <div style={{ flex: 1 }}>
                   <div style={{ fontWeight: "700", color: achieved ? bc.color : "#94a3b8", fontSize: "0.875rem" }}>{b}</div>
-                  <div style={{ fontSize: "0.7rem", color: "#94a3b8" }}>{threshold === 0 ? "Starting tier" : `${threshold.toLocaleString()}+ coins`}</div>
+                  <div style={{ fontSize: "0.7rem", color: "#94a3b8" }}>{threshold === 0 ? t("coins.startingTier") : `${threshold.toLocaleString()}+ ${t("coins.totalCoins")}`}</div>
                 </div>
-                {achieved && <span style={{ fontSize: "0.75rem", color: "#10b981", fontWeight: "700" }}>✓ Achieved</span>}
+                {achieved && <span style={{ fontSize: "0.75rem", color: "#10b981", fontWeight: "700" }}>✓ {t("coins.achieved")}</span>}
               </div>
             );
           })}
@@ -181,24 +178,24 @@ export default function CoinsPage() {
       {/* Transaction history */}
       <div className="card" style={{ marginTop: "1.5rem", padding: 0, overflow: "hidden" }}>
         <div style={{ padding: "1rem 1.25rem", borderBottom: "1px solid #f1f5f9", fontWeight: "700", color: "#1e293b", fontSize: "0.95rem" }}>
-          ⚡ Coin History
+          ⚡ {t("coins.coinHistory")}
         </div>
         {transactions.length === 0 ? (
           <div style={{ padding: "2rem", textAlign: "center", color: "#94a3b8" }}>
             <div style={{ fontSize: "2rem", marginBottom: "0.5rem" }}>⚡</div>
-            <div>No transactions yet</div>
+            <div>{t("coins.noTransactions")}</div>
           </div>
         ) : (
-          transactions.map((t, i) => (
-            <div key={t.id} style={{ display: "flex", alignItems: "center", gap: "0.875rem", padding: "0.75rem 1.25rem", borderBottom: i < transactions.length - 1 ? "1px solid #f8fafc" : "none" }}>
-              <div style={{ width: 36, height: 36, borderRadius: "50%", background: `${TYPE_COLORS[t.type] || "var(--primary, #6366f1)"}18`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.1rem", flexShrink: 0 }}>
-                {TYPE_ICONS[t.type] || "🎯"}
+          transactions.map((tx, i) => (
+            <div key={tx.id} style={{ display: "flex", alignItems: "center", gap: "0.875rem", padding: "0.75rem 1.25rem", borderBottom: i < transactions.length - 1 ? "1px solid #f8fafc" : "none" }}>
+              <div style={{ width: 36, height: 36, borderRadius: "50%", background: `${TYPE_COLORS[tx.type] || "var(--primary, #6366f1)"}18`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.1rem", flexShrink: 0 }}>
+                {TYPE_ICONS[tx.type] || "🎯"}
               </div>
               <div style={{ flex: 1 }}>
-                <div style={{ fontWeight: "600", color: "#1e293b", fontSize: "0.85rem" }}>{t.reason}</div>
-                <div style={{ fontSize: "0.7rem", color: "#94a3b8" }}>{new Date(t.createdAt).toLocaleString()}</div>
+                <div style={{ fontWeight: "600", color: "#1e293b", fontSize: "0.85rem" }}>{tx.reason}</div>
+                <div style={{ fontSize: "0.7rem", color: "#94a3b8" }}>{new Date(tx.createdAt).toLocaleString()}</div>
               </div>
-              <div style={{ fontWeight: "800", color: "#10b981", fontSize: "0.95rem" }}>+{t.amount}</div>
+              <div style={{ fontWeight: "800", color: "#10b981", fontSize: "0.95rem" }}>+{tx.amount}</div>
             </div>
           ))
         )}

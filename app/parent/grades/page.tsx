@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 
 type ChildData = {
   children: {
@@ -11,6 +12,7 @@ type ChildData = {
 };
 
 export default function ParentGradesPage() {
+  const t = useTranslations();
   const [data, setData] = useState<ChildData | null>(null);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<"grades"|"homework"|"exams">("grades");
@@ -19,9 +21,9 @@ export default function ParentGradesPage() {
     fetch("/api/parent/child").then(r=>r.json()).then(setData).finally(()=>setLoading(false));
   }, []);
 
-  if (loading) return <div style={{ padding:"3rem", textAlign:"center", color:"#94a3b8" }}>Loading...</div>;
+  if (loading) return <div style={{ padding:"3rem", textAlign:"center", color:"#94a3b8" }}>{t("common.loading")}</div>;
   if (!data?.children?.length) return null;
-  // Aggregate grades across all children
+
   const grades = data.children.flatMap(c => c.grades ?? []);
   const hwGrades = data.children.flatMap(c => c.homeworkGrades ?? []);
   const exams = data.children.flatMap(c => c.examResults ?? []);
@@ -30,25 +32,24 @@ export default function ParentGradesPage() {
   return (
     <div style={{ padding:"2rem" }}>
       <div style={{ marginBottom:"2rem" }}>
-        <h1 style={{ fontSize:"1.75rem", fontWeight:"700", color:"#1e293b", margin:"0 0 0.25rem" }}>📝 Grades & Tests</h1>
-        <p style={{ color:"#64748b", margin:0 }}>Academic performance overview</p>
+        <h1 style={{ fontSize:"1.75rem", fontWeight:"700", color:"#1e293b", margin:"0 0 0.25rem" }}>📝 {t("parent.childGrades")}</h1>
+        <p style={{ color:"#64748b", margin:0 }}>{t("parent.academicPerformance")}</p>
       </div>
 
       {avgGrade !== null && (
         <div style={{ background:"var(--primary-gradient, linear-gradient(135deg,#6366f1,#8b5cf6))", borderRadius:"1rem", padding:"1.25rem 1.5rem", marginBottom:"1.5rem", color:"white", display:"flex", justifyContent:"space-between", alignItems:"center" }}>
           <div>
-            <div style={{ fontSize:"0.8rem", opacity:0.85 }}>Overall Average</div>
+            <div style={{ fontSize:"0.8rem", opacity:0.85 }}>{t("parent.overallAverage")}</div>
             <div style={{ fontSize:"2.5rem", fontWeight:"800" }}>{avgGrade}%</div>
           </div>
           <div style={{ fontSize:"4rem" }}>{avgGrade>=90?"🌟":avgGrade>=70?"👍":avgGrade>=50?"📚":"⚠️"}</div>
         </div>
       )}
 
-      {/* Tabs */}
       <div style={{ display:"flex", gap:"0.5rem", marginBottom:"1.5rem" }}>
-        {(["grades","homework","exams"] as const).map(t => (
-          <button key={t} onClick={()=>setTab(t)} style={{ padding:"0.5rem 1.25rem", borderRadius:"9999px", border:"2px solid", borderColor:tab===t?"var(--primary, #6366f1)":"#e2e8f0", background:tab===t?"var(--primary, #6366f1)":"white", color:tab===t?"white":"#475569", fontSize:"0.875rem", fontWeight:"600", cursor:"pointer" }}>
-            {t==="grades"?"📝 Grades":t==="homework"?"📋 Homework":"🧪 Exams"}
+        {(["grades","homework","exams"] as const).map(tabKey => (
+          <button key={tabKey} onClick={()=>setTab(tabKey)} style={{ padding:"0.5rem 1.25rem", borderRadius:"9999px", border:"2px solid", borderColor:tab===tabKey?"var(--primary, #6366f1)":"#e2e8f0", background:tab===tabKey?"var(--primary, #6366f1)":"white", color:tab===tabKey?"white":"#475569", fontSize:"0.875rem", fontWeight:"600", cursor:"pointer" }}>
+            {tabKey==="grades"?`📝 ${t("grades.title")}`:tabKey==="homework"?`📋 ${t("homework.title")}`:`🧪 ${t("exams.title")}`}
           </button>
         ))}
       </div>
@@ -58,7 +59,7 @@ export default function ParentGradesPage() {
           <table style={{ width:"100%", borderCollapse:"collapse" }}>
             <thead>
               <tr style={{ background:"#f8fafc" }}>
-                {["Date","Assignment","Score","Percentage"].map(h=>(
+                {[t("common.date"), t("grades.assignment"), t("grades.score"), t("grades.percentage")].map(h=>(
                   <th key={h} style={{ padding:"0.75rem 1rem", textAlign:"left", fontSize:"0.75rem", fontWeight:"600", color:"#64748b", textTransform:"uppercase", borderBottom:"1px solid #e2e8f0" }}>{h}</th>
                 ))}
               </tr>
@@ -72,28 +73,26 @@ export default function ParentGradesPage() {
                     <td style={{ padding:"0.875rem 1rem", fontWeight:"500" }}>{g.label||"—"}</td>
                     <td style={{ padding:"0.875rem 1rem", fontWeight:"700" }}>{g.score}/{g.maxScore}</td>
                     <td style={{ padding:"0.875rem 1rem" }}>
-                      <span style={{ padding:"0.25rem 0.625rem", borderRadius:"9999px", fontSize:"0.75rem", fontWeight:"700", background:pct>=70?"#d1fae5":pct>=50?"#fef3c7":"#fee2e2", color:pct>=70?"#065f46":pct>=50?"#92400e":"#991b1b" }}>
-                        {pct}%
-                      </span>
+                      <span style={{ padding:"0.25rem 0.625rem", borderRadius:"9999px", fontSize:"0.75rem", fontWeight:"700", background:pct>=70?"#d1fae5":pct>=50?"#fef3c7":"#fee2e2", color:pct>=70?"#065f46":pct>=50?"#92400e":"#991b1b" }}>{pct}%</span>
                     </td>
                   </tr>
                 );
               })}
             </tbody>
           </table>
-          {grades.length===0 && <div style={{ padding:"3rem", textAlign:"center", color:"#94a3b8" }}>No grades yet</div>}
+          {grades.length===0 && <div style={{ padding:"3rem", textAlign:"center", color:"#94a3b8" }}>{t("parent.noGradesYet")}</div>}
         </div>
       )}
 
       {tab==="homework" && (
         <div style={{ display:"flex", flexDirection:"column", gap:"1rem" }}>
-          {hwGrades.length===0 ? <div className="card" style={{ textAlign:"center", padding:"3rem", color:"#94a3b8" }}>No homework yet</div>
+          {hwGrades.length===0 ? <div className="card" style={{ textAlign:"center", padding:"3rem", color:"#94a3b8" }}>{t("parent.noHomeworkYet")}</div>
             : hwGrades.map((h,i)=>(
             <div key={i} className="card" style={{ borderLeft:`4px solid ${h.status==="GRADED"?"#10b981":h.status==="LATE"?"#ef4444":"#f59e0b"}` }}>
               <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
                 <div>
                   <div style={{ fontWeight:"600", color:"#1e293b" }}>{h.homework.title}</div>
-                  <div style={{ fontSize:"0.75rem", color:"#64748b" }}>{h.homework.group.name} • Due: {new Date(h.homework.dueDate).toLocaleDateString()}</div>
+                  <div style={{ fontSize:"0.75rem", color:"#64748b" }}>{h.homework.group.name} • {t("homework.dueDate")}: {new Date(h.homework.dueDate).toLocaleDateString()}</div>
                 </div>
                 <div style={{ textAlign:"right" }}>
                   {h.score!=null && <div style={{ fontSize:"1.25rem", fontWeight:"700", color:"var(--primary, #6366f1)" }}>{h.score} pts</div>}
@@ -110,7 +109,7 @@ export default function ParentGradesPage() {
 
       {tab==="exams" && (
         <div style={{ display:"flex", flexDirection:"column", gap:"1rem" }}>
-          {exams.length===0 ? <div className="card" style={{ textAlign:"center", padding:"3rem", color:"#94a3b8" }}>No exams yet</div>
+          {exams.length===0 ? <div className="card" style={{ textAlign:"center", padding:"3rem", color:"#94a3b8" }}>{t("parent.noExamsYetParent")}</div>
             : exams.map((r,i)=>{
             const pct = r.score!=null ? Math.round((r.score/r.exam.maxScore)*100) : null;
             return (
@@ -126,7 +125,7 @@ export default function ParentGradesPage() {
                         <div style={{ fontSize:"1.5rem", fontWeight:"800", color:pct!==null&&pct>=70?"#10b981":pct!==null&&pct>=50?"#f59e0b":"#ef4444" }}>{r.score}/{r.exam.maxScore}</div>
                         <div style={{ fontSize:"0.75rem", color:"#64748b" }}>{pct}%</div>
                       </>
-                    ) : <span style={{ padding:"0.25rem 0.5rem", borderRadius:"9999px", background:"#fef3c7", color:"#92400e", fontSize:"0.75rem" }}>Pending</span>}
+                    ) : <span style={{ padding:"0.25rem 0.5rem", borderRadius:"9999px", background:"#fef3c7", color:"#92400e", fontSize:"0.75rem" }}>{t("exams.pendingResult")}</span>}
                   </div>
                 </div>
               </div>

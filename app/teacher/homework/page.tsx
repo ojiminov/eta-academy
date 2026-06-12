@@ -1,146 +1,183 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
+import { useTranslations } from "next-intl";
 
-type HomeworkGrade = { studentId: string; student: { user: { firstName: string; lastName: string } }; status: string; score?: number; feedback?: string; };
-type Homework = { id: string; title: string; description?: string; dueDate: string; returnDate?: string; maxScore: number; group: { name: string }; teacher: { user: { firstName: string; lastName: string } }; grades: HomeworkGrade[]; };
-
-const STATUS_STYLE: Record<string, { bg: string; color: string }> = {
-  ASSIGNED: { bg: "#fef3c7", color: "#b45309" },
-  SUBMITTED: { bg: "#dbeafe", color: "#1e40af" },
-  GRADED: { bg: "#dcfce7", color: "#16a34a" },
-  LATE: { bg: "#fee2e2", color: "#dc2626" },
+type HWGrade = {
+  id: string; status: string; score?: number; feedback?: string;
+  submittedAt?: string; submissionUrl?: string; submissionName?: string;
+  student: { user: { firstName: string; lastName: string } };
+  homework: { id: string; title: string; dueDate: string; maxScore: number; group: { name: string } };
+};
+type Homework = {
+  id: string; title: string; description?: string; dueDate: string; returnDate?: string; maxScore: number;
+  group: { name: string };
+  grades: HWGrade[];
 };
 
 export default function TeacherHomeworkPage() {
+  const t = useTranslations();
   const [homeworks, setHomeworks] = useState<Homework[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selected, setSelected] = useState<Homework | null>(null);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
   const [gradeInputs, setGradeInputs] = useState<Record<string, { score: string; feedback: string }>>({});
   const [saving, setSaving] = useState(false);
+  const [assigning, setAssigning] = useState<string | null>(null);
 
-  async function load() {
-    setLoading(true);
-    const res = await fetch("/api/teacher/homeworks");
-    if (res.ok) setHomeworks(await res.json());
-    setLoading(false);
-  }
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    fetch("/api/teacher/homework").then(r => r.json()).then(setHomeworks).finally(() => setLoading(false));
+  }, []);
 
-  function openGrading(hw: Homework) {
-    setSelected(hw);
-    const inputs: Record<string, { score: string; feedback: string }> = {};
-    hw.grades.forEach(g => { inputs[g.studentId] = { score: g.score?.toString() ?? "", feedback: g.feedback ?? "" }; });
-    setGradeInputs(inputs);
-  }
-
-  async function saveGrades() {
-    if (!selected) return;
+  async function saveGrades(hwId: string) {
     setSaving(true);
-    const grades = Object.entries(gradeInputs).map(([studentId, v]) => ({
-      studentId, score: v.score ? parseFloat(v.score) : undefined, feedback: v.feedback, status: v.score ? "GRADED" : "SUBMITTED",
-    }));
-    await fetch(`/api/teacher/homeworks/${selected.id}/grades`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ grades }) });
+    const updates = Object.entries(gradeInputs)
+      .filter(([, v]) => v.score !== "")
+      .map(([gradeId, v]) => ({ gradeId, score: Number(v.score), feedback: v.feedback }));
+    await fetch("/api/teacher/homework", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ homeworkId: hwId, grades: updates }) });
+    const data = await fetch("/api/teacher/homework").then(r => r.json());
+    setHomeworks(data);
+    setGradeInputs({});
     setSaving(false);
-    setSelected(null);
-    await load();
   }
+
+  async function assignToAll(hwId: string) {
+    setAssigning(hwId);
+    await fetch("/api/teacher/homework", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "assignAll", homeworkId: hwId }) });
+    const data = await fetch("/api/teacher/homework").then(r => r.json());
+    setHomeworks(data);
+    setAssigning(null);
+  }
+
+  const total = homeworks.length;
+  const pendingGrades = homeworks.reduce((s, hw) => s + hw.grades.filter(g => g.status === "SUBMITTED").length, 0);
+  const allGrades = homeworks.flatMap(hw => hw.grades.filter(g => g.score != null));
+  const avgScore = allGrades.length > 0 ? Math.round(allGrades.reduce((s, g) => s + (g.score || 0), 0) / allGrades.length) : null;
 
   return (
-    <div style={{ padding: "2rem", maxWidth: "1100px" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "1.75rem" }}>
+    <div style={{ padding: "2rem" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "2rem" }}>
         <div>
-          <h1 style={{ fontSize: "1.625rem", fontWeight: "700", color: "#0f172a", margin: "0 0 0.25rem" }}>Homework</h1>
-          <p style={{ color: "#64748b", margin: 0, fontSize: "0.875rem" }}>Assign and grade homework for your groups</p>
+          <h1 style={{ fontSize: "1.75rem", fontWeight: "700", color: "#1e293b", margin: "0 0 0.25rem" }}>📋 {t("homework.title")}</h1>
+          <p style={{ color: "#64748b", margin: 0 }}>{t("homework.assignAndGrade")}</p>
         </div>
-        <Link href="/teacher/homework/new" className="btn btn-primary" style={{ gap: "0.375rem" }}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-          </svg>
-          Assign Homework
-        </Link>
+        <a href="/teacher/homework/new" className="btn btn-primary">+ {t("homework.assignHomework")}</a>
       </div>
 
-      {loading ? (
-        <div style={{ textAlign: "center", padding: "3rem", color: "#94a3b8" }}>Loading...</div>
-      ) : homeworks.length === 0 ? (
-        <div style={{ background: "white", border: "1px solid #e2e8f0", borderRadius: "0.875rem", padding: "4rem", textAlign: "center", boxShadow: "0 1px 3px rgba(0,0,0,0.06)" }}>
-          <div style={{ fontSize: "2.5rem", marginBottom: "0.875rem" }}>📋</div>
-          <div style={{ fontWeight: "600", color: "#0f172a", marginBottom: "0.375rem" }}>No homework assigned yet</div>
-          <Link href="/teacher/homework/new" style={{ color: "var(--primary, #6366f1)", fontWeight: "600", textDecoration: "none", fontSize: "0.875rem" }}>Assign your first homework →</Link>
-        </div>
-      ) : (
-        <div style={{ display: "flex", flexDirection: "column", gap: "0.875rem" }}>
-          {homeworks.map(hw => {
-            const graded = hw.grades.filter(g => g.status === "GRADED").length;
-            const total = hw.grades.length;
-            const avgScore = graded > 0 ? hw.grades.filter(g => g.score != null).reduce((s, g) => s + (g.score || 0), 0) / (hw.grades.filter(g => g.score != null).length || 1) : 0;
-            const overdue = new Date(hw.dueDate) < new Date();
-            return (
-              <div key={hw.id} style={{
-                background: "white", border: "1px solid #e2e8f0", borderRadius: "0.875rem",
-                padding: "1.25rem 1.5rem", boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
-                display: "flex", justifyContent: "space-between", alignItems: "center", gap: "1rem",
-              }}>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: "0.625rem", marginBottom: "0.5rem", flexWrap: "wrap" }}>
-                    <span style={{ fontWeight: "700", fontSize: "0.9375rem", color: "#0f172a" }}>{hw.title}</span>
-                    <span style={{ padding: "0.125rem 0.5rem", borderRadius: "9999px", background: "var(--primary-light, #ede9fe)", color: "#5b21b6", fontSize: "0.7rem", fontWeight: "600" }}>{hw.group.name}</span>
-                    {overdue && <span style={{ padding: "0.125rem 0.5rem", borderRadius: "9999px", background: "#fee2e2", color: "#dc2626", fontSize: "0.7rem", fontWeight: "600" }}>OVERDUE</span>}
-                  </div>
-                  <div style={{ display: "flex", gap: "1.25rem", fontSize: "0.78rem", color: "#64748b", flexWrap: "wrap" }}>
-                    <span>📅 Due: {new Date(hw.dueDate).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</span>
-                    {hw.returnDate && <span>↩️ Return: {new Date(hw.returnDate).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</span>}
-                    <span>Max: {hw.maxScore} pts</span>
-                    <span style={{ color: graded === total && total > 0 ? "#10b981" : "#64748b" }}>✅ {graded}/{total} graded</span>
-                    {graded > 0 && <span>⭐ Avg: {avgScore.toFixed(1)}</span>}
-                  </div>
-                </div>
-                <button onClick={() => openGrading(hw)} style={{ padding: "0.5rem 1.125rem", background: "var(--primary, #6366f1)", color: "white", border: "none", borderRadius: "0.5rem", cursor: "pointer", fontWeight: "600", fontSize: "0.8rem", flexShrink: 0 }}>
-                  Grade
-                </button>
-              </div>
-            );
-          })}
-        </div>
-      )}
-
-      {/* Grading Modal */}
-      {selected && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(15,23,42,0.6)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", padding: "1rem" }}>
-          <div style={{ background: "white", borderRadius: "1.25rem", padding: "2rem", width: "100%", maxWidth: "600px", maxHeight: "80vh", overflowY: "auto", boxShadow: "0 25px 50px rgba(0,0,0,0.25)" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "1.5rem" }}>
-              <div>
-                <h2 style={{ fontSize: "1.125rem", fontWeight: "700", color: "#0f172a", margin: "0 0 0.25rem" }}>{selected.title}</h2>
-                <p style={{ fontSize: "0.8rem", color: "#64748b", margin: 0 }}>{selected.group.name} · Max {selected.maxScore} pts</p>
-              </div>
-              <button onClick={() => setSelected(null)} style={{ background: "#f1f5f9", border: "none", width: "32px", height: "32px", borderRadius: "50%", cursor: "pointer", color: "#64748b", fontSize: "1rem", display: "flex", alignItems: "center", justifyContent: "center" }}>✕</button>
-            </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: "0.625rem" }}>
-              {selected.grades.map(g => (
-                <div key={g.studentId} style={{ display: "grid", gridTemplateColumns: "1fr 110px 1fr", gap: "0.75rem", alignItems: "center", padding: "0.875rem", background: "#f8fafc", borderRadius: "0.625rem" }}>
-                  <div style={{ fontWeight: "600", color: "#0f172a", fontSize: "0.875rem" }}>{g.student.user.firstName} {g.student.user.lastName}</div>
-                  <input type="number" min="0" max={selected.maxScore} placeholder={`/${selected.maxScore}`}
-                    value={gradeInputs[g.studentId]?.score || ""}
-                    onChange={e => setGradeInputs(prev => ({ ...prev, [g.studentId]: { ...prev[g.studentId], score: e.target.value } }))}
-                    className="input" style={{ textAlign: "center", padding: "0.375rem 0.5rem", minHeight: "36px" }} />
-                  <input type="text" placeholder="Feedback..."
-                    value={gradeInputs[g.studentId]?.feedback || ""}
-                    onChange={e => setGradeInputs(prev => ({ ...prev, [g.studentId]: { ...prev[g.studentId], feedback: e.target.value } }))}
-                    className="input" style={{ padding: "0.375rem 0.5rem", minHeight: "36px" }} />
-                </div>
-              ))}
-            </div>
-            <div style={{ display: "flex", gap: "0.75rem", marginTop: "1.5rem" }}>
-              <button onClick={saveGrades} disabled={saving} className="btn btn-primary" style={{ flex: 1, justifyContent: "center" }}>
-                {saving ? "Saving..." : "Save Grades"}
-              </button>
-              <button onClick={() => setSelected(null)} className="btn btn-secondary" style={{ flex: 1, justifyContent: "center" }}>Cancel</button>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: "1rem", marginBottom: "1.5rem" }}>
+        {[
+          { label: t("homework.total"), value: total, icon: "📋", color: "var(--primary, #6366f1)", bg: "var(--primary-light, #ede9fe)" },
+          { label: t("payments.pending"), value: pendingGrades, icon: "⏳", color: pendingGrades > 0 ? "#f59e0b" : "#10b981", bg: pendingGrades > 0 ? "#fef3c7" : "#d1fae5" },
+          { label: t("homework.graded"), value: avgScore !== null ? `${avgScore}%` : "—", icon: "⭐", color: "#10b981", bg: "#d1fae5" },
+        ].map(s => (
+          <div key={s.label} className="card" style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+            <div style={{ width: 44, height: 44, borderRadius: 10, background: s.bg, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.25rem", flexShrink: 0 }}>{s.icon}</div>
+            <div>
+              <div style={{ fontSize: "1.25rem", fontWeight: "700", color: s.color }}>{s.value}</div>
+              <div style={{ fontSize: "0.75rem", color: "#64748b" }}>{s.label}</div>
             </div>
           </div>
+        ))}
+      </div>
+
+      {loading ? <div style={{ textAlign: "center", padding: "3rem", color: "#94a3b8" }}>{t("common.loading")}</div>
+        : homeworks.length === 0 ? (
+        <div className="card" style={{ textAlign: "center", padding: "3rem" }}>
+          <div style={{ fontSize: "3rem", marginBottom: "0.75rem" }}>📋</div>
+          <div style={{ fontWeight: "600", color: "#1e293b", marginBottom: "0.5rem" }}>{t("homework.noHomework")}</div>
+          <a href="/teacher/homework/new" className="btn btn-primary" style={{ display: "inline-flex" }}>+ {t("homework.assignFirst")}</a>
         </div>
-      )}
+      ) : homeworks.map(hw => {
+        const isExpanded = expandedId === hw.id;
+        const submitted = hw.grades.filter(g => g.status === "SUBMITTED");
+        const graded = hw.grades.filter(g => g.status === "GRADED");
+        const unassigned = hw.grades.length === 0;
+        return (
+          <div key={hw.id} className="card" style={{ marginBottom: "1rem", padding: 0, overflow: "hidden" }}>
+            <div style={{ padding: "1.25rem 1.5rem", cursor: "pointer", display: "flex", justifyContent: "space-between", alignItems: "center" }} onClick={() => setExpandedId(isExpanded ? null : hw.id)}>
+              <div>
+                <div style={{ fontWeight: "700", color: "#1e293b" }}>{hw.title}</div>
+                <div style={{ fontSize: "0.75rem", color: "#64748b", marginTop: "0.125rem" }}>
+                  {hw.group.name} · {t("homework.dueDate")}: {new Date(hw.dueDate).toLocaleDateString()} · {t("homework.maxScore")}: {hw.maxScore} {t("homework.pts")}
+                </div>
+              </div>
+              <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
+                {submitted.length > 0 && <span style={{ padding: "0.2rem 0.5rem", borderRadius: "9999px", background: "#dbeafe", color: "#1e40af", fontSize: "0.72rem", fontWeight: "700" }}>{submitted.length} {t("homework.statusSUBMITTED")}</span>}
+                {graded.length > 0 && <span style={{ padding: "0.2rem 0.5rem", borderRadius: "9999px", background: "#d1fae5", color: "#065f46", fontSize: "0.72rem", fontWeight: "700" }}>{graded.length} {t("homework.statusGRADED")}</span>}
+                <span style={{ color: "#94a3b8", fontSize: "0.8rem" }}>{isExpanded ? "▲" : "▼"}</span>
+              </div>
+            </div>
+
+            {isExpanded && (
+              <div style={{ borderTop: "1px solid #f1f5f9" }}>
+                {unassigned ? (
+                  <div style={{ padding: "1.5rem", textAlign: "center" }}>
+                    <p style={{ color: "#64748b", marginBottom: "1rem" }}>{t("homework.assignFirst")}</p>
+                    <button onClick={() => assignToAll(hw.id)} disabled={assigning === hw.id} className="btn btn-primary">
+                      {assigning === hw.id ? t("homework.assigning") : t("homework.assignHomework")}
+                    </button>
+                  </div>
+                ) : (
+                  <div>
+                    <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                      <thead>
+                        <tr style={{ background: "#f8fafc" }}>
+                          {[t("students.student"), t("common.status"), t("homework.submittedAt"), `${t("homework.graded")} (/${hw.maxScore})`, t("homework.feedback")].map(h => (
+                            <th key={h} style={{ padding: "0.625rem 1rem", textAlign: "left", fontSize: "0.72rem", fontWeight: "600", color: "#64748b", textTransform: "uppercase", borderBottom: "1px solid #e2e8f0" }}>{h}</th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {hw.grades.map((g, i) => (
+                          <tr key={g.id} style={{ borderBottom: "1px solid #f8fafc", background: i % 2 === 0 ? "white" : "#fafafa" }}>
+                            <td style={{ padding: "0.75rem 1rem", fontWeight: "500", fontSize: "0.875rem" }}>{g.student.user.firstName} {g.student.user.lastName}</td>
+                            <td style={{ padding: "0.75rem 1rem" }}>
+                              <span style={{ padding: "0.15rem 0.5rem", borderRadius: "9999px", fontSize: "0.7rem", fontWeight: "700",
+                                background: g.status === "GRADED" ? "#d1fae5" : g.status === "SUBMITTED" ? "#dbeafe" : g.status === "LATE" ? "#fee2e2" : "#fef3c7",
+                                color: g.status === "GRADED" ? "#065f46" : g.status === "SUBMITTED" ? "#1e40af" : g.status === "LATE" ? "#dc2626" : "#92400e" }}>
+                                {g.status}
+                              </span>
+                            </td>
+                            <td style={{ padding: "0.75rem 1rem", fontSize: "0.75rem", color: "#64748b" }}>
+                              {g.submissionUrl ? (
+                                <a href={g.submissionUrl} target="_blank" rel="noopener noreferrer" style={{ color: "#6366f1", fontWeight: "600", textDecoration: "none" }}>
+                                  📎 {g.submissionName || t("common.view")}
+                                </a>
+                              ) : g.submittedAt ? new Date(g.submittedAt).toLocaleDateString() : "—"}
+                            </td>
+                            <td style={{ padding: "0.75rem 1rem" }}>
+                              <input
+                                type="number" min={0} max={hw.maxScore}
+                                placeholder={g.score != null ? String(g.score) : "—"}
+                                value={gradeInputs[g.id]?.score ?? ""}
+                                onChange={e => setGradeInputs(prev => ({ ...prev, [g.id]: { ...prev[g.id], score: e.target.value, feedback: prev[g.id]?.feedback || "" } }))}
+                                style={{ width: "70px", padding: "0.3rem 0.5rem", border: "1px solid #e2e8f0", borderRadius: "0.375rem", fontSize: "0.875rem" }}
+                              />
+                            </td>
+                            <td style={{ padding: "0.75rem 1rem" }}>
+                              <input
+                                type="text"
+                                placeholder={g.feedback || "—"}
+                                value={gradeInputs[g.id]?.feedback ?? ""}
+                                onChange={e => setGradeInputs(prev => ({ ...prev, [g.id]: { ...prev[g.id], feedback: e.target.value, score: prev[g.id]?.score || "" } }))}
+                                style={{ width: "160px", padding: "0.3rem 0.5rem", border: "1px solid #e2e8f0", borderRadius: "0.375rem", fontSize: "0.875rem" }}
+                              />
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                    <div style={{ padding: "1rem 1.5rem", borderTop: "1px solid #f1f5f9", display: "flex", justifyContent: "flex-end" }}>
+                      <button onClick={() => saveGrades(hw.id)} disabled={saving} className="btn btn-primary">
+                        {saving ? t("homework.saving") : t("homework.saveGrades")}
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 }

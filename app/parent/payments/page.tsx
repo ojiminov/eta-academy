@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 
 type Payment = { id: string; amount: number; currency: string; status: string; method?: string; paidAt?: string; createdAt: string; notes?: string; };
 
@@ -12,12 +13,12 @@ const STATUS_COLORS: Record<string, { bg:string; color:string }> = {
 };
 
 export default function ParentPaymentsPage() {
+  const t = useTranslations();
   const [payments, setPayments] = useState<Payment[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetch("/api/parent/child").then(r=>r.json()).then(d => {
-      // Aggregate payments from all children
       const allPayments = (d.children ?? []).flatMap((c: { payments?: Payment[] }) => c.payments ?? []);
       if (allPayments.length) setPayments(allPayments);
     }).finally(()=>setLoading(false));
@@ -29,15 +30,15 @@ export default function ParentPaymentsPage() {
   return (
     <div style={{ padding:"2rem" }}>
       <div style={{ marginBottom:"2rem" }}>
-        <h1 style={{ fontSize:"1.75rem", fontWeight:"700", color:"#1e293b", margin:"0 0 0.25rem" }}>💳 Payments</h1>
-        <p style={{ color:"#64748b", margin:0 }}>Payment history and outstanding balances</p>
+        <h1 style={{ fontSize:"1.75rem", fontWeight:"700", color:"#1e293b", margin:"0 0 0.25rem" }}>💳 {t("parent.childPayments")}</h1>
+        <p style={{ color:"#64748b", margin:0 }}>{t("parent.paymentsDesc")}</p>
       </div>
 
       <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:"1rem", marginBottom:"1.5rem" }}>
         {[
-          { label:"Total Paid", value:`${totalPaid.toLocaleString()} UZS`, icon:"✅", color:"#10b981", bg:"#d1fae5" },
-          { label:"Outstanding", value:`${totalPending.toLocaleString()} UZS`, icon:"⏳", color: totalPending>0?"#ef4444":"#10b981", bg:totalPending>0?"#fee2e2":"#d1fae5" },
-          { label:"Total Records", value:payments.length, icon:"📋", color:"var(--primary, #6366f1)", bg:"var(--primary-light, #ede9fe)" },
+          { label: t("parent.totalPaid"), value:`${totalPaid.toLocaleString()} UZS`, icon:"✅", color:"#10b981", bg:"#d1fae5" },
+          { label: t("parent.outstanding"), value:`${totalPending.toLocaleString()} UZS`, icon:"⏳", color: totalPending>0?"#ef4444":"#10b981", bg:totalPending>0?"#fee2e2":"#d1fae5" },
+          { label: t("parent.totalRecords"), value:payments.length, icon:"📋", color:"var(--primary, #6366f1)", bg:"var(--primary-light, #ede9fe)" },
         ].map(s=>(
           <div key={s.label} className="card" style={{ display:"flex", alignItems:"center", gap:"0.75rem" }}>
             <div style={{ width:44,height:44,borderRadius:10,background:s.bg,display:"flex",alignItems:"center",justifyContent:"center",fontSize:"1.3rem",flexShrink:0 }}>{s.icon}</div>
@@ -53,20 +54,20 @@ export default function ParentPaymentsPage() {
         <div style={{ background:"#fee2e2", border:"1px solid #fca5a5", borderRadius:"0.75rem", padding:"1rem", marginBottom:"1.5rem", display:"flex", gap:"0.75rem", alignItems:"center" }}>
           <span style={{ fontSize:"1.5rem" }}>⚠️</span>
           <div>
-            <div style={{ fontWeight:"600", color:"#991b1b" }}>Outstanding Balance: {totalPending.toLocaleString()} UZS</div>
-            <div style={{ fontSize:"0.875rem", color:"#dc2626" }}>Please contact the academy to make a payment. You can pay via cash, card or bank transfer.</div>
+            <div style={{ fontWeight:"600", color:"#991b1b" }}>{t("parent.outstandingBalance")} {totalPending.toLocaleString()} UZS</div>
+            <div style={{ fontSize:"0.875rem", color:"#dc2626" }}>{t("parent.contactAcademy")}</div>
           </div>
         </div>
       )}
 
       <div className="card" style={{ padding:0, overflow:"hidden" }}>
-        {loading ? <div style={{ padding:"3rem", textAlign:"center", color:"#94a3b8" }}>Loading...</div>
-          : payments.length===0 ? <div style={{ padding:"3rem", textAlign:"center", color:"#94a3b8" }}>No payments yet</div>
+        {loading ? <div style={{ padding:"3rem", textAlign:"center", color:"#94a3b8" }}>{t("common.loading")}</div>
+          : payments.length===0 ? <div style={{ padding:"3rem", textAlign:"center", color:"#94a3b8" }}>{t("parent.noPaymentsYet")}</div>
           : (
           <table style={{ width:"100%", borderCollapse:"collapse" }}>
             <thead>
               <tr style={{ background:"#f8fafc" }}>
-                {["Date","Amount","Method","Status","Notes"].map(h=>(
+                {[t("common.date"), t("payments.amount"), t("payments.method"), t("common.status"), t("common.notes")].map(h=>(
                   <th key={h} style={{ padding:"0.75rem 1rem", textAlign:"left", fontSize:"0.75rem", fontWeight:"600", color:"#64748b", textTransform:"uppercase", borderBottom:"1px solid #e2e8f0" }}>{h}</th>
                 ))}
               </tr>

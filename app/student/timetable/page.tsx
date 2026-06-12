@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 
 type Group = { id: string; name: string; schedule: string; room?: string; level: string; monthlyFee: number; teacher: { user: { firstName: string; lastName: string } }; };
 
@@ -19,6 +20,7 @@ const LEVEL_BAR: Record<string, string> = {
 };
 
 export default function TimetablePage() {
+  const t = useTranslations();
   const [groups, setGroups] = useState<Group[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -29,17 +31,17 @@ export default function TimetablePage() {
   return (
     <div style={{ padding: "2rem", maxWidth: "1100px" }}>
       <div style={{ marginBottom: "1.75rem" }}>
-        <h1 style={{ fontSize: "1.625rem", fontWeight: "700", color: "#0f172a", margin: "0 0 0.25rem" }}>Class Timetable</h1>
-        <p style={{ color: "#64748b", margin: 0, fontSize: "0.875rem" }}>Your weekly class schedule</p>
+        <h1 style={{ fontSize: "1.625rem", fontWeight: "700", color: "#0f172a", margin: "0 0 0.25rem" }}>{t("timetable.title")}</h1>
+        <p style={{ color: "#64748b", margin: 0, fontSize: "0.875rem" }}>{t("timetable.subtitle")}</p>
       </div>
 
       {loading ? (
-        <div style={{ textAlign: "center", padding: "3rem", color: "#94a3b8" }}>Loading...</div>
+        <div style={{ textAlign: "center", padding: "3rem", color: "#94a3b8" }}>{t("common.loading")}</div>
       ) : groups.length === 0 ? (
         <div style={{ background: "white", border: "1px solid #e2e8f0", borderRadius: "0.875rem", padding: "4rem", textAlign: "center", boxShadow: "0 1px 3px rgba(0,0,0,0.06)" }}>
           <div style={{ fontSize: "2.5rem", marginBottom: "0.875rem" }}>🗓️</div>
-          <div style={{ fontWeight: "600", color: "#0f172a" }}>No classes scheduled yet</div>
-          <div style={{ color: "#64748b", fontSize: "0.875rem", marginTop: "0.25rem" }}>The admin will assign you to a group</div>
+          <div style={{ fontWeight: "600", color: "#0f172a" }}>{t("timetable.noClassesYet")}</div>
+          <div style={{ color: "#64748b", fontSize: "0.875rem", marginTop: "0.25rem" }}>{t("timetable.adminAssigns")}</div>
         </div>
       ) : (
         <>
@@ -87,7 +89,7 @@ export default function TimetablePage() {
           </div>
 
           <div style={{ background: "#f0f9ff", border: "1px solid #bae6fd", borderRadius: "0.875rem", padding: "1rem 1.25rem", fontSize: "0.8rem", color: "#0369a1" }}>
-            💡 Your schedule shows the days and times for each group. Contact the academy if you need to change your schedule.
+            💡 {t("timetable.scheduleNote")}
           </div>
         </>
       )}
