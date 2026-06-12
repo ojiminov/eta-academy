@@ -2,6 +2,7 @@ import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getTranslations } from "next-intl/server";
 import Link from "next/link";
+import TodayDateDisplay from "@/components/TodayDateDisplay";
 
 export const dynamic = "force-dynamic";
 
@@ -30,7 +31,6 @@ export default async function StudentDashboard() {
     ? Math.round(recentGrades.reduce((s, g) => s + (g.score / g.maxScore) * 100, 0) / recentGrades.length)
     : null;
 
-  const today = new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" });
 
   const badgeEmoji = student?.badge === "PLATINUM" ? "💎" : student?.badge === "GOLD" ? "🥇" : student?.badge === "SILVER" ? "🥈" : "🥉";
 
@@ -49,7 +49,7 @@ export default async function StudentDashboard() {
         <div style={{ position: "absolute", top: "-40px", right: "-40px", width: "200px", height: "200px", borderRadius: "50%", background: "rgba(255,255,255,0.06)" }} />
         <div style={{ position: "absolute", bottom: "-60px", right: "120px", width: "160px", height: "160px", borderRadius: "50%", background: "rgba(255,255,255,0.04)" }} />
         <div style={{ position: "relative", zIndex: 1 }}>
-          <p style={{ color: "rgba(255,255,255,0.75)", fontSize: "0.875rem", margin: "0 0 0.375rem", fontWeight: "500" }}>{today}</p>
+          <TodayDateDisplay triggerStyle={{ background: "transparent", border: "none", color: "rgba(255,255,255,0.75)", padding: "0", fontSize: "0.875rem", fontWeight: "500", width: "auto", gap: "0.375rem" }} />
           <h1 style={{ color: "white", fontSize: "1.875rem", fontWeight: "800", margin: "0 0 0.375rem", letterSpacing: "-0.025em" }}>
             {t("dashboard.studentTitle", { name: user?.firstName ?? "" })} 🎓
           </h1>

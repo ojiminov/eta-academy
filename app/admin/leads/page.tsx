@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import UzbekDatePicker from "@/components/UzbekDatePicker";
 
 type Lead = {
   id: string; firstName: string; lastName: string; phone: string; email?: string;
@@ -238,7 +239,7 @@ export default function LeadsPage() {
                 </div>
                 <div>
                   <label className="label">Trial Date</label>
-                  <input className="input" type="date" value={form.trialDate} onChange={e=>setForm({...form,trialDate:e.target.value})} />
+                  <UzbekDatePicker dateOnly value={form.trialDate} onChange={v => setForm({...form, trialDate: v})} placeholder="Trial sana..." />
                 </div>
               </div>
               <div style={{ marginBottom:"1.5rem" }}>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import UzbekDatePicker from "@/components/UzbekDatePicker";
 
 type Expense = { id: string; title: string; amount: number; currency: string; category: string; description?: string; date: string; };
 
@@ -170,7 +171,7 @@ export default function ExpensesPage() {
               </div>
               <div style={{ marginBottom:"1rem" }}>
                 <label className="label">Date</label>
-                <input className="input" type="date" value={form.date} onChange={e=>setForm({...form,date:e.target.value})} />
+                <UzbekDatePicker dateOnly value={form.date} onChange={v => setForm({...form, date: v})} placeholder="Sana..." />
               </div>
               <div style={{ marginBottom:"1.5rem" }}>
                 <label className="label">Description</label>

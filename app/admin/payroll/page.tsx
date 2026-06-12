@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import UzbekDatePicker from "@/components/UzbekDatePicker";
 
 type AdvanceFine = { id: string; amount: number; reason?: string; date: string };
 type TeacherPayroll = {
@@ -289,7 +290,7 @@ export default function PayrollPage() {
             </div>
             <div style={{ marginBottom: "1.25rem" }}>
               <label className="label">Sana</label>
-              <input className="input" type="date" value={modalForm.date} onChange={e => setModalForm(f => ({ ...f, date: e.target.value }))} />
+              <UzbekDatePicker dateOnly value={modalForm.date} onChange={v => setModalForm(f => ({ ...f, date: v }))} placeholder="Sana..." />
             </div>
             <div style={{ display: "flex", gap: "0.75rem" }}>
               <button className="btn btn-primary" onClick={saveModal} disabled={saving || !modalForm.amount}>{saving ? "..." : "Saqlash"}</button>

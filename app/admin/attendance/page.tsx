@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import UzbekDatePicker from "@/components/UzbekDatePicker";
 
 type AttendanceRecord = { id: string; status: string; student: { id: string; user: { firstName: string; lastName: string } } };
 type Teacher = { user: { firstName: string; lastName: string } };
@@ -71,13 +72,11 @@ export default function AdminAttendancePage() {
         </div>
         <div style={{ flex: "1 1 150px" }}>
           <label style={{ display: "block", fontSize: "0.75rem", fontWeight: "600", color: "#64748b", marginBottom: "0.25rem" }}>From</label>
-          <input type="date" value={from} onChange={e => setFrom(e.target.value)}
-            style={{ width: "100%", padding: "0.5rem 0.75rem", border: "1px solid #e2e8f0", borderRadius: "0.5rem", fontSize: "0.875rem" }} />
+          <UzbekDatePicker dateOnly value={from} onChange={setFrom} placeholder="Boshlanish..." />
         </div>
         <div style={{ flex: "1 1 150px" }}>
           <label style={{ display: "block", fontSize: "0.75rem", fontWeight: "600", color: "#64748b", marginBottom: "0.25rem" }}>To</label>
-          <input type="date" value={to} onChange={e => setTo(e.target.value)}
-            style={{ width: "100%", padding: "0.5rem 0.75rem", border: "1px solid #e2e8f0", borderRadius: "0.5rem", fontSize: "0.875rem" }} />
+          <UzbekDatePicker dateOnly value={to} onChange={setTo} placeholder="Tugash..." />
         </div>
         <button onClick={loadData} disabled={loading}
           style={{ padding: "0.5rem 1.25rem", background: "var(--primary, #6366f1)", color: "white", border: "none", borderRadius: "0.5rem", cursor: "pointer", fontWeight: "600", height: "38px" }}>

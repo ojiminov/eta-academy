@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
+import UzbekDatePicker from "@/components/UzbekDatePicker";
 
 const LEVELS = ["BEGINNER", "ELEMENTARY", "PRE_INTERMEDIATE", "INTERMEDIATE", "UPPER_INTERMEDIATE", "ADVANCED"];
 
@@ -108,7 +109,7 @@ export default function NewGroupPage() {
 
           <div style={{ marginBottom: "1.5rem" }}>
             <label className="label">{t("groups.startDate")} *</label>
-            <input className="input" type="date" value={form.startDate} onChange={(e) => set("startDate", e.target.value)} required />
+            <UzbekDatePicker dateOnly value={form.startDate} onChange={v => set("startDate", v)} placeholder="Boshlanish sanasi..." />
           </div>
 
           <div style={{ display: "flex", gap: "0.75rem" }}>

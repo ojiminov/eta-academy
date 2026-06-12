@@ -20,11 +20,25 @@ export function toPickerString(d: Date) {
   return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
 
+/** Parse value string; dateOnly=true uses local-time constructor to avoid UTC shift */
+function parseV(v: string, dOnly: boolean): Date | null {
+  if (!v) return null;
+  if (dOnly) {
+    const [y, m, d] = v.split("-").map(Number);
+    if (!y || !m || !d) return null;
+    return new Date(y, m - 1, d);
+  }
+  const parsed = new Date(v);
+  return isNaN(parsed.getTime()) ? null : parsed;
+}
+
 type Props = {
   value: string;
   onChange: (v: string) => void;
   placeholder?: string;
   includeTime?: boolean;
+  /** When true: accepts & returns YYYY-MM-DD (no time) — use for date-only form fields */
+  dateOnly?: boolean;
   readOnly?: boolean;
   style?: React.CSSProperties;
   triggerStyle?: React.CSSProperties;
@@ -34,21 +48,25 @@ export default function UzbekDatePicker({
   value, onChange,
   placeholder = "Sanani tanlang...",
   includeTime = true,
+  dateOnly = false,
   readOnly = false,
   style,
   triggerStyle,
 }: Props) {
   const [open, setOpen] = useState(false);
-  const [viewYear, setViewYear] = useState(() => value ? new Date(value).getFullYear() : new Date().getFullYear());
-  const [viewMonth, setViewMonth] = useState(() => value ? new Date(value).getMonth() : new Date().getMonth());
+  const [viewYear, setViewYear] = useState(() => parseV(value, dateOnly)?.getFullYear() ?? new Date().getFullYear());
+  const [viewMonth, setViewMonth] = useState(() => parseV(value, dateOnly)?.getMonth() ?? new Date().getMonth());
   const ref = useRef<HTMLDivElement>(null);
 
-  const selected = value ? new Date(value) : null;
+  const selected = parseV(value, dateOnly);
+  // when dateOnly=true, time is never shown
+  const showTime = includeTime && !dateOnly;
 
   useEffect(() => {
-    if (selected) {
-      setViewYear(selected.getFullYear());
-      setViewMonth(selected.getMonth());
+    const parsed = parseV(value, dateOnly);
+    if (parsed) {
+      setViewYear(parsed.getFullYear());
+      setViewMonth(parsed.getMonth());
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);
@@ -68,11 +86,17 @@ export default function UzbekDatePicker({
 
   function selectDay(day: number) {
     if (readOnly) return;
+    const pad = (n: number) => String(n).padStart(2, "0");
+    if (dateOnly) {
+      onChange(`${viewYear}-${pad(viewMonth+1)}-${pad(day)}`);
+      setOpen(false);
+      return;
+    }
     const base = selected ? new Date(selected) : new Date();
     base.setFullYear(viewYear); base.setMonth(viewMonth); base.setDate(day);
-    if (!includeTime) { base.setHours(0); base.setMinutes(0); }
+    if (!showTime) { base.setHours(0); base.setMinutes(0); }
     onChange(fmt(base));
-    if (!includeTime) setOpen(false);
+    if (!showTime) setOpen(false);
   }
 
   function changeTime(type: "h" | "m", val: string) {
@@ -87,7 +111,7 @@ export default function UzbekDatePicker({
   const today = new Date();
 
   const displayStr = selected
-    ? `${selected.getDate()} ${UZ_MONTHS[selected.getMonth()]} ${selected.getFullYear()}${includeTime ? ` · ${String(selected.getHours()).padStart(2,"0")}:${String(selected.getMinutes()).padStart(2,"0")}` : ""}`
+    ? `${selected.getDate()} ${UZ_MONTHS[selected.getMonth()]} ${selected.getFullYear()}${showTime ? ` · ${String(selected.getHours()).padStart(2,"0")}:${String(selected.getMinutes()).padStart(2,"0")}` : ""}`
     : "";
 
   const defaultTrigger: React.CSSProperties = {
@@ -162,7 +186,7 @@ export default function UzbekDatePicker({
           </div>
 
           {/* Time picker */}
-          {includeTime && !readOnly && selected && (
+          {showTime && !readOnly && selected && (
             <div style={{ borderTop: "1px solid #f1f5f9", marginTop: "0.875rem", paddingTop: "0.875rem", display: "flex", alignItems: "center", gap: "0.5rem", justifyContent: "center" }}>
               <span style={{ fontSize: "0.85rem" }}>🕐</span>
               <input type="number" min={0} max={23}
