@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import UzbekDatePicker, { UZ_MONTHS, UZ_WEEKDAYS, toPickerString } from "@/components/UzbekDatePicker";
+import UzbekDatePicker, { toPickerString } from "@/components/UzbekDatePicker";
 
 type Child = {
   id: string;
@@ -61,7 +61,6 @@ export default function ParentDashboard() {
   const pendingHomework = child.homeworkGrades.filter(h => h.status === "ASSIGNED" || h.status === "LATE").length;
 
   const now = new Date();
-  const todayUz = `${UZ_WEEKDAYS[now.getDay()]}, ${now.getDate()}-${UZ_MONTHS[now.getMonth()]} ${now.getFullYear()}`;
   const todayPickerValue = toPickerString(now);
 
   return (
