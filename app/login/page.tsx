@@ -42,13 +42,12 @@ export default function LoginPage() {
       {/* Language switcher — top right */}
       <div style={{ position: "fixed", top: "1.25rem", right: "1.25rem", zIndex: 10 }}>
         <div style={{
-          background: "white",
+          background: "rgba(255,255,255,0.1)",
           borderRadius: "0.5rem",
           padding: "4px",
           display: "flex",
           gap: "2px",
-          border: "1px solid var(--border)",
-          boxShadow: "var(--shadow-sm)",
+          border: "1px solid rgba(255,255,255,0.15)",
         }}>
           {(["uz", "en", "ru"] as const).map((code) => {
             const labels = { uz: "O'z", en: "EN", ru: "RU" };
@@ -71,7 +70,7 @@ export default function LoginPage() {
                   fontSize: "0.75rem",
                   fontWeight: 800,
                   background: "transparent",
-                  color: "var(--text-muted)",
+                  color: "rgba(255,255,255,0.7)",
                 }}
               >
                 {labels[code]}
