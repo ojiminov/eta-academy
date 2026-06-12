@@ -56,14 +56,25 @@ export async function getCurrentUser() {
   const session = await getSession();
   if (!session) return null;
 
-  const user = await prisma.user.findUnique({
-    where: { id: session.userId },
-    include: {
-      teacher: true,
-      student: true,
-      parent: { include: { children: { include: { student: { include: { user: true } } } } } },
-    },
-  });
-
-  return user;
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: session.userId },
+      include: {
+        teacher: true,
+        student: true,
+        parent: { include: { children: { include: { student: { include: { user: true } } } } } },
+      },
+    });
+    return user;
+  } catch {
+    // Graceful fallback if DB schema is mid-migration — return basic user info only
+    try {
+      return await prisma.user.findUnique({
+        where: { id: session.userId },
+        include: { teacher: true, student: true },
+      });
+    } catch {
+      return null;
+    }
+  }
 }
