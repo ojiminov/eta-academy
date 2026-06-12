@@ -198,15 +198,22 @@ CREATE TABLE IF NOT EXISTS parent_students (
 CREATE INDEX IF NOT EXISTS idx_parent_students_parent ON parent_students ("parentId");
 CREATE INDEX IF NOT EXISTS idx_parent_students_student ON parent_students ("studentId");
 
--- Migrate any existing parent→student links into the new join table
-INSERT INTO parent_students (id, "parentId", "studentId", "createdAt")
-SELECT gen_random_uuid()::text, id, "studentId", "createdAt"
-FROM parents
-WHERE "studentId" IS NOT NULL
-ON CONFLICT ("parentId", "studentId") DO NOTHING;
+-- Migrate any existing parent→student links (only if studentId column still exists)
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_name = 'parents' AND column_name = 'studentId'
+  ) THEN
+    INSERT INTO parent_students (id, "parentId", "studentId", "createdAt")
+    SELECT gen_random_uuid()::text, id, "studentId", "createdAt"
+    FROM parents
+    WHERE "studentId" IS NOT NULL
+    ON CONFLICT ("parentId", "studentId") DO NOTHING;
 
--- Drop the old one-to-one studentId column from parents
-ALTER TABLE parents DROP COLUMN IF EXISTS "studentId";
+    ALTER TABLE parents DROP COLUMN "studentId";
+  END IF;
+END $$;
 
 ALTER TABLE academy_settings ADD COLUMN IF NOT EXISTS "telegramUrl" TEXT;
 ALTER TABLE academy_settings ADD COLUMN IF NOT EXISTS "contactEmail" TEXT;
