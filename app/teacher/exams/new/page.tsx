@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
+import UzbekDatePicker from "@/components/UzbekDatePicker";
 
 type Group = { id: string; name: string };
 
@@ -60,7 +61,12 @@ export default function NewExamPage() {
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
           <div>
             <label style={{ display: "block", fontSize: "0.875rem", fontWeight: "600", color: "#374151", marginBottom: "0.375rem" }}>{t("exams.scheduledAt")} *</label>
-            <input type="datetime-local" value={form.scheduledAt} onChange={e => setForm(p => ({ ...p, scheduledAt: e.target.value }))} className="input" style={{ width: "100%" }} />
+            <UzbekDatePicker
+              value={form.scheduledAt}
+              onChange={v => setForm(p => ({ ...p, scheduledAt: v }))}
+              placeholder={t("common.select") + "..."}
+              includeTime
+            />
           </div>
           <div>
             <label style={{ display: "block", fontSize: "0.875rem", fontWeight: "600", color: "#374151", marginBottom: "0.375rem" }}>{t("homework.maxScore")} ({t("homework.pts")})</label>

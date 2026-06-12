@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import FileUpload from "@/components/FileUpload";
+import UzbekDatePicker from "@/components/UzbekDatePicker";
 
 type Group = { id: string; name: string };
 
@@ -61,11 +62,21 @@ export default function NewHomeworkPage() {
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
           <div>
             <label style={{ display: "block", fontSize: "0.875rem", fontWeight: "600", color: "#374151", marginBottom: "0.375rem" }}>{t("homework.dueDate")} *</label>
-            <input type="datetime-local" value={form.dueDate} onChange={e => setForm(p => ({ ...p, dueDate: e.target.value }))} className="input" style={{ width: "100%" }} />
+            <UzbekDatePicker
+              value={form.dueDate}
+              onChange={v => setForm(p => ({ ...p, dueDate: v }))}
+              placeholder={t("common.select") + "..."}
+              includeTime
+            />
           </div>
           <div>
             <label style={{ display: "block", fontSize: "0.875rem", fontWeight: "600", color: "#374151", marginBottom: "0.375rem" }}>{t("homework.returnDate")}</label>
-            <input type="datetime-local" value={form.returnDate} onChange={e => setForm(p => ({ ...p, returnDate: e.target.value }))} className="input" style={{ width: "100%" }} />
+            <UzbekDatePicker
+              value={form.returnDate}
+              onChange={v => setForm(p => ({ ...p, returnDate: v }))}
+              placeholder={t("common.select") + "..."}
+              includeTime
+            />
           </div>
         </div>
 

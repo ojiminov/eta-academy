@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
+import UzbekDatePicker, { UZ_MONTHS, UZ_WEEKDAYS, toPickerString } from "@/components/UzbekDatePicker";
 
 type Child = {
   id: string;
@@ -59,7 +60,9 @@ export default function ParentDashboard() {
   const pendingPayments = child.payments.filter(p => p.status === "PENDING" || p.status === "OVERDUE").length;
   const pendingHomework = child.homeworkGrades.filter(h => h.status === "ASSIGNED" || h.status === "LATE").length;
 
-  const today = new Date().toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric", year: "numeric" });
+  const now = new Date();
+  const todayUz = `${UZ_WEEKDAYS[now.getDay()]}, ${now.getDate()}-${UZ_MONTHS[now.getMonth()]} ${now.getFullYear()}`;
+  const todayPickerValue = toPickerString(now);
 
   return (
     <div style={{ padding: "0", maxWidth: "100%" }}>
@@ -82,7 +85,25 @@ export default function ParentDashboard() {
       <div style={{ background: "linear-gradient(135deg, #ec4899 0%, #be185d 50%, #9d174d 100%)", padding: "2rem 2.5rem 3.5rem", position: "relative", overflow: "hidden" }}>
         <div style={{ position: "absolute", top: "-40px", right: "-40px", width: "200px", height: "200px", borderRadius: "50%", background: "rgba(255,255,255,0.06)" }} />
         <div style={{ position: "relative", zIndex: 1 }}>
-          <p style={{ color: "rgba(255,255,255,0.75)", fontSize: "0.875rem", margin: "0 0 0.375rem", fontWeight: "500" }}>{today}</p>
+          <UzbekDatePicker
+            value={todayPickerValue}
+            onChange={() => {}}
+            readOnly
+            includeTime={false}
+            triggerStyle={{
+              background: "rgba(255,255,255,0.15)",
+              border: "1px solid rgba(255,255,255,0.3)",
+              borderRadius: "0.5rem",
+              color: "rgba(255,255,255,0.9)",
+              padding: "0.3rem 0.75rem",
+              fontSize: "0.85rem",
+              fontWeight: "600",
+              display: "inline-flex",
+              width: "auto",
+              marginBottom: "0.375rem",
+              backdropFilter: "blur(4px)",
+            }}
+          />
           <h1 style={{ color: "white", fontSize: "1.875rem", fontWeight: "800", margin: "0 0 0.375rem", letterSpacing: "-0.025em" }}>
             {t("parent.parentDashboard")} 👨‍👩‍👧
           </h1>
