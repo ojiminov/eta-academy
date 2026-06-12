@@ -303,40 +303,22 @@ tbody tr:last-child td { border-bottom: none; }
 
 /* ── Login page ─────────────────────────────────────── */
 .login-shell {
-  display: grid;
-  grid-template-columns: 1fr 420px;
-  min-height: 100vh;
-  background: var(--background);
-}
-
-.login-story {
-  padding: 3rem 3.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 2.5rem;
-  justify-content: center;
-  background: var(--background);
-  border-right: 1px solid var(--border-soft);
-}
-
-.login-panel {
-  background: var(--surface);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 2rem 2.5rem;
-  border-left: 1px solid var(--border-soft);
+  min-height: 100vh;
+  background: #f5f4f2;
+  padding: 1.5rem;
 }
 
 .login-card {
   width: 100%;
-  max-width: 360px;
-}
-
-.login-feature-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
+  max-width: 400px;
+  background: white;
+  border: 1px solid #e4e2de;
+  border-radius: 1.25rem;
+  padding: 2.75rem 2.5rem;
+  box-shadow: 0 2px 24px rgba(0,0,0,0.07), 0 1px 4px rgba(0,0,0,0.04);
 }
 
 .eta-brand-mark {
@@ -366,18 +348,10 @@ tbody tr:last-child td { border-bottom: none; }
   border-color: var(--primary-dark) !important;
 }
 
-@media (max-width: 768px) {
-  .login-shell {
-    grid-template-columns: 1fr;
-  }
-  .login-story {
-    display: none;
-  }
-  .login-panel {
-    border-left: none;
-    padding: 2rem 1.25rem;
-    align-items: flex-start;
-    padding-top: 4rem;
+@media (max-width: 480px) {
+  .login-card {
+    padding: 2rem 1.5rem;
+    border-radius: 1rem;
   }
 }
 
