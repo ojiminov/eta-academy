@@ -28,7 +28,7 @@ export async function PATCH(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   try {
-    const { name, logoUrl, logoName, primaryColor } = await req.json();
+    const { name, logoUrl, logoName, primaryColor, telegramUrl, contactEmail } = await req.json();
 
     const updated = await prisma.academySetting.upsert({
       where: { id: "singleton" },
@@ -38,12 +38,16 @@ export async function PATCH(req: NextRequest) {
         logoUrl:      logoUrl      ?? null,
         logoName:     logoName     ?? null,
         primaryColor: primaryColor ?? "var(--primary, #6366f1)",
+        telegramUrl:  telegramUrl  ?? null,
+        contactEmail: contactEmail ?? null,
       },
       update: {
         ...(name         !== undefined && { name }),
         ...(logoUrl      !== undefined && { logoUrl }),
         ...(logoName     !== undefined && { logoName }),
         ...(primaryColor !== undefined && { primaryColor }),
+        ...(telegramUrl  !== undefined && { telegramUrl }),
+        ...(contactEmail !== undefined && { contactEmail }),
       },
     });
 

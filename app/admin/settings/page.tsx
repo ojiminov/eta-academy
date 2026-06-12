@@ -8,6 +8,8 @@ type Settings = {
   logoUrl: string | null;
   logoName: string | null;
   primaryColor: string;
+  telegramUrl: string;
+  contactEmail: string;
 };
 
 const PRESETS = [
@@ -29,6 +31,8 @@ export default function AdminSettingsPage() {
     logoUrl: null,
     logoName: null,
     primaryColor: "#2a5c45",
+    telegramUrl: "",
+    contactEmail: "",
   });
   const [newLogo, setNewLogo] = useState<{ url: string; name: string } | null>(null);
   const [saving, setSaving] = useState(false);
@@ -39,7 +43,7 @@ export default function AdminSettingsPage() {
   useEffect(() => {
     fetch("/api/admin/settings")
       .then(r => r.json())
-      .then(d => setSettings({ name: d.name ?? "ETA Academy", logoUrl: d.logoUrl, logoName: d.logoName, primaryColor: d.primaryColor ?? "#2a5c45" }))
+      .then(d => setSettings({ name: d.name ?? "ETA Academy", logoUrl: d.logoUrl, logoName: d.logoName, primaryColor: d.primaryColor ?? "#2a5c45", telegramUrl: d.telegramUrl ?? "", contactEmail: d.contactEmail ?? "" }))
       .finally(() => setLoading(false));
   }, []);
 
@@ -60,7 +64,7 @@ export default function AdminSettingsPage() {
   async function handleSave() {
     setSaving(true);
     setSaved(false);
-    const body: Partial<Settings> = { name: settings.name, primaryColor: settings.primaryColor };
+    const body: Partial<Settings> = { name: settings.name, primaryColor: settings.primaryColor, telegramUrl: settings.telegramUrl, contactEmail: settings.contactEmail };
     if (newLogo) {
       body.logoUrl  = newLogo.url;
       body.logoName = newLogo.name;
@@ -189,6 +193,40 @@ export default function AdminSettingsPage() {
               <span style={{ fontWeight:"700", fontSize:"0.875rem", color:settings.primaryColor }}>Dashboard</span>
             </div>
             <div style={{ width:12, height:12, borderRadius:"50%", background:settings.primaryColor }} />
+          </div>
+        </div>
+      </div>
+
+      {/* Contact Info */}
+      <div className="card" style={{ marginBottom:"1.5rem" }}>
+        <h3 style={{ margin:"0 0 0.25rem", color:"#1e293b", fontSize:"1rem", fontWeight:"700" }}>📬 Contact Info</h3>
+        <p style={{ color:"#64748b", fontSize:"0.82rem", margin:"0 0 1rem" }}>
+          Shown on the public landing page so prospective students can reach you.
+        </p>
+        <div style={{ display:"flex", flexDirection:"column", gap:"0.75rem" }}>
+          <div>
+            <label style={{ display:"block", fontSize:"0.75rem", fontWeight:"600", color:"#64748b", marginBottom:"0.25rem" }}>
+              ✈️ Telegram Link
+            </label>
+            <input
+              className="input"
+              value={settings.telegramUrl}
+              onChange={e => setSettings(s => ({ ...s, telegramUrl: e.target.value }))}
+              placeholder="https://t.me/your_academy"
+            />
+            <p style={{ color:"#94a3b8", fontSize:"0.72rem", margin:"0.25rem 0 0" }}>Full URL, e.g. https://t.me/eta_academy</p>
+          </div>
+          <div>
+            <label style={{ display:"block", fontSize:"0.75rem", fontWeight:"600", color:"#64748b", marginBottom:"0.25rem" }}>
+              📧 Contact Email
+            </label>
+            <input
+              className="input"
+              type="email"
+              value={settings.contactEmail}
+              onChange={e => setSettings(s => ({ ...s, contactEmail: e.target.value }))}
+              placeholder="info@youracademy.com"
+            />
           </div>
         </div>
       </div>

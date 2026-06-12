@@ -207,6 +207,9 @@ ON CONFLICT ("parentId", "studentId") DO NOTHING;
 
 -- Drop the old one-to-one studentId column from parents
 ALTER TABLE parents DROP COLUMN IF EXISTS "studentId";
+
+ALTER TABLE academy_settings ADD COLUMN IF NOT EXISTS "telegramUrl" TEXT;
+ALTER TABLE academy_settings ADD COLUMN IF NOT EXISTS "contactEmail" TEXT;
 `;
 
 export async function POST() {

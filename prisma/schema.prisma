@@ -615,6 +615,8 @@ model AcademySetting {
   logoUrl      String?
   logoName     String?
   primaryColor String   @default("#6366f1")
+  telegramUrl  String?
+  contactEmail String?
   updatedAt    DateTime @updatedAt
 
   @@map("academy_settings")
