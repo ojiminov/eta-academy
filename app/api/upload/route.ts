@@ -39,6 +39,12 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid bucket" }, { status: 400 });
   }
 
+  // Branding and student document uploads are restricted to admins
+  const ADMIN_ONLY_BUCKETS = ["branding", "student_doc"];
+  if (ADMIN_ONLY_BUCKETS.includes(bucket) && session.role !== "ADMIN") {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
   const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
   const userId   = session.userId.replace(/[^a-zA-Z0-9-]/g, "");
   const path     = `${userId}/${Date.now()}-${safeName}`;
