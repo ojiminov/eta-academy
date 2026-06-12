@@ -284,6 +284,7 @@ model Group {
   groupStudents   GroupStudent[]
   classSessions   ClassSession[]
   invoices        Invoice[]
+  payments        Payment[]
   homeworks       Homework[]
   exams           Exam[]
   courseMaterials CourseMaterial[]
@@ -297,9 +298,10 @@ model GroupStudent {
   studentId String
   group     Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
   student   Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  joinedAt  DateTime @default(now())
-  isActive  Boolean  @default(true)
-  hasBook   Boolean  @default(false)
+  joinedAt  DateTime  @default(now())
+  leftAt    DateTime?
+  isActive  Boolean   @default(true)
+  hasBook   Boolean   @default(false)
 
   @@unique([groupId, studentId])
     @@index([groupId])
@@ -459,6 +461,10 @@ model Payment {
   student   Student       @relation(fields: [studentId], references: [id], onDelete: Cascade)
   invoiceId String?
   invoice   Invoice?      @relation(fields: [invoiceId], references: [id])
+  groupId   String?
+  group     Group?        @relation(fields: [groupId], references: [id])
+  month     Int?
+  year      Int?
   amount      Float
   cashAmount  Float?
   cardAmount  Float?
@@ -470,6 +476,7 @@ model Payment {
   createdAt DateTime      @default(now())
   updatedAt DateTime      @updatedAt
 
+  @@index([groupId, month, year])
   @@map("payments")
 }
 

@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const { studentId, amount, cashAmount, cardAmount, method, notes, status } = await req.json();
+    const { studentId, amount, cashAmount, cardAmount, method, notes, status, groupId, month, year } = await req.json();
 
     if (!studentId || !amount) {
       return NextResponse.json({ error: "Required fields missing" }, { status: 400 });
@@ -39,6 +39,20 @@ export async function POST(req: NextRequest) {
 
     const parsedAmount = parseFloat(amount);
     const isPaid = status === "PAID" || !status;
+
+    // If groupId not provided, infer from student's active group
+    let resolvedGroupId = groupId || null;
+    const now = new Date();
+    const resolvedMonth = month || (now.getMonth() + 1);
+    const resolvedYear = year || now.getFullYear();
+
+    if (!resolvedGroupId) {
+      const activeEnrollment = await prisma.groupStudent.findFirst({
+        where: { studentId, isActive: true },
+        select: { groupId: true },
+      });
+      resolvedGroupId = activeEnrollment?.groupId || null;
+    }
 
     const [payment] = await prisma.$transaction([
       prisma.payment.create({
@@ -51,6 +65,9 @@ export async function POST(req: NextRequest) {
           notes: notes || null,
           status: isPaid ? "PAID" : (status || "PENDING"),
           paidAt: isPaid ? new Date() : null,
+          groupId: resolvedGroupId,
+          month: resolvedMonth,
+          year: resolvedYear,
         },
         include: { student: { include: { user: true } } },
       }),

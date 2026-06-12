@@ -164,6 +164,24 @@ CREATE TABLE IF NOT EXISTS staff (
   "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
   "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+
+-- ── Task 2: Group-centered payments + enrollment period tracking ───────────────
+-- Add groupId, month, year to payments for direct group context on every payment
+ALTER TABLE payments ADD COLUMN IF NOT EXISTS "groupId" TEXT REFERENCES groups(id);
+ALTER TABLE payments ADD COLUMN IF NOT EXISTS month INTEGER;
+ALTER TABLE payments ADD COLUMN IF NOT EXISTS year INTEGER;
+
+-- Back-fill groupId/month/year from existing Invoice links (safe UPDATE, no data loss)
+UPDATE payments p
+SET "groupId" = i."groupId", month = i.month, year = i.year
+FROM invoices i
+WHERE p."invoiceId" = i.id AND p."groupId" IS NULL;
+
+-- Index for fast group+month+year payment queries (payroll, per-group reports)
+CREATE INDEX IF NOT EXISTS idx_payments_group_month_year ON payments ("groupId", month, year);
+
+-- Add leftAt to group_students to track enrollment end dates
+ALTER TABLE group_students ADD COLUMN IF NOT EXISTS "leftAt" TIMESTAMP(3);
 `;
 
 export async function POST() {
