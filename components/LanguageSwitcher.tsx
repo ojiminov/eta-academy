@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useLocale } from "next-intl";
 import { useState } from "react";
 
@@ -23,8 +22,7 @@ export default function LanguageSwitcher() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ locale: code }),
     });
-    router.refresh();
-    setLoading(false);
+    window.location.reload();
   }
 
   return (
